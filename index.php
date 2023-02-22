@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel = "stylesheet" type = "text/css" href = "stylesheet.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script>
+			var cmd = "";
+
+			function wait(sec){
+   				var start = new Date().getTime();
+   				var end = start;
+   				while( end < start + sec * 1000 )
+				{
+     				end = new Date().getTime();
+  				}
+			}
+
+			function toggleValve(valve,status) {
+				// cmd = "Noch mehr von PHP";
+				if( status == '0' || status == 'O' )
+ 				{
+					cmd = valve + 'O';
+				}
+				else if( status == '1' || status == 'C' )
+ 				{
+					cmd = valve + 'C';
+				}
+				else
+ 				{
+					cmd = '';
+					alert('Invalid command, could not determine the current status of the valve.');
+				}
+			}
+
+			function createFolder() {
+				// Create a folder for the data
+				$.ajax({
+						type: "POST",
+						url: 'createFolder.php',
+						async: false,
+						data: {
+							sampleName: $('#sampleName').val()
+							},
+						success: function(response){
+							console.log(response);
+							$('#folderName').html( response );
+							}
+						});
+			}
+
+			function writeLogfile( logData,folderName ) {
+				// Write logdata
+				$.ajax({
+						type: "POST",
+						url: 'writeLogfile.php',
+						data: {
+							sampleName: $('#sampleName').val(),
+							logData: logData,
+							folderName: folderName
+							},
+						success: function( response ){
+							console.log( response );
+							// $('#folderName').html(response);
+							}
+						});
+			}
+
+			function copyFiles() {
+				console.log( "Copy files." );
+				// Copy all files with a date younger than date
+				$.ajax({
+						type: "POST",
+						url: 'copyFiles.php',
+						async: false,
+						data: {
+							date: $('#timeMeasurementStarted').html(),
+							folderName: $('#folderName').html()
+							},
+						success: function(response){
+							console.log(response);
+							}
+						});
+			}
+
+			function evaluateData() {
+				console.log( "Starting evaluateData.php" )
+				$.ajax({
+  					type: "POST",
+  					url: "evaluateData.php",
+					async: true,
+  					data: {
+						  sampleName: $('#folderName').html(),
+						  userName: $('#userName').val(),
+						  polynomial: $('#polynomial').val()
+						}
+				}).done(function( result ) {
+   					// Do something
+					console.log( result );
+					console.log( "Data gotten from evaluateData.php" );
+				});
+			}
+			
+			function startWritingData() {
+				cmd = 'TWD1';
+				console.log( cmd );
+			}
+			
+			function stopWritingData() {
+				cmd = 'TWD0';
+				console.log( cmd );
+			}
+
+			function setHousingTCmd(settemp) {
+				var temp = parseFloat( $(settemp).val() ).toFixed(3);
+				cmd = 'FS' + temp;
+				console.log( cmd );
+			}
+			function setPIDStatus(status) {
+				cmd = 'TC' + status;
+				console.log( cmd );
+			}
+			function startingPosition() {
+				cmd = 'KL';
+				console.log( cmd );
+			}
+
+			function moveBellows( bellow ) {
+				$('#moveStatus').html('M' + bellow);
+				var percentage = parseFloat( $('#setPercentage' + bellow).val() ).toFixed(1);
+				if( percentage < 0 )
+				{
+					percentage = 0.0;
+					$('#setPercentage' + bellow).val( "0.0" );
+				}
+				if( percentage > 100 )
+				{
+					percentage = 100.0;
+					$('#setPercentage' + bellow).val( "100.0" );
+				}
+				cmd = bellow + 'P' + percentage;
+				console.log( cmd );
+			}
+
+			function getStatus( cmd )
+			{
+				$.ajax({
+					type: "POST",
+					url: 'getStatus.php',
+					data: {cmd: cmd},
+					async: false,
+					success: function( response ){
+						// The following status string received
+						// console.log(response);
+						// Now split the status string
+						const statusArr = response.split(",");
+						//         0           1    2    3     4     5   6  7    8   9  10  11            12                   13     14     15     16         17          18          19     20
+						// 2022-02-18 21:50:20,-,34921,55.94,51636,82.65,0,0.00,2.5,0.6,2.1,S,00000000000000000000000000000000,25.124,23.389,50,66.243,51.6351e+04,44.8385e+04,47.1265e+04,97.5315e+03
+						$('#moveStatus').html( statusArr[1] );
+						// alert( statusArr[1] );
+						if( statusArr[1] == "AX" && $('#loadingA').attr('src') != 'images/loading.gif')
+						{
+							$('#loadingA').attr('src','images/loading.gif');
+						}
+						else if( statusArr[1] != "AX")
+						{
+							$('#loadingA').attr('src',"");
+						}
+
+						if( statusArr[6] != 7980  && $('#warningZ').attr('src') != 'images/warning.png')
+						{
+							$('#warningZ').attr('src','images/warning.png');
+						}
+						else if( statusArr[6] == 7980)
+						{
+							$('#warningZ').attr('src',"");
+						}
+
+
+						if( statusArr[1] == "MX" && $('#motorX').attr('src') == 'images/standing_motor.gif' )
+						{
+							$('#motorX').attr('src','images/rotating_motor.gif');
+						}
+						else if( statusArr[1] == "MY" && $('#motorY').attr('src') == 'images/standing_motor.gif' )
+						{
+							$('#motorY').attr('src','images/rotating_motor.gif');
+						}
+						else if( statusArr[1] == "MZ" && $('#motorZ').attr('src') == 'images/standing_motor.gif' )
+						{
+							$('#motorZ').attr('src','images/rotating_motor.gif');
+						}
+						else if( statusArr[1] == "-" && ( $('#motorX').attr('src') == 'images/rotating_motor.gif' || $('#motorY').attr('src') == 'images/rotating_motor.gif' || $('#motorZ').attr('src') == 'images/rotating_motor.gif' ) )
+						{
+							$('#motorX').attr('src','images/standing_motor.gif');
+							$('#motorY').attr('src','images/standing_motor.gif');
+							$('#motorZ').attr('src','images/standing_motor.gif');
+						}
+						var percentageX = statusArr[3];
+						// X bellows
+						$('#bellowsX').css('height', parseInt( 10 + 0.9 * percentageX ) + 'px');
+						$('#percentageX').html( parseFloat(percentageX).toFixed(1) );
+						$('#percentageX').css("color","gray");
+						$('#percentageXsteps').html( parseFloat(statusArr[2]).toFixed(2) );
+						$('#stepsX').html( statusArr[2] + ' steps' );
+						// Y bellows
+						var percentageY = statusArr[5];
+						$('#bellowsY').css('height', ( 10 + 0.9 * percentageY ) + 'px');
+						$('#percentageY').html( parseFloat(percentageY).toFixed(1) );
+						$('#percentageY').css("color","gray");
+						$('#percentageYsteps').html( parseFloat(statusArr[4]).toFixed(2) );
+						$('#stepsY').html( statusArr[4] + ' steps' );
+						// Z bellows
+						$('#percentageZsteps').html( parseFloat(statusArr[7]).toFixed(1) );
+						$('#stepsZ').html( statusArr[6]); //Steps
+						$('#bellowsZ').css('height',parseFloat( 10 + 0.9 * statusArr[7] ).toFixed(1) + 'px');
+						// X baratron
+						var pressureX = parseFloat(statusArr[8]);
+						$('#pressureX').html( pressureX.toFixed(3) );
+						// Y baratron
+						var pressureY = parseFloat(statusArr[9]);
+						$('#pressureY').html( pressureY.toFixed(3) );
+						// A baratron
+						var pressureA = parseFloat(statusArr[10]);
+						$('#pressureA').html( pressureA.toFixed(1) );
+						// Valves
+						var valveArray = statusArr[12];
+						const positions = [
+							"horizontal",
+							"vertical",
+							"horizontal",
+							"horizontal",
+							"vertical",
+							"horizontal",
+							"vertical",
+							"vertical",
+							"horizontal",
+							"horizontal",
+							"vertical",
+							"horizontal",
+							"vertical",
+							"vertical",
+							"vertical",
+							"vertical",
+							"horizontal",
+							"horizontal",
+							"horizontal",
+							"horizontal",
+							"horizontal",	//V21
+							"horizontal",
+							"vertical",
+							"vertical",
+							"vertical",
+							"vertical",
+							"horizontal",
+							"horizontal",
+							"horizontal",
+							"horizontal",
+							"horizontal",
+							"horizontal"	// V32
+						];
+						// Valve status
+						var i = 1;
+						var n = '0';
+						while(i <= 33)
+						{
+							if( i < 10 )
+							{
+								n = "0";
+							}
+							else
+							{
+								n = "";
+							}
+							$('#V' + n + i.toString() + '_label').html( valveArray.charAt(i - 1) );
+							if(valveArray.charAt(i - 1) == '0')
+							{
+								$('#V' + n + i.toString()).attr('src','images/' + positions[i-1] + '_closed.png');
+							}
+							else
+							{
+								$('#V' + n + i.toString()).attr('src','images/' + positions[i-1] + '_open.png');
+							}
+							i = i + 1;
+						}
+
+						// Room humidity
+						var roomH = statusArr[24];
+						$('#roomH').html( roomH );
+						// Room temperature
+						var roomT = statusArr[23];
+						$('#roomT').html( roomT );
+						// Room pressure
+						var roomP = statusArr[25];
+						$('#roomP').html( roomP );
+
+						// Box humidity
+						var roomRH = statusArr[13];
+						$('#roomRH').html( roomRH );
+						// Box temperature
+						var housingT = statusArr[14];
+						$('#housingT').html( housingT );
+						var fanSpeed = statusArr[15];
+						$('#fanSpeed').html(fanSpeed);
+						var baratronMbar = statusArr[16] * 1.33322 + 0.406 + 0.223;
+						var baratronTorr = statusArr[16] * 1 + (0.406+0.223)/1.33322;
+						$('#baratron').html( baratronTorr.toFixed(3) );
+						// Absorption lines and CO2 concentrations from spectrometer
+						var mr1 = statusArr[17];
+						$('#mr1').html( '<sup>16</sup>C<sup>12</sup>O<sup>17</sup>O: ' + Math.round( Number(mr1)/1000 ) + ' ppmv' );
+						var mr2 = statusArr[18];
+						$('#mr2').html( '<sup>16</sup>C<sup>12</sup>O<sup>18</sup>O: ' + Math.round( Number(mr2)/1000 ) + ' ppmv' );
+						var mr3 = statusArr[19];
+						$('#mr3').html( '<sup>16</sup>C<sup>12</sup>O<sup>16</sup>O: ' + Math.round( Number(mr3)/1000 ) + ' ppmv' );
+						var mr4 = statusArr[20];
+						$('#mr4').html( 'free path CO<sub>2</sub>: ' + Math.round( Number(mr4)/1000 ) + ' ppmv' );
+						var edwards = statusArr[22];
+						$('#edwards').html( edwards );
+						var CellTemperature =  statusArr[21]-273.15;
+						$('#CellTemperature').html( CellTemperature.toFixed(3) );
+						var d17O = ((mr1/mr3) / 1.08 - 1) * 1000;
+						var d18O = ((mr2/mr3) / 1.06 - 1) * 1000;
+						$('#d18O').html( 'δ<sup>18</sup>O: ' + d18O.toFixed(1) + "‰");
+						var D17O = d17O - 0.528 * d18O;
+						$('#D17O').html( "Δ<sup>'17</sup>O: " + D17O.toFixed(3) + "‰");
+
+						$('#pCO2').html(Math.round( Number(mr3)/1000));
+
+						// Reset the command string
+						cmd = "";
+					},
+					error: function(xhr, status, error){
+						console.error(xhr);
+					}
+				});
+			}
+
+			getStatus();
+
+		</script>
+
+		<script>
+			var seconds = 0;
+			var minutes = 0;
+			var hour = 0;
+			var hourAngle = 0;
+			const radiusHour = 31;
+			const radiusMinutes = 42;
+			const radiusSeconds = 42;
+			function pad(num, size)
+			{
+			num = num.toString();
+			while (num.length < size) num = "0" + num;
+			return num;
+			}
+			function getTime()
+			{
+				var date = new Date;
+				seconds = date.getSeconds();
+				minutes = date.getMinutes();
+				hour = date.getHours();
+				minutesAngle = (minutes / 60 * 2 * Math.PI) - 0.5 * Math.PI;
+				secondsAngle = (seconds / 60 * 2 * Math.PI) - 0.5 * Math.PI;
+				hourAngle = ( hour / 12 * 2 * Math.PI + 1/12 * minutes / 60 * 2 * Math.PI ) - 0.5 * Math.PI;
+				$('#digital').html( hour + ":" + pad(minutes,2) + ":" + pad(seconds,2) + "<br> Göttingen Hbf" );
+				// Write on canvas
+				var c = document.getElementById("myCanvas");
+				var ctx = c.getContext("2d");
+				ctx.clearRect(0, 0, c.width, c.height);
+				ctx.lineCap = 'round';
+				ctx.strokeStyle = 'black';
+				// Draw circle
+				ctx.beginPath();
+				ctx.lineWidth = 2.8;
+				ctx.arc(50, 50, 48, 0, 2 * Math.PI);
+				ctx.stroke();
+
+				// Draw tickmarks
+				ctx.beginPath();
+				for (let i = 0; i < 60; i++)
+				{ 
+					ticksAngle = i * 2 * Math.PI / 60;
+					ctx.moveTo( 50 + 43 * Math.cos( ticksAngle ), 50 + 43 * Math.sin( ticksAngle ) );
+					ctx.lineTo( 50 + 48 * Math.cos( ticksAngle ), 50 + 48 * Math.sin( ticksAngle ) );
+				}
+				ctx.lineWidth = 2.2;
+				ctx.strokeStyle = '#061350';
+				ctx.stroke();
+
+				ctx.beginPath();
+				for (let i = 0; i < 12; i++)
+				{ 
+					ticksAngle = i * 2 * Math.PI / 12;
+					ctx.moveTo( 50 + 38 * Math.cos( ticksAngle ), 50 + 38 * Math.sin( ticksAngle ) );
+					ctx.lineTo( 50 + 48 * Math.cos( ticksAngle ), 50 + 48 * Math.sin( ticksAngle ) );
+				}
+				ctx.lineWidth = 3;
+				ctx.strokeStyle = '#061350';
+				ctx.stroke();
+
+				// Write hour
+				ctx.strokeStyle = '#061350';
+				ctx.beginPath();
+				ctx.moveTo(50, 50); // Center
+				ctx.lineTo( 50 + radiusHour * Math.cos( hourAngle ), 50 + radiusHour * Math.sin( hourAngle ) );
+				ctx.lineWidth = 6;
+				ctx.stroke();
+				// Write minutes
+				ctx.strokeStyle = '#061350';
+				ctx.beginPath();
+				ctx.moveTo(50, 50); // Center
+				ctx.lineTo( 50 + radiusMinutes * Math.cos( minutesAngle ), 50 + radiusMinutes * Math.sin( minutesAngle ) );
+				ctx.lineWidth = 5;
+				ctx.stroke();
+
+				// Write seconds
+				
+				ctx.beginPath();
+				ctx.moveTo(50, 50); // Center
+				ctx.strokeStyle = '#EC0016';
+				ctx.lineTo( 50 + 23 * Math.cos( secondsAngle ), 50 + 23 * Math.sin( secondsAngle ) );
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				
+				ctx.moveTo(50 + 33 * Math.cos( secondsAngle ), 50 + 33 * Math.sin( secondsAngle ));
+				ctx.strokeStyle = '#EC0016';
+				ctx.lineTo( 50 + radiusSeconds * Math.cos( secondsAngle ), 50 + radiusSeconds * Math.sin( secondsAngle ) );
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				
+				ctx.beginPath();
+				ctx.arc(50 + radiusSeconds / 1.5 * Math.cos( secondsAngle ), 50 + radiusSeconds / 1.5 * Math.sin( secondsAngle ), 5, 0, 2 * Math.PI);
+				ctx.fillStyle = "#f0ecec00";
+				ctx.fill();
+				ctx.stroke();
+
+				ctx.beginPath();
+				ctx.strokeStyle = '#061350';
+				ctx.fillStyle = "#061350";
+				ctx.moveTo(50, 50); // Center
+				ctx.arc(50, 50, 4, 0, 2 * Math.PI);
+				ctx.fill();
+				ctx.stroke();
+			}
+		</script>
+	</head>
+
+	<body style="background-color: #38342F ;">
+		<!-- <h1>IR laser spectrometer</h1> -->
+		<!-- <a href="http://192.168.1.242:8081">Show webcam</a> -->
+		<!--
+		<span id="statusString" style="border:1px solid black;padding:3px;">undefined</span>
+		2022-02-18 21:50:20,-,34921,55.94,51636,82.65,0,0.00,2.5,0.6,S,00000000000000000000000000000000,25.124,23.389,66.243,51.6351e+04,44.8385e+04,47.1265e+04,97.5315e+03
+		-->
+		<div id="wrap" style="position:relative; border:1.5px solid #F5F4F1; width:2010px;height:840px;border-radius: 4px;">
+			
+			<img src="images/schaltbild.png" style="position:absolute;top:5px;left:5px;border-radius: 4px;" />
+
+			<img src="images/GZG_logo_text_color.png" style="position:absolute;top:19px;left:1700px;width:290px;" />
+			<img src="images/GOE_Logo.png" style="position:absolute;top:770px;left:1700px;width:290px;" />
+
+
+			<div style="position:absolute;top:131px;left:725px;">
+				<span style="position:relative;top:-35px;left:77px;">V01</span>
+				<img id="V01" src="images/horizontal_closed.png" onclick="var status=$('#V01_label').html();toggleValve('V01',status);" style="width:50px;"/>
+				<span id="V01_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:178px;left:685px;">
+				<span style="position:relative;top:2px;left:77px;">V02</span>
+				<img id="V02" src="images/vertical_closed.png" onclick="var status=$('#V02_label').html();toggleValve('V02',status);" style="width:50px;"/>
+				<span id="V02_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:470px;">
+				<span style="position:relative;top:-35px;left:77px;">V03</span>
+				<img id="V03" src="images/vertical_closed.png" onclick="var status=$('#V03_label').html();toggleValve('V03',status);" style="width:50px;"/>
+				<span id="V03_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:240px;">
+				<span style="position:relative;top:-35px;left:77px;">V04</span>
+				<img id="V04" src="images/vertical_closed.png" onclick="var status=$('#V04_label').html();toggleValve('V04',status);" style="width:50px;"/>
+				<span id="V04_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:340px;left:410px;">
+				<span style="position:relative;top:-35px;left:77px;">V05</span>
+				<img id="V05" src="images/vertical_closed.png" onclick="var status=$('#V05_label').html();toggleValve('V05',status);" style="width:50px;"/>
+				<span id="V05_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:345px;">
+				<span style="position:relative;top:-35px;left:77px;">V06</span>
+				<img id="V06" src="images/vertical_closed.png" onclick="var status=$('#V06_label').html();toggleValve('V06',status);" style="width:50px;"/>
+				<span id="V06_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:475px;left:410px;">
+				<span style="position:relative;top:-35px;left:77px;">V07</span>
+				<img id="V07" src="images/vertical_closed.png" onclick="var status=$('#V07_label').html();toggleValve('V07',status);" style="width:50px;"/>
+				<span id="V07_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:475px;left:190px;">
+				<span style="position:relative;top:-35px;left:77px;">V08</span>
+				<img id="V08" src="images/vertical_closed.png" onclick="var status=$('#V08_label').html();toggleValve('V08',status);" style="width:50px;"/>
+				<span id="V08_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:905px;">
+				<span style="position:relative;top:-35px;left:77px;">V09</span>
+				<img id="V09" src="images/vertical_closed.png" onclick="var status=$('#V09_label').html();toggleValve('V09',status);" style="width:50px;"/>
+				<span id="V09_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:1145px;">
+				<span style="position:relative;top:-35px;left:77px;">V10</span>
+				<img id="V10" src="images/vertical_closed.png" onclick="var status=$('#V10_label').html();toggleValve('V10',status);" style="width:50px;"/>
+				<span id="V10_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:345px;left:972px;">
+				<span style="position:relative;top:-35px;left:77px;">V11</span>
+				<img id="V11" src="images/vertical_closed.png" onclick="var status=$('#V11_label').html();toggleValve('V11',status);" style="width:50px;"/>
+				<span id="V11_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:1040px;">
+				<span style="position:relative;top:-35px;left:77px;">V12</span>
+				<img id="V12" src="images/vertical_closed.png" onclick="var status=$('#V12_label').html();toggleValve('V12',status);" style="width:50px;"/>
+				<span id="V12_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:470px;left:972px;">
+				<span style="position:relative;top:-35px;left:77px;">V13</span>
+				<img id="V13" src="images/vertical_closed.png" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" style="width:50px;"/>
+				<span id="V13_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:472px;left:1190px;">
+				<span style="position:relative;top:-35px;left:77px;">V14</span>
+				<img id="V14" src="images/vertical_closed.png" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" style="width:50px;"/>
+				<span id="V14_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:720px;left:686px;">
+				<span style="position:relative;top:-35px;left:77px;">V15</span>
+				<img id="V15" src="images/vertical_closed.png" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" style="width:50px;"/>
+				<span id="V15_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:595px;left:686px;">
+				<span style="position:relative;top:-35px;left:77px;">V16</span>
+				<img id="V16" src="images/vertical_closed.png" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" style="width:50px;"/>
+				<span id="V16_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:131px;left:843px;">
+				<span style="position:relative;top:-35px;left:77px;">V17</span>
+				<img id="V17" src="images/vertical_closed.png" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" style="width:50px;"/>
+				<span id="V17_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:145px;">
+				<span style="position:relative;top:-35px;left:77px;">V18</span>
+				<img id="V18" src="images/vertical_closed.png" onclick="var status=$('#V18_label').html();toggleValve('V18',status);" style="width:50px;"/>
+				<span id="V18_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:231px;left:620px;">
+				<span style="position:relative;top:-35px;left:77px;">V19</span>
+				<img id="V19" src="images/vertical_closed.png" onclick="var status=$('#V19_label').html();toggleValve('V19',status);" style="width:50px;"/>
+				<span id="V19_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:231px;left:540px;">
+			    <span style="position:relative;top:-35px;left:77px;">V20</span>
+				<img id="V20" src="images/vertical_closed.png" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" style="width:50px;"/>
+				<span id="V20_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:767px;left:972px;">
+			    <span style="position:relative;top:-35px;left:77px;">V21</span>
+				<img id="V21" src="images/vertical_closed.png" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" style="width:50px;"/>
+				<span id="V21_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:410px;left:1235px;">
+			    <span style="position:relative;top:-35px;left:77px;">V22</span>
+				<img id="V22" src="images/vertical_closed.png" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" style="width:50px;"/>
+				<span id="V22_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:720px;left:1318px;">
+			    <span style="position:relative;top:-35px;left:77px;">V23</span>
+				<img id="V23" src="images/vertical_closed.png" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" style="width:50px;"/>
+				<span id="V23_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:720px;left:1408px;">
+			    <span style="position:relative;top:-35px;left:77px;">V24</span>
+				<img id="V24" src="images/vertical_closed.png" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" style="width:50px;"/>
+				<span id="V24_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:720px;left:1498px;">
+			    <span style="position:relative;top:-35px;left:77px;">V25</span>
+				<img id="V25" src="images/vertical_closed.png" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" style="width:50px;"/>
+				<span id="V25_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:720px;left:1588px;">
+			    <span style="position:relative;top:-35px;left:77px;">V26</span>
+				<img id="V26" src="images/vertical_closed.png" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" style="width:50px;"/>
+				<span id="V26_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:212px;left:843px;">
+			    <span style="position:relative;top:-35px;left:77px;">V27</span>
+				<img id="V27" src="images/vertical_closed.png" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" style="width:50px;"/>
+				<span id="V27_label" style="display:none;">undefined</span>
+			</div>
+			
+			<!-- These valves are free
+			<div style="position:absolute;top:740px;left:1190px;">
+			    <span style="position:relative;top:-35px;left:77px;">V28</span>
+				<img id="V28" src="images/vertical_closed.png" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" style="width:50px;"/>
+				<span id="V28_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:740px;left:1240px;">
+			    <span style="position:relative;top:-35px;left:77px;">V29</span>
+				<img id="V29" src="images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" style="width:50px;"/>
+				<span id="V29_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:740px;left:1290px;">
+			    <span style="position:relative;top:-35px;left:77px;">V30</span>
+				<img id="V30" src="images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V30',status);" style="width:50px;"/>
+				<span id="V30_label" style="display:none;">undefined</span>
+			</div>
+			<div style="position:absolute;top:740px;left:1340px;">
+			    <span style="position:relative;top:-35px;left:77px;">V31</span>
+				<img id="V31" src="images/vertical_closed.png" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" style="width:50px;"/>
+				<span id="V31_label" style="display:none;">undefined</span>
+			</div>
+			-->
+			<div style="position:absolute;top:767px;left:1100px;">
+				<span style="position:relative;top:-35px;left:77px;">V32</span>
+				<img id="V32" src="images/vertical_closed.png" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" style="width:50px;"/>
+				<span id="V32_label" style="display:none;">undefined</span>
+			</div>
+			
+
+			<button onclick="startWritingData();" class="button" style="top:36px;left:585px;width:60px;height:30px;">WD on</button>
+			<button onclick="stopWritingData();" class="button" style="top:66px;left:585px;width:60px;height:30px;">WD off</button>
+						
+			<span id="cycleJS" style="position:absolute;top:35px;left:150px;height:30px;width:130px; border:4px solid #061350; font-family:monospace; color: #ffffff; background-color: #1455C0;padding-left:8px;padding-top:5px;">NaN</span>
+			
+			<div id="baratron" class="box" style="top:35px;left:660px;width:60px;">CellP </div>
+				<p class="label" style="top:15px;left:730px;color:white;">Torr (cell)</p>
+				
+			<div id="CellTemperature" class="box" style="top:75px;left:660px;width:60px;">CellT</div>
+				<p class="label" style="top:55px;left:730px;color:white;">°C (cell)</p>
+
+			<img id="bellowsX" src="images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:295px;" />
+			<img id="bellowsY" src="images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:1100px;" />
+			<img id="bellowsZ" src="images/bellows.png" style="width:100px;height:60px;position:absolute;top:320px;left:688px;" />
+			
+			<span id="pressureX" class="box" style="top:353px;left:319px;width:50px;">NaN</span>
+				<p class="label" style="top:308px;left:319px;">X (mbar)</p>
+
+			<span id="pressureY" class="box" style="top:353px;left:1128px;width:50px;">NaN</span>
+				<p class="label" style="top:308px;left:1128px;">Y (mbar)</p>
+
+			<div id='pressureA' class="box" style="top:555px;left:650px;width:50px;"><em>NaN</em></div>
+				<p class="label" style="top:513px;left:650px;">A (mbar)</p>
+			<img id="loadingA" src="" style="width:25px;position:absolute;top:585px;left:650px;" />
+
+			<img id="motorX" src="images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:380px;" />
+			<span id="percentageXsteps" class="box" style="top:625px;left:315px;width:50px;">NaN</span>
+			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
+			<button onclick="moveBellows('X');" class="button" style="top:655px;left:365px;width:50px;">Set X</button>
+
+			<img id="motorY" src="images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:1184px;" />
+			<span id="percentageYsteps" class="box" style="top:625px;left:1120px;width:50px;">NaN</span>
+			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
+			<button onclick="moveBellows('Y');" class="button" style="top:655px;left:1169px;width:50px;">Set Y</button>
+			
+			<img id="motorZ" src="images/standing_motor.gif" style="width:25px;position:absolute;top:450px;left:755px;" />
+			<span id="percentageZsteps" class="box" style="top:450px;left:690px;width:50px;">NaN</span>
+			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
+			<button onclick="moveBellows('Z');" class="button" style="top:480px;left:740px;width:50px;">Set Z</button>
+			<img id="warningZ" src="" style="height:25px;position:absolute;top:450px;left:650px;" />
+
+			<!-- Bellow parameters only necessary for the index.php to work -->
+			<span id="percentageX" class="box" style="top:425px;left:1700px;width:40px;">NaN</span>
+			<span id="percentageY" class="box" style="top:425px;left:1750px;width:40px;">NaN</span>
+			<span id="stepsZ" class="box" style="top:425px;left:1800px;width:40px;">NaN</span>
+			
+			<span id="mr1" class="box" style="top:100px;left:1100px;width:180px;">mr1</span>
+			<span id="mr2" class="box" style="top:130px;left:1100px;width:180px;">mr2</span>
+			<span id="mr3" class="box" style="top:160px;left:1100px;width:180px;">mr3</span>
+			<span id="mr4" class="box" style="top:190px;left:1100px;width:180px;">mr4</span>
+			<span id="d18O" class="box" style="top:220px;left:1100px;width:180px;;">d18O</span>
+			<span id="D17O" class="box" style="top:250px;left:1100px;width:180px;">D17O</span>
+			
+			<span id="edwards" class="box" style="top:353px;left:858px;width:70px;">edwards</span>
+			<p class="label" style="top:308px;left:858px;">Vacuum (mbar)</p>
+			
+			<div style="position:absolute;top:19px;left:1370px;">
+				Sequence: <input type="file" id="uploadSequence">
+			</div>
+
+			<div style="position:absolute;top:50px;left:1370px;">
+				Method: <input type="file" id="uploadMethod">
+			</div>
+
+			<div style="position:absolute;top:81px;left:1370px;">
+				User: 
+				<select name='userName' id='userName'>	
+					<option value='David Bajnai'>Bajnai, David</option>
+					<option value='Thierry Wasselin'>Wasselin, Thierry</option>
+					<option value='Dennis Kohl'>Kohl, Dennis</option>
+					<option value='Tommaso Di Rocco'>Di Rocco, Tommaso</option>
+					<option value='Andreas Pack'>Pack, Andreas</option>
+					<option value='Oliver Jaeger'>Jäger, Oliver</option>
+					<option value='Dingsu Feng'>Feng, Dingsu</option>
+					<option value='Fabian Zahnow'>Zahnow, Fabian</option>
+					<option value='Praktikum'>Praktikum</option>
+				</select>
+			</div>
+
+			<div style="position:absolute;top:390px;left:1700px;">
+				Polynomial: <input type="number" id="polynomial" value="100" style="width:100px;">
+			</div>
+
+			<div id="sequence" class="scroll" style="top:190px;left:1370px;width:300px;height:150px;"></div>
+			<div id="method" class="scroll" style="top:353px;left:1370px;width:300px;height:318px;"></div>
+			
+			<input id='housingTargetT' value=32.0 type="number" style="top:163px;left:30px;width:60px;"/>
+			<button onclick="setHousingTCmd(housingTargetT);" class="button" style="top:163px;left:70px;width:50px;">Set T</button>
+			<button onclick="setPIDStatus(1);" class="button" style="top:163px;left:130px;width:50px;">Fan on</button>
+			<button onclick="setPIDStatus(2);" class="button" style="top:163px;left:190px;width:50px;">Fan off</button>
+			
+			<div id='fanSpeed' class="box" style="top:190px;left:30px;width:60px;">999</div>
+			<p class="label" style="top:170px;left:100px;">fan speed</p>
+
+			<div id='housingT' class="box" style="top:225px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="position:absolute;top:205px;left:100px;">°C (box)</p>
+
+			<div id='roomRH' class="box" style="top:252px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="position:absolute;top:235px;left:100px;">%rH (box)</p>
+
+			<div id='roomT' class="box" style="top:287px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="position:absolute;top:267px;left:100px;">°C (room)</p>
+
+			<div id='roomH' class="box" style="top:314px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="position:absolute;top:294px;left:100px;">%rH (room)</p>
+
+			<div id='roomP' class="box" style="top:341px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="top:321px;left:100px;">mbar (room)</p>
+
+			<div id='progressBar' style='position:absolute;top:140px;left:1370px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
+			<div id='progress' style='position:absolute;top:140px;left:1370px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
+			<div id="moveStatus" class="info" style="width:307px;top:120px;left:1370px;text-align: right;">-</div>
+			<div id='methodStatus' class="info" style='top:120px;left:1370px;'>Standby</div>
+					
+			<input type="text" id="sampleName" placeholder="Sample name" style="top:353px;left:1700px;">
+
+			<div id="timeMeasurementStarted" class="info" style="top:460px;left:1700px;">Time started</div>
+			<div id="folderName" class="info" style="top:480px;left:1700px;width:200px;">Folder name</div>
+			<div id="cellTargetPressure" class="info" style="top:500px;left:1700px;">Cell target p</div>
+			<div id="nitrogenTargetPressure" class="info" style="top:520px;left:1700px;">N2 target p</div>
+			<div id="refgasTargetPressure" class="info" style="top:540px;left:1700px;">Refgas target p</div>
+			<div id="samgasTargetPressure" class="info" style="top:560px;left:1700px;">Sample target p</div>
+
+			<div id="sample_pCO2" class="info" style="top:580px;left:1700px;">0</div>
+			<div id="reference_pCO2" class="info" style="top:600px;left:1700px;">0</div>
+			<div id="correction_pCO2" class="info" style="top:620px;left:1700px;">1.000</div>
+			<div id="pCO2" class="info" style="top:640px;left:1700px;">undefined</div>
+
+			<div id="cycle" style="position:absolute;top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
+
+			<div style="position:absolute;top:85px;left:150px;height:30px;width:130px;border:4px solid #061350;font-family:monospace;color: #ffffff;background-color: #1455C0;padding-left:8px;padding-top:5px;" id="digital">Time</div>			
+			
+			<button type='button' class="button" style='top:140px;left:1700px;height:28px;width:120px;background-color:#63A615;' onclick='createFolder();$("#methodStatus").html("Method running");var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 );$("#timeMeasurementStarted").html( timeMeasurementStarted );$("#sample0").prepend("&#9758; ");'>Start sequence</button>
+
+			<button onclick="startingPosition();" class="button" style="top:190px;left:1700px;width:120px;height:28px;background-color:#9A6CA6  ;">Starting position</button>
+			
+			<a href="http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2" target="_blank"> <button class="button" style="top:230px;left:1700px;width:120px;height:28px;">See results</button></a>
+
+			<canvas style="position:absolute;top:30px;left:30px;" id="myCanvas" width="100" height="100" style="border:1px solid black;"></canvas>
+
+		</div>
+
+		<!-- Ajax JavaScript File Upload Logic -->
+		<script>
+			var commandsArray = []; // Global variable
+			var parameterArray = [];
+			var timeArray = [];
+			var colArr = [];
+
+			$('body').on('change', '#uploadMethod', function() {
+				var data = new FormData(); // Das ist unser Daten-Objekt ...
+				data.append('file', this.files[0]); // ... an das wir unsere Datei anhängen
+				$.ajax({
+					url: 'uploadMethod.php', 	// Wohin soll die Datei geschickt werden?
+					data: data,          		// Das ist unser Datenobjekt.
+					type: 'POST',         		// HTTP-Methode, hier: POST
+					processData: false,
+					contentType: false,
+					// und wenn alles erfolgreich verlaufen ist, schreibe eine Meldung
+					// in das Response-Div
+					success: function(result) {
+						// One could do something here
+					}
+				});
+			});
+
+			function loadMethod( methodFileName ) {
+				// alert(methodFileName);
+				var xM = methodFileName;
+				// var data = new FormData(); // das ist unser Daten-Objekt ...
+				// data.append('file', this.files[0]); // ... an die wir unsere Datei anhängen
+				$.ajax({
+					url: 'loadMethod.php', // Wohin soll die Datei geschickt werden?
+					data: {
+						methodFileName: xM
+						}, // Das ist unser Datenobjekt.
+					type: 'POST',         // HTTP-Methode, hier: POST
+					// processData: false,
+					// contentType: false,
+					// und wenn alles erfolgreich verlaufen ist, schreibe eine Meldung
+					// in das Response-Div
+					success: function( result ) {
+						// Delete all elements in div sequence
+						console.log( "loadMethod-Funktion",result );
+						$('#method').empty();
+						colArr = result.split("|");
+						commandsArray = [];
+						commandsArray = colArr[0].split(","); // This is a 1D array here
+						console.log("commandsArray",commandsArray);
+						parameterArray = colArr[1].split(","); // For valves: 0 = close, 1 = open, for bellows position in %
+						console.log("parameterArray",parameterArray);
+						timeArray = colArr[2].split(",");
+						console.log("timeArray",timeArray);
+						// Create list with commands on frontpanel
+						var vertical = 0;
+						for (let i = 0; i < commandsArray.length; i++) {
+							$( "#method" ).append( "<div id='command" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + ": " + commandsArray[i] + " &rarr; " + parameterArray[i] + " &rarr; wait " + timeArray[i] + " s</div>" );  
+						}
+						vertical = vertical + 0;
+					}
+				});
+			};
+
+			$('body').on('change', '#uploadSequence', function() {
+				var data = new FormData(); // das ist unser Daten-Objekt ...
+				data.append('file', this.files[0]); // ... an die wir unsere Datei anhängen
+				$.ajax({
+					url: 'uploadSequence.php', // Wohin soll die Datei geschickt werden?
+					data: data,          // Das ist unser Datenobjekt.
+					type: 'POST',         // HTTP-Methode, hier: POST
+					processData: false,
+					contentType: false,
+					// und wenn alles erfolgreich verlaufen ist, schreibe eine Meldung
+					// in das Response-Div
+					success: function(result) {
+						// Delete all elements in div sequence
+						$('#sequence').empty();
+						var colSeqArr = result.split("|");
+						let sampleNameArr = colSeqArr[0].split(",");
+						console.log( "Sample array", sampleNameArr );
+						let methodFileArr = colSeqArr[1].split(",");
+						console.log( "Methods file name array", methodFileArr );
+						// Create list with commands on frontpanel
+						var vertical = 0;
+						for (let i = 0; i < sampleNameArr.length; i++) {
+							if( i == 0 )
+							{
+								// Loading the method of the first sample
+								console.log( "First method file:", methodFileArr[i] );
+								loadMethod( methodFileArr[i] );
+								$('#sampleName').val( sampleNameArr[i] );
+							}
+							$( "#sequence" ).append( "<div id='sample" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + "," + sampleNameArr[i] + "," + methodFileArr[i] + "</div>" );  
+						}
+						vertical = vertical + 0;
+					}
+				});
+			});
+		</script>
+		<script>
+			// Method script
+			var startTime = 0;
+			var timeExecuted = 0; // Time when cmd has been sent to Arduino
+			var line = 0;
+			var moving = "no";
+			var waiting = "no"; // Wait for the delay to goto next command
+			var executed = "yes";
+			var cycleJS = 0;
+			var firstSample = "";
+			var currentTimeOld = 0;
+			var logData = [];
+			var sample = 0;
+			var diff = 0;
+			var cycle = 0;
+
+			// Interval function (equivalent to main loop of a program)
+			setInterval(function()
+				{	
+					// console.log("Interval loop running");
+					// Check every 30 sec the Temperature
+					// Update all readings and, in case, send a command cmd
+					getStatus( cmd );
+					console.log('Current cmd',cmd);
+					cmd = "";
+					getTime(); // Sets the clock
+					// Execute the individual commands from the method
+					if( $("#methodStatus").text() == "Method running"  )
+					{
+						var currentTime = parseInt( new Date().getTime() / 1000 );
+						// Write data to logfile
+						if( currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").val() != "" )
+						{
+
+							// IMPORTANT: if you add/remove elements below, you have to update the lenght filter in the writeLogfile.php!
+							// Unix -> Mac timestamp, TILDAS uses Mac timestamp
+							logData.push( [parseInt(currentTime + 2082844800),parseFloat( $('#housingT').html() ),parseFloat( $('#housingTargetT').val() ),parseFloat( $('#roomRH').html() ),$('#percentageXsteps').html(),$('#percentageYsteps').html(),$('#percentageZsteps').html(),$('#pressureX').html(),$('#pressureY').html(),$('#pressureA').html(),$('#edwards').html().trim(),parseFloat( $('#fanSpeed').html()),parseFloat( $('#roomT').html()),parseFloat( $('#roomH').html()),parseFloat( $('#roomP').html())] );
+							
+							if( currentTime % 30 == 0 )
+							{
+								// Write data to logfile every ~ 2 min
+								console.log("Writing to logfile now.");
+								writeLogfile( logData,$('#folderName').html() );
+								// Reset logfile array
+								logData = [];
+							}
+							currentTimeOld = currentTime;
+						}
+						// Valve commands V03 1
+						if( commandsArray[line][0] == "V" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							// Valve that needs to be switched
+							if( parameterArray[line] == 0 )
+							{
+								toggleValve(commandsArray[line],"1");
+							}	
+							else
+							{
+								toggleValve(commandsArray[line],"0");
+							}
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+						// Set housing temperature
+						else if( commandsArray[line][0] == "F" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							cmd = "FS" + parameterArray[line];
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Set fan ON /OFF
+						else if( commandsArray[line][0] == "T" && commandsArray[line][1] == "C" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							cmd = "TC" + parameterArray[line];
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// This command waits until A target pressure is reached, than closes valves
+						else if( commandsArray[line][0] == "A" && commandsArray[line][1] == "X" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							cmd = "AX" + parameterArray[line];
+
+							// Resetting the progress bar						
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+							// $("#command" + line).append(" &#10003;");
+							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Reset valves to starting position
+						else if( commandsArray[line][0] == "K" && commandsArray[line][1] == "L" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							cmd = "KL" + parameterArray[line];
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Write cell pressure for the first sample on frontpanel "WC <no parameter>"
+						else if( commandsArray[line][0] == "W" && commandsArray[line][1] == "C" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							$("#cellTargetPressure").html( $("#baratron").html() );
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Write nitrogen pressure for the first sample on the frontpanel "WA <no parameter>"
+						else if( commandsArray[line][0] == "W" && commandsArray[line][1] == "A" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+
+							$("#nitrogenTargetPressure").html( (parseFloat( $("#pressureA").html() ) + 0.5).toFixed(1) );
+
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Write reference gas target pressure for the first sample on the frontpanel "WR <no parameter>"
+						else if( commandsArray[line][0] == "W" && commandsArray[line][1] == "R" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$( "#command" + line).prepend("&#9758; " );
+							// Keep the target pressure (ref) for all samples in sequence
+							if( $( "#refgasTargetPressure" ).html() == "Refgas target p" )
+							{
+								$( "#refgasTargetPressure" ).html( "1.700" );
+							}
+							else
+							{
+								$( "#refgasTargetPressure" ).html( (parseFloat($( "#refgasTargetPressure" ).html()) * 1.0026).toFixed(3) );
+							}
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+					
+
+						// Write sample gas target pressure for the first sample on the frontpanel "WS <no parameter>"
+						else if( commandsArray[line][0] == "W" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$( "#command" + line).prepend("&#9758; " );
+							// Keep the target pressure (sam) for all samples in sequence
+							if( $( "#samgasTargetPressure" ).html() == "Sample target p" )
+							{
+								$( "#samgasTargetPressure" ).html( "1.700" );
+							}
+							else
+							{
+								$( "#samgasTargetPressure" ).html( (parseFloat($( "#samgasTargetPressure" ).html()) * 1.0026).toFixed(3) );
+							}
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Write gas mixing ratio to the frontpanel "CM, 0=Reference 1=Sample"
+						else if( commandsArray[line][0] == "C" && commandsArray[line][1] == "M" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$( "#command" + line).prepend("&#9758; " );
+
+							if( parameterArray[line] == 0 )
+							{
+								$("#reference_pCO2").html( $("#pCO2").html() );
+
+								if( $( "#sample_pCO2" ).html() != "0" )
+								{
+									$( "#correction_pCO2" ).html( ($("#sample_pCO2").html() / $("#reference_pCO2").html() * $("#correction_pCO2").html() ).toFixed(3) );
+								}
+							}
+							else if( parameterArray[line] == 1 )
+							{
+								$("#sample_pCO2").html( $("#pCO2").html() );
+								
+								if( $( "#reference_pCO2" ).html() != "0" )
+								{
+									$( "#correction_pCO2" ).html( ( $("#sample_pCO2").html() / $("#reference_pCO2" ).html() * $("#correction_pCO2").html() ).toFixed(3) );
+								}
+							}
+
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Execute command at laser spectrometer: Start writing data to disk "TWD 0"
+						else if( commandsArray[line][0] == "T" && commandsArray[line][1] == "W" && commandsArray[line][2] == "D" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							// Do something here
+							// Execute command at laser spectrometer: Stop writing data to disk
+							if( parameterArray[line] == 0 )
+							{
+								stopWritingData();						
+							}
+							else if( parameterArray[line] == 1 )
+							{
+								startWritingData();
+								$('#cycle').html( cycle );
+								cycle++;						
+							}
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						}
+
+						// Move bellows (X,Y,Z) "BY 53" with the percentage as parameter BX 34.5
+						else if( commandsArray[line][0] == "B" && moving == "no" && executed == "yes" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							// Move bellows
+							if( parameterArray[line].substr(0,1) == "+" || parameterArray[line].substr(0,1) == "-" )
+							{
+								// Move increment
+								// Get current bellows position
+								let currentPercent = parseFloat( $("#percentage" + commandsArray[line][1] + "steps").text() );
+								// Calculate the new bellows position
+								let newPercent = currentPercent + parseFloat( parameterArray[line] );
+								$( "#setPercentage" + commandsArray[line][1] ).val( newPercent.toFixed(1) );
+							}
+							else
+							{
+								// Move absolute
+								$( "#setPercentage" + commandsArray[line][1] ).val( parameterArray[line] );
+							}
+							moveBellows( commandsArray[line][1] );
+							console.log( "Just started to move bellows, move status:", $('#moveStatus').html() );
+		
+							// After each command
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							timeExecuted = new Date().getTime() / 1000; // Start time of command
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+
+							console.log('Command',commandsArray[line],timeExecuted,'started.');
+						}
+
+						// Set bellows to pressure target (X,Y) "PX 1.723"
+						else if( commandsArray[line][0] == "P" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							if( commandsArray[line][1] == "X" )
+							{
+								if( $( "#refgasTargetPressure" ).html() == "Refgas target p" )
+								{
+									var pTarget = parseFloat( parameterArray[line] );
+								}
+								else
+								{
+									var pTarget = parseFloat( $( "#refgasTargetPressure" ).html() ).toFixed(3);
+								}
+							}
+							else if( commandsArray[line][1] == "Y" )
+							{
+								if( $( "#samgasTargetPressure" ).html() == "Sample target p" )
+								{
+									var pTarget = parseFloat( parameterArray[line] );
+								}
+								else
+								{
+									var pTarget = parseFloat( $( "#samgasTargetPressure" ).html() ).toFixed(3);
+								}
+							}
+
+							// Here we correct pTarget by the correction_pCO2 factor
+
+							var pTarget = pTarget * parseFloat( $( "#correction_pCO2" ).html() ).toFixed(3);
+
+							console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");
+							// alert( pTarget.toFixed(3) );							
+							getStatus( commandsArray[line][1] + "S" + pTarget.toFixed(3) );
+							$('#moveStatus').html( 'M' + commandsArray[line][1] );
+							// Resetting the progress bar						
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+						}
+						// Set bellows to pressure target (X,Y) "PX 1.723"
+						else if( commandsArray[line][0] == "S" && commandsArray[line][1] == "N" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+	
+							if( $( "#nitrogenTargetPressure" ).html() == "N2 target p" )
+							{
+								var pTarget = 0;
+							}
+							else
+							{
+								var pTarget = parseFloat( $( "#nitrogenTargetPressure" ).html() );
+							}
+							console.log("The target N2 pressure (A) is: ", pTarget, " Torr");
+							// alert( pTarget.toFixed(3) );							
+							getStatus( "SN" + pTarget.toFixed(1) );
+							$('#moveStatus').html( 'SN' );
+
+							// Resetting the progress bar						
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+						}
+						// Refill sample gas
+						else if( commandsArray[line][0] == "R" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+
+							getStatus( "RS" + parseFloat( parameterArray[line] ).toFixed(3) );
+							$('#moveStatus').html( 'RS' );
+							console.log('Hello David, its all right');
+
+							// Resetting the progress bar						
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+						}
+						// Mixes and inserts gas into bellows X
+						else if( commandsArray[line][0] == "X" && commandsArray[line][1] == "I" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");	
+							getStatus( "XI" );
+							// Resetting the progress bar						
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+						}
+						// Set bellows Z to cell pressure target (40.000 Torr) "QZ 40.1"
+						else if( commandsArray[line][0] == "Q" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+
+							// Measure the current pressure (in Torr) in the cell
+							let p = parseFloat( $("#baratron").text() );
+							console.log("Current pressure in the cell is: ", p.toFixed(3), "Torr");
+							// Check if any pressure is given in the cellTargetPressure window
+							if( parseFloat( $("#cellTargetPressure").html() ) > 0 )
+							{
+								var pTarget = parseFloat( $("#cellTargetPressure").html() );
+							}
+							else
+							{
+								var pTarget = parseFloat( parameterArray[line] ); // Normally about 40 Torr
+							}
+							console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
+							let percent = parseFloat( $("#percentageZsteps").text() );
+							console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
+							var percentTarget = percent + ( pTarget - p ) / -0.007030;
+							percentTarget = parseFloat( percentTarget ).toFixed(1);
+							console.log("Target percentage is: ", percentTarget, "%");
+							// Move bellows
+							$( "#setPercentageZ" ).val( percentTarget );
+							console.log( "Sends the move Z bellows command." );
+							moveBellows( "Z" );
+							// Resetting the progress bar						
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							// Do this after every command
+							timeExecuted = new Date().getTime() / 1000; // In this case only comes after the movement has finished
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
+						}
+						// Set bellows Z to nitrogen pressure target "AZ 178.2"
+						else if( commandsArray[line][0] == "A" && executed == "yes" && moving == "no" && waiting == "no" )
+						{
+							// Do this before every command in method
+							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+							$("#command" + line).prepend("&#9758; ");
+							// Measure the current nitrogen pressure (in Torr)
+							let p = parseFloat( $("#pressureA").text() );
+							console.log("Current nitrogen pressure is: ", p.toFixed(1), "Torr");
+							// Check if any pressure is given in the nitrogenTargetPressure window
+							if( parseFloat( $("#cellTargetPressure").html() ) > 0 )
+							{
+								var pTarget = parseFloat( $("#nitrogenTargetPressure").html() );
+							}
+							else
+							{
+								var pTarget = parseFloat( parameterArray[line] ); // Normally about 40 Torr
+							}
+							console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
+							let percent = parseFloat( $("#percentageZsteps").text() );
+							console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
+							var percentTarget = percent + ( pTarget - p ) / -0.1118;
+							percentTarget = parseFloat( percentTarget ).toFixed(1);
+							console.log("Target percentage is: ", percentTarget, "%");
+							// Move bellows
+							$( "#setPercentageZ" ).val( percentTarget );
+							console.log( "Sends the move Z bellows command." );
+							moveBellows( "Z" );	
+							// Resetting the progress bar						
+							$("#progressBar").css( "width","0px" );
+							$("#progress").html("0%");
+							// Do this after every command
+							// timeExecuted = new Date().getTime() / 1000; In this case only comes after the movement has finished
+							moving = "yes";
+							executed = "no";
+							waiting = "no";
+							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
+						}
+
+						// Check if bellows target position has been reached
+						if( moving == "yes" && executed == "no" && waiting == "no" && ( $('#moveStatus').html() != "-" || new Date().getTime() / 1000.00 - timeExecuted < 1 ) )
+						{
+							// Case 1
+							// console.log( new Date().getTime() / 1000, "Case 1: Bellows are currently moving, nothing changed." );
+						}
+						else if( moving == "yes" && executed == "no" && waiting == "no" && $('#moveStatus').html() == "-" )
+						{
+							// Case 2
+							timeExecuted = new Date().getTime() / 1000;
+							moving = "no";
+							executed = "yes";
+							waiting = "yes";
+							$("#command" + line).append(" &#10003;");
+						}
+						else if( moving == "no" && executed == "yes"  && waiting == "yes" && $('#moveStatus').html() == "-" && new Date().getTime() / 1000 - timeExecuted < timeArray[line] )
+						{
+							// Case 3
+							// Now move the progress bar
+							var pbpc = ( new Date().getTime() / 1000 - timeExecuted ) * 307 / timeArray[line];
+							$('#progressBar').css("width",pbpc+"px");
+							$("#progress").html( parseInt(pbpc / 3.07) + "%" );
+						}
+						else
+						{
+							// Case 4
+							// console.log( new Date().getTime() / 1000, "Case 4: Jumps to next sample." );
+							waiting = "no";
+							// Goto next line in method
+							line++;
+							console.log("Now goto next line",line);
+							if( line == commandsArray.length )
+							{
+								console.log("End of method.");
+								$('#progressBar').css("width","0px");
+								$("#methodStatus").html('Sample finished');
+								$("#sample" + sample).append(" &#10003;");
+								$("#sample" + sample)[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+								// Copy files from TILDAS to raspberry folder
+								copyFiles();
+								// Execute Python script
+								evaluateData();
+								// Move to the next sample (by index)
+								sample++;
+								// Check if this element exists
+								if( $('#sample' + sample ).length )
+								{
+									// OK, next sample exists, read out sample name & method file name now
+									$("#sample" + sample).prepend("&#9758; ");
+									let sampleName = $( '#sample' + sample ).html().split(",")[1];
+									let methodFileName = $( '#sample' + sample ).html().split(",")[2];
+									$('#sampleName').val( sampleName );
+									loadMethod( methodFileName );
+									line = 0;
+									cycle = 0;
+									createFolder();
+									$("#methodStatus").html('Method running');
+									$('#cycle').html( "0" );
+									$( "#sample_pCO2" ).html( "0" );
+									$( "#reference_pCO2" ).html( "0" );
+									$( "#correction_pCO2" ).html( "1.000" );
+								}
+								else
+								{
+									// No next sample, sequence finished
+									console.log("No more sample to be run.");
+									sample = 0;
+									line = 0;
+									cycle = 0;
+									$('#cycle').html( "0" );
+									$( "#refgasTargetPressure" ).html( "Refgas target p" );
+									$( "#sample_pCO2" ).html( "0" );
+									$( "#reference_pCO2" ).html( "0" );
+									$( "#correction_pCO2" ).html( "1.000" );
+								}
+							}
+						}
+					}
+
+					$('#cycleJS').text('ICE ' + cycleJS );
+					cycleJS++;
+				}
+			,50);
+			
+		</script>
+		</br>
+		<details>
+			<summary>Quick start</summary>
+			<ol>
+				<li>Reload the front panel webpage (http://localhost).</li>
+				<li>Attach the manifold to the inlet system and plug in the corresponding yellow tubes.</li>
+				<li>Pump the vented volume between the green valve on the manifold and V22. First use the scroll pump then the turbo.</li>
+				<li>After the vacuum reached 1.00E-04, open the green valve manually.</li>
+				<li>Click the <b><span style="color: #9A6CA6">violet</span></b> <em>Starting position</em> button.</li>
+				<li>To select the measurement sequence, click the <em>Sequence: Choose File</em> button.</li>
+				<ul>
+				<li>The sequence .csv files are usually in the /home/pi/Desktop folder.</li>
+				<li>You can modify the existing sampleSequence.csv file, or create a new file. The name does not matter.</li>
+				<li>Modifying a sequence file after it is loaded in will not automatically update on the front panel. You have to refresh the front panel and upload the modified sequence.</li>
+				</ul>
+				<li>To start the measurement, click the <b><span style="color: #63A615">green</span></b> <em>Start sequence</em> button.</li>
+			</ol>
+		</details>
+		</br>
+		<details>
+			<summary>User manual</summary>
+
+			<h3>General notes</h3>
+			<ul>
+				<li>Before stopping the serialComm.py or the Arduino, make sure the Z bellow is at 50%!</li>
+				<li>To reprocess a single measurement: http://192.168.1.242/evaluateData.php?sampleName=221223_025949_test_Air&polynomial=100</li>
+				<li>To reprocess a multiple measurements: /usr/bin/python3 /var/www/html/Python/batchReprocess.py</li>
+
+			</ul>
+			
+			<h3>Startup</h3>
+			<ul>
+				<li>To turn the TILDAS on: (1) plug it in, (2) toggle the power switch in the back, (3) turn on the main swith on the front.</li>
+				<li>The rPi has to be turned on after the TILDAS, otherwise reboot it: sudo shutdown -r now.</li>
+				<li>To allow streaming data from the TILDAS to the rPi, click the "RS" on (TDLWintel bottom left) and set the mode to "Stream Data" (TDLWintel top left).</li>
+				<li>Make sure that "RS" is active at TILDAS and that mode is in "Stream Data", otherwise Python does not get data.</li>
+				<li>Start the communication script: /usr/bin/python3 /var/www/html/serialComm.py</li>
+			</ul>
+
+			<h3>Methods and sequences</h3>
+			<p>The general structure of a command line in the method files is "command,parameter,wait". The method files are CSV files with a separation by comma. 
+			You can edit them using a text editor or VSCode. The parameter is used for most commands, ignored for some, but it always has to be present.</br>
+			<b>Sequences and methods should always start from a specific starting situation.</b> You can reset the valves to this situation by pressing the <em>Starting Position</em> button.</p>
+			<ul>
+				<li>V03,0,15, &lt;--- Close valve 3 and wait 15 s</li>
+				<li>V13,1,12, &lt;--- Open valve 13 and wait 12 s</li>
+				<li>WC,0,5, &lt;--- Write current cell presure (Baratron at absorption cell) on front panel for later use (cell presure adjustment) and wait 5 s</li>
+				<li>WA,0,7, &lt;--- Write current N<sub>2</sub> pressure (Baratron gauge A) on front panel for later use (N<sub>2</sub> presure adjustment) and wait 7 s</li>
+				<li>WR,0,12, &lt;--- Write current reference CO<sub>2</sub> pressure (Baratron bellows X) on front panel for later use (CO<sub>2</sub> presure adjustment) and wait 12 s, this value is kept for the entire measurement</li>
+				<li>WS,0,6, &lt;--- Write current sample CO<sub>2</sub> pressure (Baratron bellows Y) on front panel for later use (CO<sub>2</sub> presure adjustment) and wait 6 s, this value is kept for the entire measurement</li>
+				<li>CM,0,1, &lt;--- Write current <em>p</em>CO<sub>2</sub> (mr3) on front panel for mixing ratio adjustment. Parameter 0 is for reference gas and 1 for sample gas.</li>
+				<li>AX,0,7, &lt;--- Used for the air measurements. Waits until the pressure on Baratron gauge A reaches the value set in the parameter, then closes valves V15 and V21.</li>
+				<li>TWD,1,1, &lt;--- Starts writing the data from the TILDAS in hard disk</li>
+				<li>TWD,0,1, &lt;--- Stops writing the data from the TILDAS in hard disk</li>
+				<li>BX,45.3,12, &lt;--- Move bellows X to 45.3% and wait 12 s. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
+				<li>BX,-7.2,12, &lt;--- Move bellows X by -7.2% (percent points) reative to the current position and wait 12 s.</li>
+				<li>BY,25.3,12, &lt;--- Move bellows Y to 25.3% and wait 12 s. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
+				<li>BY,+4.5,12, &lt;--- Move bellows Y by 4.5% (percent points) reative to the current position and wait 12 s.</li>
+				<li>BZ,25.3,12, &lt;--- Move bellows Z to 25.3% and wait 12 s. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
+				<li>PX,1.653,10, &lt;--- Move bellows X or expand the gas so that the pressure is 1.653 mbar in bellows X. If the bellows are compressed to &lt; 11%, reference gas is refilled. <b>The starting situation should be V05C, V07C, V06O.</b></li>
+				<li>PY,1.653,10, &lt;--- Move bellows Y so that the pressure is 1.653 mbar in bellows Y. <b>The starting situation should be V11C, V13C, V12O.</b></li></li>
+				<li>QC,39.387,10, &lt;--- Set the cell pressure by moving bellows Z to the pressure written by command WC on the frontpanel. The parameter 39.387 is only used in case that there is no value given on the frontpanel. Only a small range can be adjusted.</li>
+				<li>SN,277.13,10, &lt;--- Set the N<sub>2</sub> pressure (Baratron gauge A) by moving bellows Z to the pressure written by command WA on the frontpanel. The parameter 277.13 is only used in case that there is no value given on the frontpanel. Only a small range can be adjusted.</li>
+			</ul>
+		</details>
+	</body>
+</html>
+

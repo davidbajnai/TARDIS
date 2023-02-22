@@ -1,0 +1,130 @@
+V15,0,1, <--- Necessary dummy command for the beginning #########################
+V07,0,1, <---------------------------------------------------------- START DUMMY
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,2.000,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+WA,0,1,<---------- Write target N2 pressure, only for the Dummy
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+WC,0,2, <---------- Write target cell pressure only for the Dummy
+V02,0,70
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,30, <------------------------------------------------------ DUMMY FINISHED
+V13,0,1, <------------------------------------------------------ START SAMPLE AIR 01
+V07,0,1
+V11,0,1
+V27,1,1
+V15,1,30, <--- Pump the perchlorate
+V16,0,1
+V21,1,1
+AX,369,1
+V19,0,1
+V01,1,1
+V20,1,5
+V20,0,5
+V01,0,1
+V02,1,1
+V19,1,5
+V01,1,20
+V17,1,25
+V19,0,1
+V01,0,1
+V07,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,41.200,5, <--- Set the cell pressure
+QC,41.200,2, <--- Set the cell pressure
+V02,0,15
+CM,1,1, <--- log pCO2 of the sample gas
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V07,1,1
+V11,1,1
+V13,1,1
+V19,1,20
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED AIR 01
+V13,0,1, <------------------------------------------------------ START REFERENCE 11 RIGHT
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,2.000,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,41.200,5, <--- Set the cell pressure
+QC,41.200,2, <--- Set the cell pressure
+V02,0,70
+CM,0,1, <--- log pCO2 of the reference gas
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-7.5,1, <--- Compress bellow to speed up PY
+V17,1,45, <-------------------------------------------------- REFERENCE 11 RIGHT
+V19,1,45, <----------------------------------------------------- START APPENDIX

@@ -1,0 +1,1058 @@
+V15,0,1, <--- Necessary dummy command for the beginning #########################
+V07,0,1, <---------------------------------------------------------- START DUMMY
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+WA,0,1,<---------- Write target N2 pressure, only for the Dummy
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.100,5, <--- Set the cell pressure
+QC,42.100,2, <--- Set the cell pressure
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <------------------------------------------------------ DUMMY FINISHED
+V07,0,1, <--------------------------------------------------- START REFERENCE 01
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 01
+V13,0,1, <------------------------------------------------------ START SAMPLE 01
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure Sam
+QC,42.100,2, <--- Set the cell pressure Sam
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-7.5,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 01
+V07,0,1, <--------------------------------------------------- START REFERENCE 02
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 02
+V13,0,1, <------------------------------------------------------ START SAMPLE 02
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure Sam
+QC,42.100,2, <--- Set the cell pressure Sam
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-7.5,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 02
+V07,0,1, <--------------------------------------------------- START REFERENCE 03
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 03
+V13,0,1, <------------------------------------------------------ START SAMPLE 03
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure
+QC,42.100,2, <--- Set the cell pressure
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-7.5,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 03
+V07,0,1, <--------------------------------------------------- START REFERENCE 04
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 04
+V13,0,1, <------------------------------------------------------ START SAMPLE 04
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure
+QC,42.100,2, <--- Set the cell pressure
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-7.5,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 04
+V07,0,1, <--------------------------------------------------- START REFERENCE 05
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 05
+V13,0,1, <------------------------------------------------------ START SAMPLE 05
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure
+QC,42.100,2, <--- Set the cell pressure
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-7.5,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 05
+V07,0,1, <--------------------------------------------------- START REFERENCE 06
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 06
+V13,0,1, <------------------------------------------------------ START SAMPLE 06
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure Sam
+QC,42.100,2, <--- Set the cell pressure Sam
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-8.1,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 06
+V07,0,1, <--------------------------------------------------- START REFERENCE 07
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.6,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 07
+V13,0,1, <------------------------------------------------------ START SAMPLE 07
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure
+QC,42.100,2, <--- Set the cell pressure
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-8.4,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 07
+V07,0,1, <--------------------------------------------------- START REFERENCE 08
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-7.6,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 08
+V13,0,1, <------------------------------------------------------ START SAMPLE 08
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure
+QC,42.100,2, <--- Set the cell pressure
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-9.3,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 08
+V07,0,1, <--------------------------------------------------- START REFERENCE 09
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-8.4,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 09
+V13,0,1, <------------------------------------------------------ START SAMPLE 09
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure Sam
+QC,42.100,2, <--- Set the cell pressure Sam
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-10.1,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 09
+V07,0,1, <--------------------------------------------------- START REFERENCE 10
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+BX,-9.5,1, <--- Compress bellow to speed up PX
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 10
+V13,0,1, <------------------------------------------------------ START SAMPLE 10
+V11,0,1
+V12,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PY,1.756,5, <--- Set sample CO2 pressure
+V12,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V05,0,1
+V07,0,1
+V13,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10,
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V11,1,10, <--- Insert analyte to cell
+V11,0,1,
+QC,42.100,5, <--- Set the cell pressure Sam
+QC,42.100,2, <--- Set the cell pressure Sam
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V05,1,1
+V11,1,1
+V19,1,1
+V07,1,1
+V27,1,20
+BY,-11.0,1, <--- Compress bellow to speed up PY
+V17,1,90, <-------------------------------------------------- SAMPLE FINISHED 10
+V07,0,1, <--------------------------------------------------- START REFERENCE 11
+V05,0,1
+V06,1,1
+V19,0,1, <--- Expand a portion of N2 for later mixing
+V20,1,5
+V20,0,1
+PX,1.750,5
+V06,0,1
+V16,0,1
+V19,1,5, <--- Expand the N2 aliquot for mixing
+V19,0,1
+V20,1,5
+V20,0,1
+V19,1,5
+V19,0,10
+SN,0,2, <--- Set N2 pressure to the target value
+V11,0,1
+V13,0,1
+V07,1,1, <---- Start gas mixing
+BZ,52,1
+BZ,50,1
+TWD,0,1, <--- MEASUREMENT OFF, changeover starts >>>
+V17,0,1
+V01,1,1, <--- Evacuate the cell
+V27,1,10
+V01,0,1, <--- Flush the cell with nitrogen and pump
+V02,1,2
+V01,1,20
+V17,1,25
+V01,0,1
+V05,1,10, <--- Insert analyte to cell
+V05,0,1
+QC,42.600,5, <--- Set the cell pressure Ref
+QC,42.600,2, <--- Set the cell pressure Ref
+V02,0,70
+TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
+V17,0,1, <--- Evacuate the remaining CO2-N2 mixture
+V16,1,1
+V27,1,1
+BZ,52,1
+BZ,50,1
+V11,1,1
+V05,1,1
+V19,1,1
+V13,1,1
+V27,1,20
+V17,1,90, <----------------------------------------------- REFERENCE FINISHED 11
+V19,1,105, <----------------------------------------------------- START APPENDIX
+TWD,0,10, <--------------------------------------------------- APPENDIX FINISHED
