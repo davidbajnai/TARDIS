@@ -1,0 +1,22 @@
+V15,0,1, <--- Necessary dummy command for the beginning #########################
+V11,0,1
+V07,0,1
+V17,0,1
+V14,1,1
+V22,1,1
+V12,1,1
+V27,1,1
+BY,100,10
+V17,1,180, <--- Pump the line
+V14,0,1
+V12,0,1
+V23,1,120, <--- Open autovial
+RS,1.700,1
+V23,0,1, <--- Close autovial
+V13,0,1
+V12,1,1
+V07,1,1
+PY,1.861,1
+V12,0,1
+V11,1,1
+V13,1,180
