@@ -142,11 +142,11 @@
 				console.log( cmd );
 			}
 
-			function getStatus( cmd )
+			function sendCommand( cmd )
 			{
 				$.ajax({
 					type: "POST",
-					url: 'getStatus.php',
+					url: 'sendCommand.php',
 					data: {cmd: cmd},
 					async: false,
 					success: function( response ){
@@ -334,7 +334,7 @@
 				});
 			}
 
-			getStatus();
+			sendCommand();
 
 		</script>
 
@@ -885,7 +885,7 @@
 					// console.log("Interval loop running");
 					// Check every 30 sec the Temperature
 					// Update all readings and, in case, send a command cmd
-					getStatus( cmd );
+					sendCommand( cmd );
 					console.log('Current cmd',cmd);
 					cmd = "";
 					getTime(); // Sets the clock
@@ -1218,7 +1218,7 @@
 
 							console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");
 							// alert( pTarget.toFixed(3) );							
-							getStatus( commandsArray[line][1] + "S" + pTarget.toFixed(3) );
+							sendCommand( commandsArray[line][1] + "S" + pTarget.toFixed(3) );
 							$('#moveStatus').html( 'M' + commandsArray[line][1] );
 							// Resetting the progress bar						
 							$("#progressBar").css( "width","0px" );
@@ -1246,7 +1246,7 @@
 							}
 							console.log("The target N2 pressure (A) is: ", pTarget, " Torr");
 							// alert( pTarget.toFixed(3) );							
-							getStatus( "SN" + pTarget.toFixed(1) );
+							sendCommand( "SN" + pTarget.toFixed(1) );
 							$('#moveStatus').html( 'SN' );
 
 							// Resetting the progress bar						
@@ -1265,7 +1265,7 @@
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
 
-							getStatus( "RS" + parseFloat( parameterArray[line] ).toFixed(3) );
+							sendCommand( "RS" + parseFloat( parameterArray[line] ).toFixed(3) );
 							$('#moveStatus').html( 'RS' );
 							console.log('Hello David, its all right');
 
@@ -1284,7 +1284,7 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");	
-							getStatus( "XI" );
+							sendCommand( "XI" );
 							// Resetting the progress bar						
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
