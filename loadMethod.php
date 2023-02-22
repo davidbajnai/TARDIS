@@ -1,13 +1,13 @@
 <?php
-    // echo "Greetings from php";
-    // Check if a sequence or method file has been uploaded
+    // This files loads the appropriate method .csv file from the Methods folder
+    // The method .csv file has to be present in the Methods folder
 
-    // ####################### Method file has been uploaded #################################
     /* Get the name of the uploaded file */
-    // $filename = $_FILES['file']['name'];
     $filename = $_POST['methodFileName'];
+
     /* Choose where to save the uploaded file */
     $location = "./Methods/" . $filename;
+
     /* Save the uploaded file to the local filesystem */
     $file = fopen($location, "r");
     $col1_array = [];
@@ -17,7 +17,6 @@
     if (($handle = $file) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             $num = count($data);
-            // echo "<p> $num Felder in Zeile $row: <br /></p>\n";
             for ($c = 0; $c < $num; $c++) {
                 if($c == 0)
                 {
@@ -31,7 +30,6 @@
                 {
                     $col3_array[] = $data[$c]; 
                 }
-                // echo $data[$c] . "<br />\n";
             }
             $row++;
         }
@@ -42,5 +40,4 @@
     echo implode(",", $col2_array );
     echo "|";
     echo implode(",", $col3_array );
-    // 
 ?>

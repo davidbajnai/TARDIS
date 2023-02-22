@@ -2,16 +2,17 @@
 $sampleName = $_POST['sampleName'];
 $logData = $_POST['logData']; // Comma separated string
 $folderName = $_POST['folderName'];
-// Check if the logfile exists
+
+// Create a logfile if it doesnt exist yet
 if( file_exists( $folderName . "/logFile.csv" ) === false )
 {
     file_put_contents( $folderName . "/logFile.csv", "SampleName,Time(abs),Temperature(room),TargetT(box),Humidity(room),percentageX,percentageY,percentageZ,pressureX,pressureY,pressureA,edwards,fanSpeed,RoomT,RoomH,RoomP\n", FILE_APPEND  | LOCK_EX );
 }
+
 // Add data to the logfile
 foreach ($logData as $row) {
     $rowLength = count($row);
     $desiredLength = 15;
-    // echo "_"; print_r($rowLength);
     if( $rowLength === $desiredLength )
     {
         // echo "This row is 15 elements long, I will copy it into the logFile ";
