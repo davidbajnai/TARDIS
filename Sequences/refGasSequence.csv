@@ -1,0 +1,12 @@
+﻿refill_normal,refGasRefillLeft.csv
+refill_heavy,heavyGasRefillRight.csv
+heavyVsRef,changeoverMethod.csv
+refill_normal,refGasRefillLeft.csv
+refill_heavy,lightGasRefillRight.csv
+lightVsRef,changeoverMethod.csv
+refill_normal,refGasRefillLeft.csv
+refill_heavy,heavyGasRefillRight.csv
+heavyVsRef,changeoverMethod.csv
+refill_normal,refGasRefillLeft.csv
+refill_heavy,lightGasRefillRight.csv
+lightVsRef,changeoverMethod.csv

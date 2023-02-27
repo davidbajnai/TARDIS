@@ -17,7 +17,6 @@
 			}
 
 			function toggleValve(valve,status) {
-				// cmd = "Noch mehr von PHP";
 				if( status == '0' || status == 'O' )
  				{
 					cmd = valve + 'O';
@@ -61,7 +60,6 @@
 							},
 						success: function( response ){
 							console.log( response );
-							// $('#folderName').html(response);
 							}
 						});
 			}
@@ -95,7 +93,6 @@
 						  polynomial: $('#polynomial').val()
 						}
 				}).done(function( result ) {
-   					// Do something
 					console.log( result );
 					console.log( "Data gotten from evaluateData.php" );
 				});
@@ -142,8 +139,7 @@
 				console.log( cmd );
 			}
 
-			function sendCommand( cmd )
-			{
+			function sendCommand( cmd ){
 				$.ajax({
 					type: "POST",
 					url: 'sendCommand.php',
@@ -339,6 +335,7 @@
 		</script>
 
 		<script>
+			// This is script for the clock
 			var seconds = 0;
 			var minutes = 0;
 			var hour = 0;
@@ -445,12 +442,7 @@
 	</head>
 
 	<body style="background-color: #38342F ;">
-		<!-- <h1>IR laser spectrometer</h1> -->
-		<!-- <a href="http://192.168.1.242:8081">Show webcam</a> -->
-		<!--
-		<span id="statusString" style="border:1px solid black;padding:3px;">undefined</span>
-		2022-02-18 21:50:20,-,34921,55.94,51636,82.65,0,0.00,2.5,0.6,S,00000000000000000000000000000000,25.124,23.389,66.243,51.6351e+04,44.8385e+04,47.1265e+04,97.5315e+03
-		-->
+	
 		<div id="wrap" style="position:relative; border:1.5px solid #F5F4F1; width:2010px;height:840px;border-radius: 4px;">
 			
 			<img src="images/schaltbild.png" style="position:absolute;top:5px;left:5px;border-radius: 4px;" />

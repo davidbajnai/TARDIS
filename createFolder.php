@@ -1,7 +1,7 @@
 <?php
 
-// This script is used:
-// to create a folder on the RPi before each analysis to store the measurement files
+// This script is used to:
+// create a folder on the RPi before each analysis to store the measurement files
 
 $sampleName = $_POST['sampleName'];
 

@@ -1,10 +1,13 @@
 <?php
+
+    // This script is used to:
+    // send commands to the TILDAS and the Arduino
+
     $m = new Memcached();
     $m->addServer('127.0.0.1', 11211);
-    // Set a value
     $value = $m->get('key');
     echo $value; // This is the information received from Python serial communication
-    // Set a value
+
     if( $_POST['cmd'] != "" )
     {
         if( $_POST['cmd'] == "TWD1" )

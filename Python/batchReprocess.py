@@ -13,8 +13,8 @@ driver.set_window_size(1700, 400)
 # Filter samples based on measurement date
 # afterDate = datetime(1946,12,18)
 # beforeDate = datetime(2022,11,18,11) # since this, we measured multiple cycles for bracketing
-afterDate = datetime(2023,2,9,15)
-beforeDate = datetime(2023,2,10,6)
+afterDate = datetime(2022,11,28,15)
+beforeDate = datetime(2022,12,18,11)
 
 # Create a dataframe from the subfolder names in the Results folder
 folders = os.listdir('/var/www/html/Results/')
@@ -32,7 +32,7 @@ results = results.astype({'Date':'int'})
 # Filter sample names according to measurement date
 resultsFiltered = results[results.RealDate >= afterDate] # measured after
 resultsFiltered = resultsFiltered[resultsFiltered.RealDate <= beforeDate] # measured before
-# resultsFiltered = resultsFiltered[resultsFiltered["SampleName"].str.contains("TC.02")] # includes
+resultsFiltered = resultsFiltered[resultsFiltered["SampleName"].str.contains("SK-")] # includes
 resultsFiltered = resultsFiltered[~resultsFiltered["SampleName"].str.contains("refill")] # doesn't include
 resultsFiltered = resultsFiltered[~resultsFiltered["SampleName"].str.contains("test")] # doesn't include
 resultsFiltered = resultsFiltered[~resultsFiltered["SampleName"].str.contains("Air")] # doesn't include

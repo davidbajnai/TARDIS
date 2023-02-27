@@ -1,4 +1,8 @@
 <?php
+
+// This script is used to:
+// log the status (temp, bellow compression, vacuum, etc.) of the inlet system
+
 $sampleName = $_POST['sampleName'];
 $logData = $_POST['logData']; // Comma separated string
 $folderName = $_POST['folderName'];

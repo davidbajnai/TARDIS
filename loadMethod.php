@@ -1,6 +1,7 @@
 <?php
-    // This files loads the appropriate method .csv file from the Methods folder
-    // The method .csv file has to be present in the Methods folder
+
+    // This script is used to:
+    // load the appropriate method .csv file from the Methods folder
 
     /* Get the name of the uploaded file */
     $filename = $_POST['methodFileName'];
