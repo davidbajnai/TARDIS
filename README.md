@@ -1,3 +1,7 @@
-# RPi-TILDAS: <img src="images/GZG_logo_white.png" align="right" width="140"/> <br/> control TILDAS using RPi
+# TARDIS: <img src="images/GZG_logo_white.png" align="right" width="140"/> <br/> TILDAS + Automated R* Dual-Inlet System
 
-This repository is the clone of the html folder on the Raspberry Pi that controls the TILDAS at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3784963.svg)](https://doi.org/10.5281/zenodo.3784963)
+
+This repository includes files used to control the dual-inlet system of the TILDAS at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
+
+The methodology is described in a paper submitted to G-Cubed. All files relevant to the paper are stored in the **Paper** folder
