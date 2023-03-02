@@ -1485,7 +1485,7 @@
 				<li>The rPi has to be turned on after the TILDAS, otherwise reboot it: sudo shutdown -r now.</li>
 				<li>To allow streaming data from the TILDAS to the rPi, click the "RS" on (TDLWintel bottom left) and set the mode to "Stream Data" (TDLWintel top left).</li>
 				<li>Make sure that "RS" is active at TILDAS and that mode is in "Stream Data", otherwise Python does not get data.</li>
-				<li>Start the communication script: /usr/bin/python3 /var/www/html/serialComm.py</li>
+				<li>Start the communication script: /usr/bin/python3 /var/www/html/Python/serialComm.py</li>
 			</ul>
 
 			<h3>Methods and sequences</h3>
