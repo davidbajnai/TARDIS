@@ -4,11 +4,11 @@
 [![Python](https://img.shields.io/badge/Python-3.7-success)]()
 [![PHP](https://img.shields.io/badge/PHP-7.3.31-success)]()
 
-This repository includes files used to control the dual-inlet system of the TILDAS at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
+This repository includes files used to control the custom-built dual inlet system of the TILDAS at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
 
 The methodology is described in a paper currently in prep. All files relevant to the article are stored in the **Paper** folder.
 
 The computers codes in this package were written by Andreas Pack and David Bajnai.
 
 <hr>
-<img src="images/GZG_logo_text_white.png" align="center" height="100"/>
+<img src="images/GZG_logo_text_white.png" align="left" height="100"/>

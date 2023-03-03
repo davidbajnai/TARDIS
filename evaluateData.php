@@ -1,4 +1,8 @@
 <?php
+
+    // This script is used to:
+    // start the data evaluation and clean up
+
     echo "Starting the evaluateData.php script<br>";
     if ( isset( $_POST['sampleName']) )
     {
@@ -21,39 +25,27 @@
     // Execute shell command
     if( fnmatch('*refill*',$sampleName) )
     {
-        // exec("sudo find . -type d -name "$sampleName" -exec rm -rf {} \;")
         console.log("This was a refill, there will be no data processing.");
         exit();
     }
-    else
-    {
-        $cmd = "/usr/bin/python3 Python/processRawDataFiles.py " . $sampleName . " " . $polynomial . " 2>&1";
-    }
+    // else
+    // {
+    //     $cmd = "/usr/bin/python3 Python/processRawDataFiles.py " . $sampleName . " " . $polynomial . " 2>&1";
+    // }
+
+    // Start the python script to evaluate the data
     $cmd = "/usr/bin/python3 Python/processRawDataFiles.py " . $sampleName . " " . $polynomial . " 2>&1";
-    $result = shell_exec( $cmd );
+    $result = shell_exec( $cmd ); // isotope ratios from the evaluation script
     echo $result;
 
-    // Hello Andreas, I had to comment out the lines below
-
-    // echo "<hr>";
-    // // There might be an error message before the result string. That needs to be removed first
-    // // Check if there is a ". 2" in the string
-    // if( strpos( $result, PHP_EOL) )
-    // {
-    //     echo "Ist was davor " . strpos( $result, PHP_EOL);
-    //     $result = substr( $result, strpos($result, PHP_EOL) );
-    // }
-    // echo "<hr>";
-    // echo $result; // 220412_053915_refGas 14.232 28.045 -101.2 3.5
 
     echo "<br>";
     echo "The python program has evaluated the data<br />";
 
-    // That does not work
     $resultArray = explode(" ",$result);
+
     // Now upload the data to the Isolabor server
-    // Only upload if data make sense
-    if( trim( $resultArray[1] ) != "(most" )
+    if( trim( $resultArray[1] ) != "(most" ) // Only upload if data make sense
     {
         $url = "http://192.168.1.1/isotope/addTildasData.php?sampleName=" . $sampleName . "&d17O=" . trim($resultArray[1]) . "&d18O=" . trim($resultArray[2]) . "&CapD17O=" . trim($resultArray[3]) . "&CapD17OError=" . trim($resultArray[4]) . "&d17Oreference=" . trim($resultArray[5]) . "&d18Oreference=" . trim($resultArray[6]) . "&pCO2Ref=" . trim($resultArray[8]) . "&pCO2Sam=" . trim($resultArray[9]) . "&PCellRef=" . trim($resultArray[10]) . "&PCellSam=" . trim($resultArray[11]). "&userName=" . trim($userName);
         echo "$url<br>";
@@ -66,7 +58,7 @@
         {
             // Create folder on Isolaborserver
             exec("mkdir /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
-            // logfile.csv *.stc *.str from TILDAS xlsx and png svg from Python
+
             // Now copy all measurement files to the isolaborserver
             exec("cp Results/$sampleName/* /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
             echo "Data copied to Isolaborserver<br />";
@@ -80,10 +72,12 @@
             exec("cp Results/$sampleName/*.svg /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
             echo "Folder existed, files and data were updated on Isolaborserver<br />";
         }
-        exec("zip -j $sampleName.zip Results/$sampleName/*"); // creates ZIP archive of all data
+
+        // Create a ZIP archive of all data and upload that too the isolaborserver
+        exec("zip -j $sampleName.zip Results/$sampleName/*");
         exec("cp $sampleName.zip /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
 
-        // delete local files to save space
+        // Delete some of the local files to save space on the Raspberry
         exec("rm $sampleName.zip");
         exec("rm Results/$sampleName/*.svg");
         exec("rm Results/$sampleName/*.png");

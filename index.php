@@ -146,14 +146,13 @@
 					data: {cmd: cmd},
 					async: false,
 					success: function( response ){
-						// The following status string received
-						// console.log(response);
+
 						// Now split the status string
 						const statusArr = response.split(",");
-						//         0           1    2    3     4     5   6  7    8   9  10  11            12                   13     14     15     16         17          18          19     20
-						// 2022-02-18 21:50:20,-,34921,55.94,51636,82.65,0,0.00,2.5,0.6,2.1,S,00000000000000000000000000000000,25.124,23.389,50,66.243,51.6351e+04,44.8385e+04,47.1265e+04,97.5315e+03
+						
 						$('#moveStatus').html( statusArr[1] );
-						// alert( statusArr[1] );
+
+						// Lets display some images if conditions are met
 						if( statusArr[1] == "AX" && $('#loadingA').attr('src') != 'images/loading.gif')
 						{
 							$('#loadingA').attr('src','images/loading.gif');
@@ -171,7 +170,6 @@
 						{
 							$('#warningZ').attr('src',"");
 						}
-
 
 						if( statusArr[1] == "MX" && $('#motorX').attr('src') == 'images/standing_motor.gif' )
 						{
@@ -551,7 +549,7 @@
 				<img id="V20" src="images/vertical_closed.png" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" style="width:50px;"/>
 				<span id="V20_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:767px;left:972px;">
+			<div style="position:absolute;top:767px;left:843px;">
 			    <span style="position:relative;top:-35px;left:77px;">V21</span>
 				<img id="V21" src="images/vertical_closed.png" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" style="width:50px;"/>
 				<span id="V21_label" style="display:none;">undefined</span>
@@ -561,22 +559,22 @@
 				<img id="V22" src="images/vertical_closed.png" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" style="width:50px;"/>
 				<span id="V22_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1318px;">
+			<div style="position:absolute;top:720px;left:1319px;">
 			    <span style="position:relative;top:-35px;left:77px;">V23</span>
 				<img id="V23" src="images/vertical_closed.png" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" style="width:50px;"/>
 				<span id="V23_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1408px;">
+			<div style="position:absolute;top:720px;left:1409px;">
 			    <span style="position:relative;top:-35px;left:77px;">V24</span>
 				<img id="V24" src="images/vertical_closed.png" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" style="width:50px;"/>
 				<span id="V24_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1498px;">
+			<div style="position:absolute;top:720px;left:1499px;">
 			    <span style="position:relative;top:-35px;left:77px;">V25</span>
 				<img id="V25" src="images/vertical_closed.png" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" style="width:50px;"/>
 				<span id="V25_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1588px;">
+			<div style="position:absolute;top:720px;left:1589px;">
 			    <span style="position:relative;top:-35px;left:77px;">V26</span>
 				<img id="V26" src="images/vertical_closed.png" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" style="width:50px;"/>
 				<span id="V26_label" style="display:none;">undefined</span>
@@ -610,7 +608,7 @@
 			</div>
 			-->
 			<div style="position:absolute;top:767px;left:1100px;">
-				<span style="position:relative;top:-35px;left:77px;">V32</span>
+				<span style="position:relative;top:-35px;left:2px;">V32, pump</span>
 				<img id="V32" src="images/vertical_closed.png" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" style="width:50px;"/>
 				<span id="V32_label" style="display:none;">undefined</span>
 			</div>
@@ -774,31 +772,20 @@
 					type: 'POST',         		// HTTP-Methode, hier: POST
 					processData: false,
 					contentType: false,
-					// und wenn alles erfolgreich verlaufen ist, schreibe eine Meldung
-					// in das Response-Div
 					success: function(result) {
-						// One could do something here
 					}
 				});
 			});
 
 			function loadMethod( methodFileName ) {
-				// alert(methodFileName);
 				var xM = methodFileName;
-				// var data = new FormData(); // das ist unser Daten-Objekt ...
-				// data.append('file', this.files[0]); // ... an die wir unsere Datei anhängen
 				$.ajax({
 					url: 'loadMethod.php', // Wohin soll die Datei geschickt werden?
 					data: {
 						methodFileName: xM
 						}, // Das ist unser Datenobjekt.
 					type: 'POST',         // HTTP-Methode, hier: POST
-					// processData: false,
-					// contentType: false,
-					// und wenn alles erfolgreich verlaufen ist, schreibe eine Meldung
-					// in das Response-Div
 					success: function( result ) {
-						// Delete all elements in div sequence
 						console.log( "loadMethod-Funktion",result );
 						$('#method').empty();
 						colArr = result.split("|");
@@ -828,8 +815,6 @@
 					type: 'POST',         // HTTP-Methode, hier: POST
 					processData: false,
 					contentType: false,
-					// und wenn alles erfolgreich verlaufen ist, schreibe eine Meldung
-					// in das Response-Div
 					success: function(result) {
 						// Delete all elements in div sequence
 						$('#sequence').empty();
@@ -855,6 +840,7 @@
 				});
 			});
 		</script>
+		
 		<script>
 			// Method script
 			var startTime = 0;

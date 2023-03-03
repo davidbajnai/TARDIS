@@ -10,6 +10,7 @@ $folderName = $_POST['folderName'];
 // Create a logfile if it doesnt exist yet
 if( file_exists( $folderName . "/logFile.csv" ) === false )
 {
+    // Name the header row
     file_put_contents( $folderName . "/logFile.csv", "SampleName,Time(abs),Temperature(room),TargetT(box),Humidity(room),percentageX,percentageY,percentageZ,pressureX,pressureY,pressureA,edwards,fanSpeed,RoomT,RoomH,RoomP\n", FILE_APPEND  | LOCK_EX );
 }
 

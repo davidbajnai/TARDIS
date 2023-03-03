@@ -1,7 +1,7 @@
 <?php
 
     // This script is used to:
-    // load the appropriate method .csv file from the Methods folder
+    // load a specific method .csv file from the Methods folder
 
     /* Get the name of the uploaded file */
     $filename = $_POST['methodFileName'];
@@ -15,6 +15,7 @@
     $col2_array = [];
     $col3_array = [];
     $row = 1;
+
     if (($handle = $file) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             $num = count($data);
@@ -36,9 +37,11 @@
         }
         fclose($handle);
     }
+
     echo implode(",", $col1_array );
     echo "|";
     echo implode(",", $col2_array );
     echo "|";
     echo implode(",", $col3_array );
+
 ?>
