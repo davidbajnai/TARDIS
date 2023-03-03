@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from pymemcache.client import base
 import time
 import serial
@@ -6,20 +5,20 @@ import bme680
 import datetime
 
 # Arduino serial communication
-arduino = serial.Serial('/dev/ttyACM0',baudrate=115200, timeout=1)
-# Laser spectrometer serial communication (can also be ttyUSB1 if no other USBs are connected)
-laser = serial.Serial('/dev/ttyUSB0',baudrate=57600,timeout=1)
-# Edwards pressure gauge serial communication (can also be ttyUSB0 if no other USBs are connected)
-edwards = serial.Serial('/dev/ttyUSB1',baudrate=9600,timeout=0.01)
+arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
+# Laser spectrometer serial communication (can also be ttyUSB1)
+laser = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=1)
+# Edwards pressure gauge serial communication (can also be ttyUSB0)
+edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=1)
 # Initialize the breakout sensors
 sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
 
-# set initial values
-edwardsGauge = '1.00E+03'
-vacuum = '1.00E+03'
-roomT = 999
-roomH = 999
-roomP = 999
+# Set initial values, that are obviously fake
+edwardsGauge = '1.00E+40'
+vacuum = '1.00E+40'
+roomT = 1
+roomH = 1
+roomP = 1
 
 # Connect to the shared variable
 m = base.Client(('127.0.0.1', 11211))
@@ -28,8 +27,8 @@ m.set('key2', "")
 arduino.readline()
 time.sleep(2)
 # This is to wait until the Arduino is ready and the status message shows up, it starts with an 'X'
-    
-print("Starting main loop, continuously reading data from Arduino")
+
+print("Starting continuously reading data from Arduino.")
 
 i = 0
 while( 2 > 1 ):
@@ -59,15 +58,19 @@ while( 2 > 1 ):
 
     # Read Edwards pressure gauge and temperature sensor every 10 cycles
     if(i == 10):
+
         edwards.write( bytes('?GA1\r','utf-8') )
         edwardsGauge = edwards.readline().decode('utf-8')
+        # A little formatting is necessary because the string is sometimes broken
         if len(edwardsGauge) == 9:
             vacuum = str(edwardsGauge)[:-1]
+        
         # room temperature from sensor
         sensor.get_sensor_data()
         roomT = '{:05.3f}'.format(sensor.data.temperature)
         roomH = '{:05.3f}'.format(sensor.data.humidity)
         roomP = '{:05.3f}'.format(sensor.data.pressure)
+        
         time.sleep(0.05)
         i = 0
 
@@ -82,13 +85,9 @@ while( 2 > 1 ):
     # Receive commands for Arduino from PHP via shared variable 'key2'
     value = m.get('key2').decode('UTF-8')
     if( value != "" ):
-        # The is a commands that is understood by the Arduino
         arduino.write( bytes(value, 'utf-8') )
         # print(value) # Show command in the terminal - for debugging
         m.set('key2', "")
         time.sleep(0.05)
 
     i = i + 1
-
-# Clean up the shared variables
-# m.close()
