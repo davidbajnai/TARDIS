@@ -2,8 +2,9 @@
 
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3784963.svg)](https://doi.org/10.5281/zenodo.3784963) -->
 [![CodeFactor](https://www.codefactor.io/repository/github/davidbajnai/tardis/badge?s=e60c8acc0095fc83f8522a69115b1e3ed10c7320)](https://www.codefactor.io/repository/github/davidbajnai/tardis)
-[![Python](https://img.shields.io/badge/Python-3.7-success)]()
-[![PHP](https://img.shields.io/badge/PHP-7.3.31-success)]()
+[![Python](https://img.shields.io/badge/Python-3.7-FFD43B)]()
+[![PHP](https://img.shields.io/badge/PHP-8.2-%234f5b93)]()
+[![Debian](https://img.shields.io/badge/Debian-10-CE0058)]()
 
 This repository includes files used to control the custom-built dual inlet system of the TILDAS at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
 

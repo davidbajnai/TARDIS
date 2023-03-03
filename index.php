@@ -88,9 +88,9 @@
   					url: "evaluateData.php",
 					async: true,
   					data: {
-						  sampleName: $('#folderName').html(),
-						  userName: $('#userName').val(),
-						  polynomial: $('#polynomial').val()
+						sampleName: $('#folderName').html(),
+						userName: $('#userName').val(),
+						polynomial: $('#polynomial').val()
 						}
 				}).done(function( result ) {
 					console.log( result );
@@ -162,7 +162,7 @@
 							$('#loadingA').attr('src',"");
 						}
 
-						if( statusArr[6] != 7980  && $('#warningZ').attr('src') != 'images/warning.png')
+						if( statusArr[6] != 7980 && $('#warningZ').attr('src') != 'images/warning.png')
 						{
 							$('#warningZ').attr('src','images/warning.png');
 						}
@@ -309,7 +309,7 @@
 						$('#mr4').html( 'free path CO<sub>2</sub>: ' + Math.round( Number(mr4)/1000 ) + ' ppmv' );
 						var edwards = statusArr[22];
 						$('#edwards').html( edwards );
-						var CellTemperature =  statusArr[21]-273.15;
+						var CellTemperature = statusArr[21]-273.15;
 						$('#CellTemperature').html( CellTemperature.toFixed(3) );
 						var d17O = ((mr1/mr3) / 1.08 - 1) * 1000;
 						var d18O = ((mr2/mr3) / 1.06 - 1) * 1000;
@@ -545,42 +545,42 @@
 				<span id="V19_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:231px;left:540px;">
-			    <span style="position:relative;top:-35px;left:77px;">V20</span>
+				<span style="position:relative;top:-35px;left:77px;">V20</span>
 				<img id="V20" src="images/vertical_closed.png" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" style="width:50px;"/>
 				<span id="V20_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:767px;left:843px;">
-			    <span style="position:relative;top:-35px;left:77px;">V21</span>
+				<span style="position:relative;top:-35px;left:77px;">V21</span>
 				<img id="V21" src="images/vertical_closed.png" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" style="width:50px;"/>
 				<span id="V21_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:1235px;">
-			    <span style="position:relative;top:-35px;left:77px;">V22</span>
+				<span style="position:relative;top:-35px;left:77px;">V22</span>
 				<img id="V22" src="images/vertical_closed.png" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" style="width:50px;"/>
 				<span id="V22_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1319px;">
-			    <span style="position:relative;top:-35px;left:77px;">V23</span>
+				<span style="position:relative;top:-35px;left:77px;">V23</span>
 				<img id="V23" src="images/vertical_closed.png" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" style="width:50px;"/>
 				<span id="V23_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1409px;">
-			    <span style="position:relative;top:-35px;left:77px;">V24</span>
+				<span style="position:relative;top:-35px;left:77px;">V24</span>
 				<img id="V24" src="images/vertical_closed.png" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" style="width:50px;"/>
 				<span id="V24_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1499px;">
-			    <span style="position:relative;top:-35px;left:77px;">V25</span>
+				<span style="position:relative;top:-35px;left:77px;">V25</span>
 				<img id="V25" src="images/vertical_closed.png" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" style="width:50px;"/>
 				<span id="V25_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1589px;">
-			    <span style="position:relative;top:-35px;left:77px;">V26</span>
+				<span style="position:relative;top:-35px;left:77px;">V26</span>
 				<img id="V26" src="images/vertical_closed.png" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" style="width:50px;"/>
 				<span id="V26_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:212px;left:843px;">
-			    <span style="position:relative;top:-35px;left:77px;">V27</span>
+				<span style="position:relative;top:-35px;left:77px;">V27</span>
 				<img id="V27" src="images/vertical_closed.png" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" style="width:50px;"/>
 				<span id="V27_label" style="display:none;">undefined</span>
 			</div>
@@ -748,7 +748,7 @@
 			
 			<button type='button' class="button" style='top:140px;left:1700px;height:28px;width:120px;background-color:#63A615;' onclick='createFolder();$("#methodStatus").html("Method running");var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 );$("#timeMeasurementStarted").html( timeMeasurementStarted );$("#sample0").prepend("&#9758; ");'>Start sequence</button>
 
-			<button onclick="startingPosition();" class="button" style="top:190px;left:1700px;width:120px;height:28px;background-color:#9A6CA6  ;">Starting position</button>
+			<button onclick="startingPosition();" class="button" style="top:190px;left:1700px;width:120px;height:28px;background-color:#9A6CA6;">Starting position</button>
 			
 			<a href="http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2" target="_blank"> <button class="button" style="top:230px;left:1700px;width:120px;height:28px;">See results</button></a>
 
@@ -799,7 +799,7 @@
 						// Create list with commands on frontpanel
 						var vertical = 0;
 						for (let i = 0; i < commandsArray.length; i++) {
-							$( "#method" ).append( "<div id='command" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + ": " + commandsArray[i] + " &rarr; " + parameterArray[i] + " &rarr; wait " + timeArray[i] + " s</div>" );  
+							$( "#method" ).append( "<div id='command" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + ": " + commandsArray[i] + " &rarr; " + parameterArray[i] + " &rarr; wait " + timeArray[i] + " s</div>" );
 						}
 						vertical = vertical + 0;
 					}
@@ -811,8 +811,8 @@
 				data.append('file', this.files[0]); // ... an die wir unsere Datei anhängen
 				$.ajax({
 					url: 'uploadSequence.php', // Wohin soll die Datei geschickt werden?
-					data: data,          // Das ist unser Datenobjekt.
-					type: 'POST',         // HTTP-Methode, hier: POST
+					data: data,		// Das ist unser Datenobjekt.
+					type: 'POST',	// HTTP-Methode, hier: POST
 					processData: false,
 					contentType: false,
 					success: function(result) {
@@ -833,7 +833,7 @@
 								loadMethod( methodFileArr[i] );
 								$('#sampleName').val( sampleNameArr[i] );
 							}
-							$( "#sequence" ).append( "<div id='sample" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + "," + sampleNameArr[i] + "," + methodFileArr[i] + "</div>" );  
+							$( "#sequence" ).append( "<div id='sample" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + "," + sampleNameArr[i] + "," + methodFileArr[i] + "</div>" );
 						}
 						vertical = vertical + 0;
 					}
@@ -868,7 +868,7 @@
 					cmd = "";
 					getTime(); // Sets the clock
 					// Execute the individual commands from the method
-					if( $("#methodStatus").text() == "Method running"  )
+					if( $("#methodStatus").text() == "Method running")
 					{
 						var currentTime = parseInt( new Date().getTime() / 1000 );
 						// Write data to logfile
@@ -1365,7 +1365,7 @@
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
 						}
-						else if( moving == "no" && executed == "yes"  && waiting == "yes" && $('#moveStatus').html() == "-" && new Date().getTime() / 1000 - timeExecuted < timeArray[line] )
+						else if( moving == "no" && executed == "yes" && waiting == "yes" && $('#moveStatus').html() == "-" && new Date().getTime() / 1000 - timeExecuted < timeArray[line] )
 						{
 							// Case 3
 							// Now move the progress bar
@@ -1502,4 +1502,3 @@
 		</details>
 	</body>
 </html>
-

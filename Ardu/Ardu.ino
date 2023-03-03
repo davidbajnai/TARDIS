@@ -1,10 +1,10 @@
 #include <AccelStepper.h>
 
 // there are two temperature sensors connected
-//#include "Adafruit_Si7021.h"
+// #include "Adafruit_Si7021.h"
 #include "Adafruit_SHTC3.h"
 
-//Adafruit_Si7021 si7021 = Adafruit_Si7021();
+// Adafruit_Si7021 si7021 = Adafruit_Si7021();
 Adafruit_SHTC3 shtc3 = Adafruit_SHTC3();
 
 long XstartPos = 0;
@@ -85,7 +85,7 @@ void setup()
     delay(10);
   }
 
-  //si7021.begin();
+  // si7021.begin();
   shtc3.begin();
 
   // Configure the output pins and set them to low, for valves (via relay boards)
@@ -97,8 +97,8 @@ void setup()
     pinNr = pinNr + 1;
   }
 
-  digitalWrite(21 + 17, HIGH); // Ventil #17 (turbo pump) schlie�en
-  digitalWrite(21 + 27, HIGH); // Ventil #27 (fore vacuum pump) schlie�en
+  digitalWrite(21 + 17, HIGH); // Ventil #17 (turbo pump) close
+  digitalWrite(21 + 27, HIGH); // Ventil #27 (fore vacuum pump) close
   digitalWrite(21 + 16, HIGH);
 
   pinMode(A0, INPUT); // Potentiometer X
@@ -650,7 +650,7 @@ void sendStatus( String param )
   Xpercentage = -100.00 / 800 * analogRead(A0) + 100 + 10000 / 800;
   Ypercentage = -100.00 / 800 * analogRead(A1) + 100 + 10000 / 800;
 
-  //boxTemp = si7021.readTemperature();
+  // boxTemp = si7021.readTemperature();
 
   sensors_event_t humidity, temp; // objects for the shtc3 sensor data
   shtc3.getEvent(&humidity, &temp);
@@ -952,5 +952,5 @@ void loop()
 
   // Print out the current settings
   sendStatus("-"); // Disabled for programming
-  delay(20);
+  delay(50);
 }

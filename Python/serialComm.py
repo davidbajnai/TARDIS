@@ -6,7 +6,7 @@ import bme680
 import datetime
 
 # Arduino serial communication
-arduino = serial.Serial('/dev/ttyACM0',baudrate=115200,timeout=1)
+arduino = serial.Serial('/dev/ttyACM0',baudrate=115200, timeout=1)
 # Laser spectrometer serial communication (can also be ttyUSB1 if no other USBs are connected)
 laser = serial.Serial('/dev/ttyUSB0',baudrate=57600,timeout=1)
 # Edwards pressure gauge serial communication (can also be ttyUSB0 if no other USBs are connected)
@@ -25,11 +25,9 @@ roomP = 999
 m = base.Client(('127.0.0.1', 11211))
 m.set('key2', "")
 
-i = 0
-while(i < 50):
-    arduino.readline()
-    i = i + 1
-    # This is to wait until the Arduino is ready and the status message shows up, it starts with an 'X'
+arduino.readline()
+time.sleep(2)
+# This is to wait until the Arduino is ready and the status message shows up, it starts with an 'X'
     
 print("Starting main loop, continuously reading data from Arduino")
 
@@ -55,6 +53,7 @@ while( 2 > 1 ):
 
     # Read Arduino data
     status = arduino.readline()
+    # print(status) # Show the raw serial output of the Arduino in the Terminal - for debugging
     status = status.decode('utf-8')
     status = status[:-1]
 
@@ -76,18 +75,20 @@ while( 2 > 1 ):
     if( status != "" ):
         status = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ',' + status[:-1]
         m.set('key', status + ',' + pressure[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + tempr + ',' + vacuum  + ',' + str(roomT)+ ',' + str(roomH) + ',' + str(roomP))
-        # Show status string in terminal
+        # Show status string in terminal - for debugging
         # print(status + ',' + pressure[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + tempr + ',' + vacuum + ',' + str(roomT) + ',' + str(roomH) + ',' + str(roomP))
+        time.sleep(0.05)
 
     # Receive commands for Arduino from PHP via shared variable 'key2'
     value = m.get('key2').decode('UTF-8')
     if( value != "" ):
-        # The is a commands that is understood by the Arduino Mega
-        arduino.write( bytes(value, 'utf-8') ) # This could be a '?' to get the status
-        time.sleep(0.05) # Wait a bit
+        # The is a commands that is understood by the Arduino
+        arduino.write( bytes(value, 'utf-8') )
+        # print(value) # Show command in the terminal - for debugging
         m.set('key2', "")
+        time.sleep(0.05)
 
     i = i + 1
 
 # Clean up the shared variables
-m.close()
+# m.close()

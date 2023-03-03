@@ -51,6 +51,7 @@
         else
         {    
             $m->set('key2', $_POST['cmd']); // This is a command sent to Python serial communication
+            // echo("Command sent to Arduino");
         }
     }
     // clean up
