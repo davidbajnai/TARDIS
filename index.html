@@ -154,41 +154,41 @@
 						$('#moveStatus').html( statusArr[1] );
 
 						// Lets display some images if conditions are met
-						if( statusArr[1] == "AX" && $('#loadingA').attr('src') != 'images/loading.gif')
+						if( statusArr[1] == "AX" && $('#loadingA').attr('src') != 'Images/loading.gif')
 						{
-							$('#loadingA').attr('src','images/loading.gif');
+							$('#loadingA').attr('src','Images/loading.gif');
 						}
 						else if( statusArr[1] != "AX")
 						{
 							$('#loadingA').attr('src',"");
 						}
 
-						if( statusArr[6] != 7980 && $('#warningZ').attr('src') != 'images/warning.png')
+						if( statusArr[6] != 7980 && $('#warningZ').attr('src') != 'Images/warning.png')
 						{
-							$('#warningZ').attr('src','images/warning.png');
+							$('#warningZ').attr('src','Images/warning.png');
 						}
 						else if( statusArr[6] == 7980)
 						{
 							$('#warningZ').attr('src',"");
 						}
 
-						if( statusArr[1] == "MX" && $('#motorX').attr('src') == 'images/standing_motor.gif' )
+						if( statusArr[1] == "MX" && $('#motorX').attr('src') == 'Images/standing_motor.gif' )
 						{
-							$('#motorX').attr('src','images/rotating_motor.gif');
+							$('#motorX').attr('src','Images/rotating_motor.gif');
 						}
-						else if( statusArr[1] == "MY" && $('#motorY').attr('src') == 'images/standing_motor.gif' )
+						else if( statusArr[1] == "MY" && $('#motorY').attr('src') == 'Images/standing_motor.gif' )
 						{
-							$('#motorY').attr('src','images/rotating_motor.gif');
+							$('#motorY').attr('src','Images/rotating_motor.gif');
 						}
-						else if( statusArr[1] == "MZ" && $('#motorZ').attr('src') == 'images/standing_motor.gif' )
+						else if( statusArr[1] == "MZ" && $('#motorZ').attr('src') == 'Images/standing_motor.gif' )
 						{
-							$('#motorZ').attr('src','images/rotating_motor.gif');
+							$('#motorZ').attr('src','Images/rotating_motor.gif');
 						}
-						else if( statusArr[1] == "-" && ( $('#motorX').attr('src') == 'images/rotating_motor.gif' || $('#motorY').attr('src') == 'images/rotating_motor.gif' || $('#motorZ').attr('src') == 'images/rotating_motor.gif' ) )
+						else if( statusArr[1] == "-" && ( $('#motorX').attr('src') == 'Images/rotating_motor.gif' || $('#motorY').attr('src') == 'Images/rotating_motor.gif' || $('#motorZ').attr('src') == 'Images/rotating_motor.gif' ) )
 						{
-							$('#motorX').attr('src','images/standing_motor.gif');
-							$('#motorY').attr('src','images/standing_motor.gif');
-							$('#motorZ').attr('src','images/standing_motor.gif');
+							$('#motorX').attr('src','Images/standing_motor.gif');
+							$('#motorY').attr('src','Images/standing_motor.gif');
+							$('#motorZ').attr('src','Images/standing_motor.gif');
 						}
 						var percentageX = statusArr[3];
 						// X bellows
@@ -269,11 +269,11 @@
 							$('#V' + n + i.toString() + '_label').html( valveArray.charAt(i - 1) );
 							if(valveArray.charAt(i - 1) == '0')
 							{
-								$('#V' + n + i.toString()).attr('src','images/' + positions[i-1] + '_closed.png');
+								$('#V' + n + i.toString()).attr('src','Images/' + positions[i-1] + '_closed.png');
 							}
 							else
 							{
-								$('#V' + n + i.toString()).attr('src','images/' + positions[i-1] + '_open.png');
+								$('#V' + n + i.toString()).attr('src','Images/' + positions[i-1] + '_open.png');
 							}
 							i = i + 1;
 						}
@@ -444,173 +444,173 @@
 	
 		<div id="wrap" style="position:relative; border:1.5px solid #F5F4F1; width:2010px;height:840px;border-radius: 4px;">
 			
-			<img src="images/schaltbild.png" style="position:absolute;top:5px;left:5px;border-radius: 4px;" />
+			<img src="Images/schaltbild.png" style="position:absolute;top:5px;left:5px;border-radius: 4px;" />
 
-			<img src="images/GZG_logo_text_color.png" style="position:absolute;top:19px;left:1700px;width:290px;" />
-			<img src="images/GOE_Logo.png" style="position:absolute;top:770px;left:1700px;width:290px;" />
+			<img src="Images/GZG_logo_text_color.png" style="position:absolute;top:19px;left:1700px;width:290px;" />
+			<img src="Images/GOE_Logo.png" style="position:absolute;top:770px;left:1700px;width:290px;" />
 
 
 			<div style="position:absolute;top:131px;left:725px;">
 				<span style="position:relative;top:-35px;left:77px;">V01</span>
-				<img id="V01" src="images/horizontal_closed.png" onclick="var status=$('#V01_label').html();toggleValve('V01',status);" style="width:50px;"/>
+				<img id="V01" src="Images/horizontal_closed.png" onclick="var status=$('#V01_label').html();toggleValve('V01',status);" style="width:50px;"/>
 				<span id="V01_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:178px;left:685px;">
 				<span style="position:relative;top:2px;left:77px;">V02</span>
-				<img id="V02" src="images/vertical_closed.png" onclick="var status=$('#V02_label').html();toggleValve('V02',status);" style="width:50px;"/>
+				<img id="V02" src="Images/vertical_closed.png" onclick="var status=$('#V02_label').html();toggleValve('V02',status);" style="width:50px;"/>
 				<span id="V02_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:470px;">
 				<span style="position:relative;top:-35px;left:77px;">V03</span>
-				<img id="V03" src="images/vertical_closed.png" onclick="var status=$('#V03_label').html();toggleValve('V03',status);" style="width:50px;"/>
+				<img id="V03" src="Images/vertical_closed.png" onclick="var status=$('#V03_label').html();toggleValve('V03',status);" style="width:50px;"/>
 				<span id="V03_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:240px;">
 				<span style="position:relative;top:-35px;left:77px;">V04</span>
-				<img id="V04" src="images/vertical_closed.png" onclick="var status=$('#V04_label').html();toggleValve('V04',status);" style="width:50px;"/>
+				<img id="V04" src="Images/vertical_closed.png" onclick="var status=$('#V04_label').html();toggleValve('V04',status);" style="width:50px;"/>
 				<span id="V04_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:340px;left:410px;">
 				<span style="position:relative;top:-35px;left:77px;">V05</span>
-				<img id="V05" src="images/vertical_closed.png" onclick="var status=$('#V05_label').html();toggleValve('V05',status);" style="width:50px;"/>
+				<img id="V05" src="Images/vertical_closed.png" onclick="var status=$('#V05_label').html();toggleValve('V05',status);" style="width:50px;"/>
 				<span id="V05_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:345px;">
 				<span style="position:relative;top:-35px;left:77px;">V06</span>
-				<img id="V06" src="images/vertical_closed.png" onclick="var status=$('#V06_label').html();toggleValve('V06',status);" style="width:50px;"/>
+				<img id="V06" src="Images/vertical_closed.png" onclick="var status=$('#V06_label').html();toggleValve('V06',status);" style="width:50px;"/>
 				<span id="V06_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:475px;left:410px;">
 				<span style="position:relative;top:-35px;left:77px;">V07</span>
-				<img id="V07" src="images/vertical_closed.png" onclick="var status=$('#V07_label').html();toggleValve('V07',status);" style="width:50px;"/>
+				<img id="V07" src="Images/vertical_closed.png" onclick="var status=$('#V07_label').html();toggleValve('V07',status);" style="width:50px;"/>
 				<span id="V07_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:475px;left:190px;">
 				<span style="position:relative;top:-35px;left:77px;">V08</span>
-				<img id="V08" src="images/vertical_closed.png" onclick="var status=$('#V08_label').html();toggleValve('V08',status);" style="width:50px;"/>
+				<img id="V08" src="Images/vertical_closed.png" onclick="var status=$('#V08_label').html();toggleValve('V08',status);" style="width:50px;"/>
 				<span id="V08_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:905px;">
 				<span style="position:relative;top:-35px;left:77px;">V09</span>
-				<img id="V09" src="images/vertical_closed.png" onclick="var status=$('#V09_label').html();toggleValve('V09',status);" style="width:50px;"/>
+				<img id="V09" src="Images/vertical_closed.png" onclick="var status=$('#V09_label').html();toggleValve('V09',status);" style="width:50px;"/>
 				<span id="V09_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:1145px;">
 				<span style="position:relative;top:-35px;left:77px;">V10</span>
-				<img id="V10" src="images/vertical_closed.png" onclick="var status=$('#V10_label').html();toggleValve('V10',status);" style="width:50px;"/>
+				<img id="V10" src="Images/vertical_closed.png" onclick="var status=$('#V10_label').html();toggleValve('V10',status);" style="width:50px;"/>
 				<span id="V10_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:345px;left:972px;">
 				<span style="position:relative;top:-35px;left:77px;">V11</span>
-				<img id="V11" src="images/vertical_closed.png" onclick="var status=$('#V11_label').html();toggleValve('V11',status);" style="width:50px;"/>
+				<img id="V11" src="Images/vertical_closed.png" onclick="var status=$('#V11_label').html();toggleValve('V11',status);" style="width:50px;"/>
 				<span id="V11_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:1040px;">
 				<span style="position:relative;top:-35px;left:77px;">V12</span>
-				<img id="V12" src="images/vertical_closed.png" onclick="var status=$('#V12_label').html();toggleValve('V12',status);" style="width:50px;"/>
+				<img id="V12" src="Images/vertical_closed.png" onclick="var status=$('#V12_label').html();toggleValve('V12',status);" style="width:50px;"/>
 				<span id="V12_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:470px;left:972px;">
 				<span style="position:relative;top:-35px;left:77px;">V13</span>
-				<img id="V13" src="images/vertical_closed.png" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" style="width:50px;"/>
+				<img id="V13" src="Images/vertical_closed.png" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" style="width:50px;"/>
 				<span id="V13_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:472px;left:1190px;">
 				<span style="position:relative;top:-35px;left:77px;">V14</span>
-				<img id="V14" src="images/vertical_closed.png" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" style="width:50px;"/>
+				<img id="V14" src="Images/vertical_closed.png" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" style="width:50px;"/>
 				<span id="V14_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:686px;">
 				<span style="position:relative;top:-35px;left:77px;">V15</span>
-				<img id="V15" src="images/vertical_closed.png" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" style="width:50px;"/>
+				<img id="V15" src="Images/vertical_closed.png" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" style="width:50px;"/>
 				<span id="V15_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:595px;left:686px;">
 				<span style="position:relative;top:-35px;left:77px;">V16</span>
-				<img id="V16" src="images/vertical_closed.png" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" style="width:50px;"/>
+				<img id="V16" src="Images/vertical_closed.png" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" style="width:50px;"/>
 				<span id="V16_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:131px;left:843px;">
 				<span style="position:relative;top:-35px;left:77px;">V17</span>
-				<img id="V17" src="images/vertical_closed.png" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" style="width:50px;"/>
+				<img id="V17" src="Images/vertical_closed.png" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" style="width:50px;"/>
 				<span id="V17_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:145px;">
 				<span style="position:relative;top:-35px;left:77px;">V18</span>
-				<img id="V18" src="images/vertical_closed.png" onclick="var status=$('#V18_label').html();toggleValve('V18',status);" style="width:50px;"/>
+				<img id="V18" src="Images/vertical_closed.png" onclick="var status=$('#V18_label').html();toggleValve('V18',status);" style="width:50px;"/>
 				<span id="V18_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:231px;left:620px;">
 				<span style="position:relative;top:-35px;left:77px;">V19</span>
-				<img id="V19" src="images/vertical_closed.png" onclick="var status=$('#V19_label').html();toggleValve('V19',status);" style="width:50px;"/>
+				<img id="V19" src="Images/vertical_closed.png" onclick="var status=$('#V19_label').html();toggleValve('V19',status);" style="width:50px;"/>
 				<span id="V19_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:231px;left:540px;">
 				<span style="position:relative;top:-35px;left:77px;">V20</span>
-				<img id="V20" src="images/vertical_closed.png" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" style="width:50px;"/>
+				<img id="V20" src="Images/vertical_closed.png" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" style="width:50px;"/>
 				<span id="V20_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:767px;left:843px;">
 				<span style="position:relative;top:-35px;left:77px;">V21</span>
-				<img id="V21" src="images/vertical_closed.png" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" style="width:50px;"/>
+				<img id="V21" src="Images/vertical_closed.png" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" style="width:50px;"/>
 				<span id="V21_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:410px;left:1235px;">
 				<span style="position:relative;top:-35px;left:77px;">V22</span>
-				<img id="V22" src="images/vertical_closed.png" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" style="width:50px;"/>
+				<img id="V22" src="Images/vertical_closed.png" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" style="width:50px;"/>
 				<span id="V22_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1319px;">
 				<span style="position:relative;top:-35px;left:77px;">V23</span>
-				<img id="V23" src="images/vertical_closed.png" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" style="width:50px;"/>
+				<img id="V23" src="Images/vertical_closed.png" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" style="width:50px;"/>
 				<span id="V23_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1409px;">
 				<span style="position:relative;top:-35px;left:77px;">V24</span>
-				<img id="V24" src="images/vertical_closed.png" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" style="width:50px;"/>
+				<img id="V24" src="Images/vertical_closed.png" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" style="width:50px;"/>
 				<span id="V24_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1499px;">
 				<span style="position:relative;top:-35px;left:77px;">V25</span>
-				<img id="V25" src="images/vertical_closed.png" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" style="width:50px;"/>
+				<img id="V25" src="Images/vertical_closed.png" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" style="width:50px;"/>
 				<span id="V25_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:720px;left:1589px;">
 				<span style="position:relative;top:-35px;left:77px;">V26</span>
-				<img id="V26" src="images/vertical_closed.png" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" style="width:50px;"/>
+				<img id="V26" src="Images/vertical_closed.png" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" style="width:50px;"/>
 				<span id="V26_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:212px;left:843px;">
 				<span style="position:relative;top:-35px;left:77px;">V27</span>
-				<img id="V27" src="images/vertical_closed.png" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" style="width:50px;"/>
+				<img id="V27" src="Images/vertical_closed.png" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" style="width:50px;"/>
 				<span id="V27_label" style="display:none;">undefined</span>
 			</div>
 			
 			<!-- These valves are free
 			<div style="position:absolute;top:740px;left:1190px;">
 			    <span style="position:relative;top:-35px;left:77px;">V28</span>
-				<img id="V28" src="images/vertical_closed.png" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" style="width:50px;"/>
+				<img id="V28" src="Images/vertical_closed.png" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" style="width:50px;"/>
 				<span id="V28_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:740px;left:1240px;">
 			    <span style="position:relative;top:-35px;left:77px;">V29</span>
-				<img id="V29" src="images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" style="width:50px;"/>
+				<img id="V29" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" style="width:50px;"/>
 				<span id="V29_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:740px;left:1290px;">
 			    <span style="position:relative;top:-35px;left:77px;">V30</span>
-				<img id="V30" src="images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V30',status);" style="width:50px;"/>
+				<img id="V30" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V30',status);" style="width:50px;"/>
 				<span id="V30_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:740px;left:1340px;">
 			    <span style="position:relative;top:-35px;left:77px;">V31</span>
-				<img id="V31" src="images/vertical_closed.png" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" style="width:50px;"/>
+				<img id="V31" src="Images/vertical_closed.png" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" style="width:50px;"/>
 				<span id="V31_label" style="display:none;">undefined</span>
 			</div>
 			-->
 			<div style="position:absolute;top:767px;left:1100px;">
 				<span style="position:relative;top:-35px;left:2px;">V32, pump</span>
-				<img id="V32" src="images/vertical_closed.png" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" style="width:50px;"/>
+				<img id="V32" src="Images/vertical_closed.png" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" style="width:50px;"/>
 				<span id="V32_label" style="display:none;">undefined</span>
 			</div>
 			
@@ -626,9 +626,9 @@
 			<div id="CellTemperature" class="box" style="top:75px;left:660px;width:60px;">CellT</div>
 				<p class="label" style="top:55px;left:730px;color:white;">°C (cell)</p>
 
-			<img id="bellowsX" src="images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:295px;" />
-			<img id="bellowsY" src="images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:1100px;" />
-			<img id="bellowsZ" src="images/bellows.png" style="width:100px;height:60px;position:absolute;top:320px;left:688px;" />
+			<img id="bellowsX" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:295px;" />
+			<img id="bellowsY" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:1100px;" />
+			<img id="bellowsZ" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:320px;left:688px;" />
 			
 			<span id="pressureX" class="box" style="top:353px;left:319px;width:50px;">NaN</span>
 				<p class="label" style="top:308px;left:319px;">X (mbar)</p>
@@ -640,17 +640,17 @@
 				<p class="label" style="top:513px;left:650px;">A (mbar)</p>
 			<img id="loadingA" src="" style="width:25px;position:absolute;top:585px;left:650px;" />
 
-			<img id="motorX" src="images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:380px;" />
+			<img id="motorX" src="Images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:380px;" />
 			<span id="percentageXsteps" class="box" style="top:625px;left:315px;width:50px;">NaN</span>
 			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
 			<button onclick="moveBellows('X');" class="button" style="top:655px;left:365px;width:50px;">Set X</button>
 
-			<img id="motorY" src="images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:1184px;" />
+			<img id="motorY" src="Images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:1184px;" />
 			<span id="percentageYsteps" class="box" style="top:625px;left:1120px;width:50px;">NaN</span>
 			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
 			<button onclick="moveBellows('Y');" class="button" style="top:655px;left:1169px;width:50px;">Set Y</button>
 			
-			<img id="motorZ" src="images/standing_motor.gif" style="width:25px;position:absolute;top:450px;left:755px;" />
+			<img id="motorZ" src="Images/standing_motor.gif" style="width:25px;position:absolute;top:450px;left:755px;" />
 			<span id="percentageZsteps" class="box" style="top:450px;left:690px;width:50px;">NaN</span>
 			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
 			<button onclick="moveBellows('Z');" class="button" style="top:480px;left:740px;width:50px;">Set Z</button>
