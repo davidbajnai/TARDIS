@@ -1,20 +1,22 @@
 <!DOCTYPE html>
+
+<!-- This is the script for the front panel: the graphical user interface to control the inlet system and the TILDAS -->
+
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta charset="UTF-8">
 		<link rel = "stylesheet" type = "text/css" href = "stylesheet.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 		<script>
 			var cmd = "";
-
 			function wait(sec){
-   				var start = new Date().getTime();
-   				var end = start;
-   				while( end < start + sec * 1000 )
+ 				var start = new Date().getTime();
+				var end = start;
+				while( end < start + sec * 1000 )
 				{
-     				end = new Date().getTime();
-  				}
+					end = new Date().getTime();
+				}
 			}
 
 			function toggleValve(valve,status) {
@@ -85,10 +87,10 @@
 			function evaluateData() {
 				console.log( "Starting evaluateData.php" )
 				$.ajax({
-  					type: "POST",
-  					url: "evaluateData.php",
+					type: "POST",
+					url: "evaluateData.php",
 					async: true,
-  					data: {
+					data: {
 						sampleName: $('#folderName').html(),
 						userName: $('#userName').val(),
 						polynomial: $('#polynomial').val()
@@ -114,10 +116,12 @@
 				cmd = 'FS' + temp;
 				console.log( cmd );
 			}
-			function setPIDStatus(status) {
-				cmd = 'TC' + status;
-				console.log( cmd );
-			}
+
+			// function setPIDStatus(status) {
+			// 	cmd = 'TC' + status;
+			// 	console.log( cmd );
+			// }
+
 			function startingPosition() {
 				cmd = 'KL';
 				console.log( cmd );
@@ -139,11 +143,11 @@
 				cmd = bellow + 'P' + percentage;
 				console.log( cmd );
 			}
-
+			
 			function sendCommand( cmd ){
 				$.ajax({
-					type: "POST",
-					url: 'sendCommand.php',
+					type: "POST", // request type
+					url: 'sendCommand.php', // the page containing php script
 					data: {cmd: cmd},
 					async: false,
 					success: function( response ){
@@ -324,12 +328,13 @@
 						cmd = "";
 					},
 					error: function(xhr, status, error){
-						console.error(xhr);
+						console.error(error);
 					}
 				});
 			}
 
 			sendCommand();
+			// debug();
 
 		</script>
 
@@ -588,22 +593,22 @@
 			
 			<!-- These valves are free
 			<div style="position:absolute;top:740px;left:1190px;">
-			    <span style="position:relative;top:-35px;left:77px;">V28</span>
+				<span style="position:relative;top:-35px;left:77px;">V28</span>
 				<img id="V28" src="Images/vertical_closed.png" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" style="width:50px;"/>
 				<span id="V28_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:740px;left:1240px;">
-			    <span style="position:relative;top:-35px;left:77px;">V29</span>
+				<span style="position:relative;top:-35px;left:77px;">V29</span>
 				<img id="V29" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" style="width:50px;"/>
 				<span id="V29_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:740px;left:1290px;">
-			    <span style="position:relative;top:-35px;left:77px;">V30</span>
+				<span style="position:relative;top:-35px;left:77px;">V30</span>
 				<img id="V30" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V30',status);" style="width:50px;"/>
 				<span id="V30_label" style="display:none;">undefined</span>
 			</div>
 			<div style="position:absolute;top:740px;left:1340px;">
-			    <span style="position:relative;top:-35px;left:77px;">V31</span>
+				<span style="position:relative;top:-35px;left:77px;">V31</span>
 				<img id="V31" src="Images/vertical_closed.png" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" style="width:50px;"/>
 				<span id="V31_label" style="display:none;">undefined</span>
 			</div>
@@ -702,10 +707,11 @@
 			<div id="sequence" class="scroll" style="top:190px;left:1370px;width:300px;height:150px;"></div>
 			<div id="method" class="scroll" style="top:353px;left:1370px;width:300px;height:318px;"></div>
 			
-			<input id='housingTargetT' value=32.0 type="number" style="top:163px;left:30px;width:60px;"/>
-			<button onclick="setHousingTCmd(housingTargetT);" class="button" style="top:163px;left:70px;width:50px;">Set T</button>
-			<button onclick="setPIDStatus(1);" class="button" style="top:163px;left:130px;width:50px;">Fan on</button>
-			<button onclick="setPIDStatus(2);" class="button" style="top:163px;left:190px;width:50px;">Fan off</button>
+			<input id='housingTargetT' value=32.000 type="number" style="top:163px;left:30px;width:58px;"/>
+			<!-- <p class="label" style="top:143px;left:100px;">°C set point</p> -->
+			<button onclick="setHousingTCmd(housingTargetT);" class="button" style="top:163px;left:100px;width:50px;">Set T</button>
+			<!-- <button onclick="setPIDStatus(1);" class="button" style="top:163px;left:130px;width:50px;">Fan on</button>
+			<button onclick="setPIDStatus(2);" class="button" style="top:163px;left:190px;width:50px;">Fan off</button> -->
 			
 			<div id='fanSpeed' class="box" style="top:190px;left:30px;width:60px;">999</div>
 			<p class="label" style="top:170px;left:100px;">fan speed</p>
@@ -766,12 +772,12 @@
 			var colArr = [];
 
 			$('body').on('change', '#uploadMethod', function() {
-				var data = new FormData(); // Das ist unser Daten-Objekt ...
-				data.append('file', this.files[0]); // ... an das wir unsere Datei anhängen
+				var data = new FormData();
+				data.append('file', this.files[0]);
 				$.ajax({
-					url: 'uploadMethod.php', 	// Wohin soll die Datei geschickt werden?
-					data: data,          		// Das ist unser Datenobjekt.
-					type: 'POST',         		// HTTP-Methode, hier: POST
+					url: 'uploadMethod.php',
+					data: data,
+					type: 'POST',
 					processData: false,
 					contentType: false,
 					success: function(result) {
@@ -782,11 +788,11 @@
 			function loadMethod( methodFileName ) {
 				var xM = methodFileName;
 				$.ajax({
-					url: 'loadMethod.php', // Wohin soll die Datei geschickt werden?
+					url: 'loadMethod.php',
 					data: {
 						methodFileName: xM
-						}, // Das ist unser Datenobjekt.
-					type: 'POST',         // HTTP-Methode, hier: POST
+						},
+					type: 'POST',
 					success: function( result ) {
 						console.log( "loadMethod-Funktion",result );
 						$('#method').empty();
@@ -863,20 +869,20 @@
 			setInterval(function()
 				{	
 					// console.log("Interval loop running");
-					// Check every 30 sec the Temperature
-					// Update all readings and, in case, send a command cmd
+
 					sendCommand( cmd );
 					console.log('Current cmd',cmd);
 					cmd = "";
 					getTime(); // Sets the clock
+
 					// Execute the individual commands from the method
 					if( $("#methodStatus").text() == "Method running")
 					{
 						var currentTime = parseInt( new Date().getTime() / 1000 );
+
 						// Write data to logfile
 						if( currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").val() != "" )
 						{
-
 							// IMPORTANT: if you add/remove elements below, you have to update the lenght filter in the writeLogfile.php!
 							// Unix -> Mac timestamp, TILDAS uses Mac timestamp
 							logData.push( [parseInt(currentTime + 2082844800),parseFloat( $('#housingT').html() ),parseFloat( $('#housingTargetT').val() ),parseFloat( $('#roomRH').html() ),$('#percentageXsteps').html(),$('#percentageYsteps').html(),$('#percentageZsteps').html(),$('#pressureX').html(),$('#pressureY').html(),$('#pressureA').html(),$('#edwards').html().trim(),parseFloat( $('#fanSpeed').html()),parseFloat( $('#roomT').html()),parseFloat( $('#roomH').html()),parseFloat( $('#roomP').html())] );
@@ -891,6 +897,7 @@
 							}
 							currentTimeOld = currentTime;
 						}
+
 						// Valve commands V03 1
 						if( commandsArray[line][0] == "V" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
@@ -914,6 +921,7 @@
 							$("#command" + line).append(" &#10003;");
 							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
+
 						// Set housing temperature
 						else if( commandsArray[line][0] == "F" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
@@ -931,20 +939,20 @@
 						}
 
 						// Set fan ON /OFF
-						else if( commandsArray[line][0] == "T" && commandsArray[line][1] == "C" && executed == "yes" && moving == "no" && waiting == "no" )
-						{
-							// Do this before every command in method
-							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-							$("#command" + line).prepend("&#9758; ");
-							cmd = "TC" + parameterArray[line];
-							// Do this after every command
-							timeExecuted = new Date().getTime() / 1000;
-							moving = "no";
-							executed = "yes";
-							waiting = "yes";
-							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
-						}
+						// else if( commandsArray[line][0] == "T" && commandsArray[line][1] == "C" && executed == "yes" && moving == "no" && waiting == "no" )
+						// {
+						// 	// Do this before every command in method
+						// 	if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+						// 	$("#command" + line).prepend("&#9758; ");
+						// 	cmd = "TC" + parameterArray[line];
+						// 	// Do this after every command
+						// 	timeExecuted = new Date().getTime() / 1000;
+						// 	moving = "no";
+						// 	executed = "yes";
+						// 	waiting = "yes";
+						// 	$("#command" + line).append(" &#10003;");
+						// 	console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+						// }
 
 						// This command waits until A target pressure is reached, than closes valves
 						else if( commandsArray[line][0] == "A" && commandsArray[line][1] == "X" && executed == "yes" && moving == "no" && waiting == "no" )
@@ -1193,7 +1201,7 @@
 							}
 
 							// Here we correct pTarget by the correction_pCO2 factor
-
+							// The corrrection factor is 1.000 by default, but can be adjusted by the CM command
 							var pTarget = pTarget * parseFloat( $( "#correction_pCO2" ).html() ).toFixed(3);
 
 							console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");
@@ -1209,6 +1217,7 @@
 							executed = "no";
 							waiting = "no";
 						}
+
 						// Set bellows to pressure target (X,Y) "PX 1.723"
 						else if( commandsArray[line][0] == "S" && commandsArray[line][1] == "N" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
@@ -1238,7 +1247,8 @@
 							executed = "no";
 							waiting = "no";
 						}
-						// Refill sample gas
+
+						// Refill sample gas from the manifold headspace - can be used after first fill
 						else if( commandsArray[line][0] == "R" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
 							// Do this before every command in method
@@ -1247,7 +1257,6 @@
 
 							sendCommand( "RS" + parseFloat( parameterArray[line] ).toFixed(3) );
 							$('#moveStatus').html( 'RS' );
-							console.log('Hello David, its all right');
 
 							// Resetting the progress bar						
 							$("#progressBar").css( "width","0px" );
@@ -1258,22 +1267,24 @@
 							executed = "no";
 							waiting = "no";
 						}
+
 						// Mixes and inserts gas into bellows X
-						else if( commandsArray[line][0] == "X" && commandsArray[line][1] == "I" && executed == "yes" && moving == "no" && waiting == "no" )
-						{
-							// Do this before every command in method
-							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-							$("#command" + line).prepend("&#9758; ");	
-							sendCommand( "XI" );
-							// Resetting the progress bar						
-							$("#progressBar").css( "width","0px" );
-							$("#progress").html("0%");
-							// Do this after every command
-							timeExecuted = new Date().getTime() / 1000;
-							moving = "yes";
-							executed = "no";
-							waiting = "no";
-						}
+						// else if( commandsArray[line][0] == "X" && commandsArray[line][1] == "I" && executed == "yes" && moving == "no" && waiting == "no" )
+						// {
+						// 	// Do this before every command in method
+						// 	if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+						// 	$("#command" + line).prepend("&#9758; ");	
+						// 	sendCommand( "XI" );
+						// 	// Resetting the progress bar						
+						// 	$("#progressBar").css( "width","0px" );
+						// 	$("#progress").html("0%");
+						// 	// Do this after every command
+						// 	timeExecuted = new Date().getTime() / 1000;
+						// 	moving = "yes";
+						// 	executed = "no";
+						// 	waiting = "no";
+						// }
+
 						// Set bellows Z to cell pressure target (40.000 Torr) "QZ 40.1"
 						else if( commandsArray[line][0] == "Q" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
@@ -1313,6 +1324,7 @@
 							waiting = "no";
 							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
 						}
+
 						// Set bellows Z to nitrogen pressure target "AZ 178.2"
 						else if( commandsArray[line][0] == "A" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
@@ -1351,6 +1363,8 @@
 							waiting = "no";
 							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
 						}
+
+						// ^^^ The command "if" series ends here ^^^
 
 						// Check if bellows target position has been reached
 						if( moving == "yes" && executed == "no" && waiting == "no" && ( $('#moveStatus').html() != "-" || new Date().getTime() / 1000.00 - timeExecuted < 1 ) )
@@ -1409,7 +1423,7 @@
 									cycle = 0;
 									createFolder();
 									$("#methodStatus").html('Method running');
-									$('#cycle').html( "0" );
+									$('#cycle').html("0");
 									$( "#sample_pCO2" ).html( "0" );
 									$( "#reference_pCO2" ).html( "0" );
 									$( "#correction_pCO2" ).html( "1.000" );
@@ -1421,7 +1435,7 @@
 									sample = 0;
 									line = 0;
 									cycle = 0;
-									$('#cycle').html( "0" );
+									$('#cycle').html("9¾");
 									$( "#refgasTargetPressure" ).html( "Refgas target p" );
 									$( "#sample_pCO2" ).html( "0" );
 									$( "#reference_pCO2" ).html( "0" );

@@ -28,9 +28,9 @@ float ApressureArray[200];
 float XpercentageArray[200];
 float YpercentageArray[200];
 float boxTempArray[200];
-int fsSetPoint = 0;
+int fanSpeed = 0;
 float boxTemp = 0.000;
-float boxHum = 0.000;
+float boxHum = 0.00;
 long now = 0;
 long lastTime = 0;
 long timeChange = 0;
@@ -39,16 +39,8 @@ float errSum = 0.000;
 float dErr = 0.000;
 float lastErr = 0.000;
 int cycl = 0;
-
-// variables for the PID
-int PID_Status = 1;
 float housingSetT = 32.000;
-int kp = 395;
-float ki = 0.33;
-float kd = 0.033;
-
 float targetPercent = 0.000;
-
 long Xsteps = 0;
 long Ysteps = 0;
 long Zsteps = 0;
@@ -189,7 +181,7 @@ void controlT()
   timeChange = now - lastTime;
   
   // Compute all the working error variables after cycle 60
-  Terror = boxTemp - housingSetT;
+  Terror = boxTemp - 32.000;
   
   if( cycl > 60 ) {
     errSum += (Terror * timeChange/1000);
@@ -199,24 +191,28 @@ void controlT()
     lastTime = now;
   }
   cycl = cycl + 1;
-  // Compute PID Output
-  
-  fsSetPoint = kp * Terror + ki * errSum + kd * dErr;
 
-  if( fsSetPoint > 100 )
+  // Compute PID Output
+
+  // variables for the PID
+  // int PID_Status = 1;
+  // int kp = 395;
+  // float ki = 0.33;
+  // float kd = 0.033;
+  // The structure of the PID control string
+  // fanSpeed = kp * Terror + ki * errSum + kd * dErr;
+  fanSpeed = 395 * Terror + 0.33 * errSum + 0.033 * dErr;
+
+  if( fanSpeed > 100 )
   {
-    fsSetPoint = 100;
+    fanSpeed = 100;
   }
-  else if( fsSetPoint < 9)
+  else if( fanSpeed < 9)
   {
-    fsSetPoint = 9;
-  }
-  if( PID_Status != 1)
-  {
-    fsSetPoint = 0;
+    fanSpeed = 9;
   }
   
-  analogWrite(8, fsSetPoint * 40 / 100 );
+  analogWrite(8, fanSpeed * 40 / 100 );
 }
 
 void runXP(float percentage, String string)
@@ -739,57 +735,17 @@ void sendStatus( String param )
     pinNr = pinNr + 1;
   }
   Serial.print(",");
-  Serial.print(boxHum, 3); // this is the place of the box humidity
+  Serial.print(boxHum, 3);
   Serial.print(",");
   Serial.print(boxTemp, 3);
   Serial.print(",");
-  Serial.print(fsSetPoint-9);
+  Serial.print(fanSpeed);
   
   Serial.println("");
 }
 
-//void bellowsCalibrationY()
-//{
-//  for (int i = 0; i < 11; i++) {
-//    runYP( 100 - i * 10, "CY" );
-//    delay(500);
-//    x[i] = 100 - i * 10;
-//    y[i] = -100.00 / 800.00 * analogRead(A1) + 100 + 10000 / 800; // Xpercentage, Y is on A1
-//  }
-//  for (int i = 0; i < 11; i++)
-//  {
-//    Serial.print(x[i]);
-//    Serial.print(",");
-//    Serial.println(y[i]);
-//  }
-//  // Now do the regression
-//  int ret = fitCurve(order, sizeof(x) / sizeof(double), y, x, sizeof(coeffs) / sizeof(double), coeffs);
-//  if (ret == 0) { //Returned value is 0 if no error
-//    uint8_t c = 'a';
-//    Serial.println("Coefficients for Y bellows are:");
-//    for (int i = 0; i < sizeof(coeffs) / sizeof(double); i++) {
-//      // snprintf(buf, 100, "%c=",c++);
-//      // Serial.print(buf);
-//      Serial.print(coeffs[i]);
-//      Serial.println("");
-//    }
-//  }
-//  Serial.println( coeffs[1] );
-//  Serial.println( Yaxis.currentPosition() );
-//  runYP( coeffs[1], "CY" ); // z.B. -0.21
-//  Serial.println( Yaxis.currentPosition() );
-//  // int tmp = Xaxis.currentPosition() + coeffs[1] * 62438 / 100;
-//  Yaxis.setCurrentPosition( 0 );
-//  Serial.println( Yaxis.currentPosition() );
-//
-//  delay(10000);
-//  runYP(50, "CY");
-//}
 
-
-
-
-// Here comes the main program loop ----------------------
+// Here comes the main program loop ----------------------------------------------------------------
 
 void loop()
 {
@@ -802,22 +758,26 @@ void loop()
 
   controlT();
 
-  // Set the stepper motor positions
+  // Perform a function based on on the command sent by the index.html
+
   if ( string.substring(0, 2) == "XP" )
   {
+    // Set the stepper motor positions
     runXP( string.substring(2, 9).toFloat(), "MX" );
     string = "";
     command = "";
     sendStatus("-");
   }
+
   else if ( string.substring(0, 2) == "XS" )
   {
-    // Sets the pressure in bellows X to the given pressure XS1.702
+    // Set the pressure in bellows X to the given pressure
     setPressureX( string.substring(2, 9).toFloat() );
     string = "";
     command = "";
     sendStatus("-");
   }
+
   else if ( string.substring(0, 2) == "FS" )
   {
     // Sets the housing temperature
@@ -826,7 +786,8 @@ void loop()
     command = "";
     sendStatus("-");
   }
-    else if ( string.substring(0, 2) == "KL" )
+
+  else if ( string.substring(0, 2) == "KL" )
   {
     // Resets the valves to starting position
     startingPosition();
@@ -834,16 +795,19 @@ void loop()
     command = "";
     sendStatus("-");
   }
-  else if ( string.substring(0, 2) == "TC" )
-  {
-    // Sets the housing temperature
-    PID_Status = string.substring(2, 9).toInt();
-    string = "";
-    command = "";
-    sendStatus("-");
-  }
+
+  // else if ( string.substring(0, 2) == "TC" )
+  // {
+  //   // Turns the fans on/off
+  //   PID_Status = string.substring(2, 9).toInt();
+  //   string = "";
+  //   command = "";
+  //   sendStatus("-");
+  // }
+
   else if ( string.substring(0, 2) == "YP" )
   {
+    // Move bellow Y (sample side)
     runYP( string.substring(2, 9).toFloat(), "MY" );
     string = "";
     command = "";
@@ -852,6 +816,7 @@ void loop()
 
   else if ( string.substring(0, 2) == "AX" )
   {
+    // Wait until gauge A reaches the required pressure - for air refill
     runAX(string.substring(2, 9).toFloat());
     string = "";
     command = "";
@@ -860,54 +825,64 @@ void loop()
 
   else if ( string.substring(0, 2) == "YS" )
   {
-    // Sets the pressure in bellows Y to the given pressure YS1.702
+    // Set pressure in bellow Y (sample side)
     setPressureY( string.substring(2, 9).toFloat() );
     string = "";
     command = "";
     sendStatus("-");
   }
+
   else if ( string.substring(0, 2) == "ZP" )
   {
+    // Move bellow Z
     runZP( string.substring(2, 9).toFloat(), "MZ" );
     string = "";
     command = "";
     sendStatus("-");
   }
+
   else if ( string.substring(0, 2) == "SN" )
   {
+    // Set N2 pressure by moving the Z bellow
     setN2Pressure( string.substring(2, 9).toFloat() );
     string = "";
     command = "";
     sendStatus("-");
   }
+
   else if ( string.substring(0, 2) == "RS" )
   {
+    // Refill sample from manifold
+    // To work, this function needs a starting position, and
+    // that the sample gas is aleady in the manifold and not the autofinger
     refillSample( string.substring(2, 9).toFloat() );
     string = "";
     command = "";
     sendStatus("-");
   }
+
+  // else if ( string.substring(0, 1) == "S" )
+  // {
   // Get the current status & sleep (set motor currents to zero)
-  else if ( string.substring(0, 1) == "S" )
-  {
-    digitalWrite(XYZsleepPin, LOW);
-    string = "";
-    command = "";
-    stat = "S";
-    sendStatus("-");
-  }
+  //   digitalWrite(XYZsleepPin, LOW);
+  //   string = "";
+  //   command = "";
+  //   stat = "S";
+  //   sendStatus("-");
+  // }
   // Get current status & wake up
-  else if ( string.substring(0, 1) == "W" )
-  {
-    digitalWrite(XYZsleepPin, HIGH);
-    string = "";
-    command = "";
-    stat = "W";
-    sendStatus("-");
-  }
-  // Set the valve positions 'V02C'
+  // else if ( string.substring(0, 1) == "W" )
+  // {
+  //   digitalWrite(XYZsleepPin, HIGH);
+  //   string = "";
+  //   command = "";
+  //   stat = "W";
+  //   sendStatus("-");
+  // }
+
   else if ( string.substring(0, 1) == "V" )
   {
+    // Set the valve positions
     // Extract an integer out of the valve number
     int v = string.substring(1, 3).toInt();
     if ( string.substring(3, 4) == "O" )
@@ -942,15 +917,18 @@ void loop()
     command = "";
     sendStatus("-");
   }
-  // Just send the status
+
   else if ( string.substring(0, 1) == "?" )
   {
+    // Just send the status
     sendStatus("-");
     string = "";
     command = "";
   }
 
   // Print out the current settings
-  sendStatus("-"); // Disabled for programming
+  sendStatus("-");
+
   delay(50);
+
 }

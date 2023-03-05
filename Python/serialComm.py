@@ -9,7 +9,7 @@ arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
 # Laser spectrometer serial communication (can also be ttyUSB1)
 laser = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=1)
 # Edwards pressure gauge serial communication (can also be ttyUSB0)
-edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=1)
+edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
 # Initialize the breakout sensors
 sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
 
@@ -25,8 +25,7 @@ m = base.Client(('127.0.0.1', 11211))
 m.set('key2', "")
 
 arduino.readline()
-time.sleep(2)
-# This is to wait until the Arduino is ready and the status message shows up, it starts with an 'X'
+time.sleep(2) # This is to wait until the Arduino is ready and the status message shows up
 
 print("Starting continuously reading data from Arduino.")
 
@@ -52,8 +51,13 @@ while( 2 > 1 ):
 
     # Read Arduino data
     status = arduino.readline()
-    # print(status) # Show the raw serial output of the Arduino in the Terminal - for debugging
+    print(status) # Show the raw serial output of the Arduino in the Terminal - for debugging
+    print(len(status)) # Show the length of the serial output of the Arduino in the Terminal - for debugging
     status = status.decode('utf-8')
+
+    # Continue only with Arduino status strings that are whole and correct
+    if(len(status) < 106 or len(status) > 115):
+        status = ""
     status = status[:-1]
 
     # Read Edwards pressure gauge and temperature sensor every 10 cycles
@@ -78,8 +82,8 @@ while( 2 > 1 ):
     if( status != "" ):
         status = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ',' + status[:-1]
         m.set('key', status + ',' + pressure[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + tempr + ',' + vacuum  + ',' + str(roomT)+ ',' + str(roomH) + ',' + str(roomP))
-        # Show status string in terminal - for debugging
-        # print(status + ',' + pressure[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + tempr + ',' + vacuum + ',' + str(roomT) + ',' + str(roomH) + ',' + str(roomP))
+        Show status string in terminal - for debugging
+        print(status + ',' + pressure[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + tempr + ',' + vacuum  + ',' + str(roomT)+ ',' + str(roomH) + ',' + str(roomP))
         time.sleep(0.05)
 
     # Receive commands for Arduino from PHP via shared variable 'key2'
@@ -91,3 +95,6 @@ while( 2 > 1 ):
         time.sleep(0.05)
 
     i = i + 1
+
+    # Clean up the shared variables
+    m.close()
