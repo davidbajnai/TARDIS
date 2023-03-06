@@ -1,3 +1,4 @@
+<!-- This is the README file for GitHub -->
 # TARDIS: <img src="Images/TARDIS_logo.png" align="right" width="100"/> <br/> TILDAS + Automated Remix & Dual Inlet System
 
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3784963.svg)](https://doi.org/10.5281/zenodo.3784963) -->

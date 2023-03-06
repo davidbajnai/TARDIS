@@ -711,7 +711,7 @@ void sendStatus( String param )
   Serial.print( "," );
   Serial.print( Zaxis.currentPosition() );
   Serial.print(",");
-  Serial.print( Zaxis.currentPosition() * 100 / 15960.00 );
+  Serial.print( Zaxis.currentPosition() * 100 / 15960.00, 2 );
   Serial.print(",");
   Serial.print( Xpressure, 3 );
   Serial.print( "," );
@@ -735,13 +735,15 @@ void sendStatus( String param )
     pinNr = pinNr + 1;
   }
   Serial.print(",");
-  Serial.print(boxHum, 3);
+  Serial.print(boxHum, 2);
   Serial.print(",");
   Serial.print(boxTemp, 3);
   Serial.print(",");
   Serial.print(fanSpeed);
   
-  Serial.println("");
+  Serial.println(""); // End of status string
+  Serial.flush(); // Waits for the transmission of outgoing serial data to complete
+  
 }
 
 

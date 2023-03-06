@@ -1,7 +1,8 @@
 <?php
 
     // This script is used to:
-    // send commands to the TILDAS and the Arduino
+    // receives the status array from the serialComm.py
+    // and sends commands to the TILDAS and the Arduino
 
     $m = new Memcached();
     $m->addServer('127.0.0.1', 11211);

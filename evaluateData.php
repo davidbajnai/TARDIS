@@ -3,43 +3,52 @@
     // This script is used to:
     // start the data evaluation and clean up
 
+    date_default_timezone_set('CET');
+
     echo "Starting the evaluateData.php script<br>";
     if ( isset( $_POST['sampleName']) )
     {
-        $sampleName = explode( "/", $_POST['sampleName'] ); // Results/220226_084003_bottleCO2
+        $sampleName = explode( "/", $_POST['sampleName'] ); // Results/220226_084003_sampleName
         $sampleName = $sampleName[1];
         $polynomial = $_POST['polynomial']; // 0…3, 100 for standard bracketing
         $userName = urlencode( $_POST['userName'] );
+        echo "Parameters are recieved from index.html <br>";
     }
     else
     {
         $sampleName = $_GET['sampleName']; // Give sample name via URL
         $polynomial = $_GET['polynomial']; // 0…3, 100 for standard bracketing
         $userName = $_POST['userName'];
+        echo "Paramteres are recieved via URL <br>";
     }
     if( $userName == "" )
     {
         $userName = "Dummy_Dummy";
     }
 
-    // Execute shell command
+    // Do not evaluate data for refills
     if( fnmatch('*refill*',$sampleName) )
     {
         console.log("This was a refill, there will be no data processing.");
         exit();
     }
-    // else
-    // {
-    //     $cmd = "/usr/bin/python3 Python/processRawDataFiles.py " . $sampleName . " " . $polynomial . " 2>&1";
-    // }
 
-    // Start the python script to evaluate the data
-    $cmd = "/usr/bin/python3 Python/processRawDataFiles.py " . $sampleName . " " . $polynomial . " 2>&1";
-    $result = shell_exec( $cmd ); // isotope ratios from the evaluation script
-    echo $result;
+    // Decide which evaluation script to use. This is necessary because a change in the logfile structure
+    $measurementDateTime = DateTimeImmutable::createFromFormat('ymd_His', substr( $sampleName, 0, 13));
 
+    $changeDate = new DateTime('2023-03-06 13:00:00');
+    if ($measurementDateTime < $changeDate ) {
+        echo "Based on the measurement date (" . date_format($measurementDateTime, 'Y-m-d H:i:s') . " < " . date_format($changeDate, 'Y-m-d H:i:s') . ") we use the historic python script (processRawDataFiles1.py) <br>";
+        $cmd = "/usr/bin/python3 Python/processRawDataFiles1.py " . $sampleName . " " . $polynomial . " 2>&1";
+        $result = shell_exec( $cmd ); // isotope ratios from the evaluation script
+        echo $result . "<br>";
+    } else {
+        echo "Based on the measurement date (" . date_format($measurementDateTime, 'Y-m-d H:i:s') . " > " . date_format($changeDate, 'Y-m-d H:i:s'). ") we use the newer python script (processRawDataFiles2.py) <br>";
+        $cmd = "/usr/bin/python3 Python/processRawDataFiles2.py " . $sampleName . " " . $polynomial . " 2>&1";
+        $result = shell_exec( $cmd ); // isotope ratios from the evaluation script
+        echo $result . "<br>";
+    }
 
-    echo "<br>";
     echo "The python program has evaluated the data<br />";
 
     $resultArray = explode(" ",$result);

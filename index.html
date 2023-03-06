@@ -36,14 +36,16 @@
 			}
 
 			function createFolder() {
+				console.log( "Creating folder." );
 				// Create a folder for the data
 				$.ajax({
 						type: "POST",
 						url: 'createFolder.php',
 						async: false,
 						data: {
+							date: $('#timeMeasurementStarted').html(), // Date and time when measurement started in UNIX format & UTC timezone
 							sampleName: $('#sampleName').val()
-							},
+						},
 						success: function(response){
 							console.log(response);
 							$('#folderName').html( response );
@@ -69,14 +71,14 @@
 
 			function copyFiles() {
 				console.log( "Copy files." );
-				// Copy all files with a date younger than date
+				// Copy all files with a date younger than timeMeasurementStarted
 				$.ajax({
 						type: "POST",
 						url: 'copyFiles.php',
 						async: false,
 						data: {
-							date: $('#timeMeasurementStarted').html(),
-							folderName: $('#folderName').html()
+							date: $('#timeMeasurementStarted').html(), // Date and time when measurement started in UNIX format & UTC timezone
+							folderName: $('#folderName').html() // Something like: Results/230306_123421_sampleName
 							},
 						success: function(response){
 							console.log(response);
@@ -146,14 +148,14 @@
 			
 			function sendCommand( cmd ){
 				$.ajax({
-					type: "POST", // request type
-					url: 'sendCommand.php', // the page containing php script
+					type: "POST",
+					url: 'sendCommand.php',
 					data: {cmd: cmd},
 					async: false,
 					success: function( response ){
 
 						// Now split the status string
-						const statusArr = response.split(",");
+						const statusArr = response.split(","); // The status array is received from serialComm.py via sendCommand.php
 						
 						$('#moveStatus').html( statusArr[1] );
 
@@ -282,16 +284,6 @@
 							i = i + 1;
 						}
 
-						// Room humidity
-						var roomH = statusArr[24];
-						$('#roomH').html( roomH );
-						// Room temperature
-						var roomT = statusArr[23];
-						$('#roomT').html( roomT );
-						// Room pressure
-						var roomP = statusArr[25];
-						$('#roomP').html( roomP );
-
 						// Box humidity
 						var roomRH = statusArr[13];
 						$('#roomRH').html( roomRH );
@@ -300,6 +292,9 @@
 						$('#housingT').html( housingT );
 						var fanSpeed = statusArr[15];
 						$('#fanSpeed').html(fanSpeed);
+
+						// Here starts the part of the status array related to the laserSpectrometer
+
 						var baratronMbar = statusArr[16] * 1.33322 + 0.406 + 0.223;
 						var baratronTorr = statusArr[16] * 1 + (0.406+0.223)/1.33322;
 						$('#baratron').html( baratronTorr.toFixed(3) );
@@ -323,6 +318,12 @@
 						$('#D17O').html( "Δ<sup>'17</sup>O: " + D17O.toFixed(3) + "‰");
 
 						$('#pCO2').html(Math.round( Number(mr3)/1000));
+
+						// Room humidity and temperature
+						var roomHumidity = statusArr[24];
+						$('#roomHumidity').html( roomHumidity );
+						var roomTemperature = statusArr[23];
+						$('#roomTemperature').html( roomTemperature );
 
 						// Reset the command string
 						cmd = "";
@@ -722,14 +723,11 @@
 			<div id='roomRH' class="box" style="top:252px;left:30px;width:60px;">undefined</div>
 			<p class="label" style="position:absolute;top:235px;left:100px;">%rH (box)</p>
 
-			<div id='roomT' class="box" style="top:287px;left:30px;width:60px;">undefined</div>
+			<div id='roomTemperature' class="box" style="top:287px;left:30px;width:60px;">undefined</div>
 			<p class="label" style="position:absolute;top:267px;left:100px;">°C (room)</p>
 
-			<div id='roomH' class="box" style="top:314px;left:30px;width:60px;">undefined</div>
+			<div id='roomHumidity' class="box" style="top:314px;left:30px;width:60px;">undefined</div>
 			<p class="label" style="position:absolute;top:294px;left:100px;">%rH (room)</p>
-
-			<div id='roomP' class="box" style="top:341px;left:30px;width:60px;">undefined</div>
-			<p class="label" style="top:321px;left:100px;">mbar (room)</p>
 
 			<div id='progressBar' style='position:absolute;top:140px;left:1370px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
 			<div id='progress' style='position:absolute;top:140px;left:1370px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
@@ -754,7 +752,7 @@
 
 			<div style="position:absolute;top:85px;left:150px;height:30px;width:130px;border:4px solid #061350;font-family:monospace;color: #ffffff;background-color: #1455C0;padding-left:8px;padding-top:5px;" id="digital">Time</div>			
 			
-			<button type='button' class="button" style='top:140px;left:1700px;height:28px;width:120px;background-color:#63A615;' onclick='createFolder();$("#methodStatus").html("Method running");var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 );$("#timeMeasurementStarted").html( timeMeasurementStarted );$("#sample0").prepend("&#9758; ");'>Start sequence</button>
+			<button type='button' class="button" style='top:140px;left:1700px;height:28px;width:120px;background-color:#63A615;' onclick='var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 ); $("#timeMeasurementStarted").html( timeMeasurementStarted ); createFolder(); $("#methodStatus").html("Method running"); $("#sample0").prepend("&#9758; ");'>Start sequence</button>
 
 			<button onclick="startingPosition();" class="button" style="top:190px;left:1700px;width:120px;height:28px;background-color:#9A6CA6;">Starting position</button>
 			
@@ -880,18 +878,18 @@
 					{
 						var currentTime = parseInt( new Date().getTime() / 1000 );
 
-						// Write data to logfile
+						// Save data to logfile array every 5 seconds
 						if( currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").val() != "" )
 						{
 							// IMPORTANT: if you add/remove elements below, you have to update the lenght filter in the writeLogfile.php!
 							// Unix -> Mac timestamp, TILDAS uses Mac timestamp
-							logData.push( [parseInt(currentTime + 2082844800),parseFloat( $('#housingT').html() ),parseFloat( $('#housingTargetT').val() ),parseFloat( $('#roomRH').html() ),$('#percentageXsteps').html(),$('#percentageYsteps').html(),$('#percentageZsteps').html(),$('#pressureX').html(),$('#pressureY').html(),$('#pressureA').html(),$('#edwards').html().trim(),parseFloat( $('#fanSpeed').html()),parseFloat( $('#roomT').html()),parseFloat( $('#roomH').html()),parseFloat( $('#roomP').html())] );
+							logData.push( [parseInt(currentTime + 2082844800 + 3600),parseFloat( $('#housingT').html() ),parseFloat( $('#housingTargetT').val() ),parseFloat( $('#roomRH').html() ),$('#percentageXsteps').html(),$('#percentageYsteps').html(),$('#percentageZsteps').html(),$('#pressureX').html(),$('#pressureY').html(),$('#pressureA').html(),$('#edwards').html().trim(),parseFloat( $('#fanSpeed').html()),parseFloat( $('#roomTemperature').html()),parseFloat( $('#roomHumidity').html())] );
 							
 							if( currentTime % 30 == 0 )
 							{
-								// Write data to logfile every ~ 2 min
-								console.log("Writing to logfile now.");
-								writeLogfile( logData,$('#folderName').html() );
+								// Write data to logfile every 30 seconds
+								// console.log("Writing to logfile now.");
+								writeLogfile( logData, $('#folderName').html() );
 								// Reset logfile array
 								logData = [];
 							}

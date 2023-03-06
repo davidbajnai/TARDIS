@@ -11,18 +11,19 @@ $folderName = $_POST['folderName'];
 if( file_exists( $folderName . "/logFile.csv" ) === false )
 {
     // Name the header row
-    file_put_contents( $folderName . "/logFile.csv", "SampleName,Time(abs),Temperature(room),TargetT(box),Humidity(room),percentageX,percentageY,percentageZ,pressureX,pressureY,pressureA,edwards,fanSpeed,RoomT,RoomH,RoomP\n", FILE_APPEND  | LOCK_EX );
+    file_put_contents( $folderName . "/logFile.csv", "sampleName,dateTime,boxTemperature,boxSetpoint,boxHumidity,percentageX,percentageY,percentageZ,pressureX,pressureY,pressureA,vacuum,fanSpeed,roomTemperature,roomHumidity\n", FILE_APPEND  | LOCK_EX );
 }
 
 // Add data to the logfile
 foreach ($logData as $row) {
+
+    // Add data to logfile if no data is missing.
     $rowLength = count($row);
-    $desiredLength = 15;
+    $desiredLength = 14;
     if( $rowLength === $desiredLength )
     {
-        // echo "This row is 15 elements long, I will copy it into the logFile ";
         file_put_contents( $folderName . "/logFile.csv", $sampleName . "," . trim(implode(",",$row)) . "\n", FILE_APPEND  | LOCK_EX );
     }
 }
 
-echo "Data written to logfile.";
+echo "Data written to logfile at " . date("ymd_His");

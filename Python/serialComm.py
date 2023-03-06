@@ -33,32 +33,35 @@ i = 0
 while( 2 > 1 ):
     # Read laser spectrometer data
     if( laser.inWaiting() > 10 ):
-        laserStatus = laser.readline()
-        laserStatus = laserStatus.decode('utf-8')
-        # print(laserStatus)
-        laserStatus = laserStatus[:-1]
+        laserStatus = laser.readline().decode('utf-8')
+        # print(laserStatus) # Show the raw serial output of the TILDAS in the Terminal - for debugging
+        laserStatus = laserStatus[:-1] # Remove the line break from the end of the string
+        # print(laserStatus) # Show the raw serial output of the TILDAS in the Terminal - for debugging
+
         laserStatusArray = laserStatus.split(',')
-        mr1 = laserStatusArray[1]
-        mr2 = laserStatusArray[2]
-        mr3 = laserStatusArray[3]
-        mr4 = laserStatusArray[4]
-        mr5 = laserStatusArray[5]
-        mr6 = laserStatusArray[6]
-        mr7 = laserStatusArray[7]
-        mr8 = laserStatusArray[8]
-        pressure = laserStatusArray[10]
-        tempr = laserStatusArray[9]
+
+        mr1 = laserStatusArray[1] # 627
+        mr2 = laserStatusArray[2] # 628
+        mr3 = laserStatusArray[3] # 626
+        mr4 = laserStatusArray[4] # free-path CO2
+        cellT = laserStatusArray[9] # cell temperature
+        cellP = laserStatusArray[10] # cell pressure (Torr)
+
+        laserStatus = cellP[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + cellT
+        # print(laserStatus) # Show laser status string in the Terminal - for debugging
+
+        # These are not used
+        # mr5 = laserStatusArray[5]
+        # mr6 = laserStatusArray[6]
+        # mr7 = laserStatusArray[7]
+        # mr8 = laserStatusArray[8]
 
     # Read Arduino data
-    status = arduino.readline()
-    print(status) # Show the raw serial output of the Arduino in the Terminal - for debugging
-    print(len(status)) # Show the length of the serial output of the Arduino in the Terminal - for debugging
-    status = status.decode('utf-8')
-
-    # Continue only with Arduino status strings that are whole and correct
-    if(len(status) < 106 or len(status) > 115):
-        status = ""
-    status = status[:-1]
+    arduinoStatus = arduino.readline()
+    # print(arduinoStatus) # Show the raw serial output of the Arduino in the Terminal - for debugging
+    arduinoStatus = arduinoStatus.decode('utf-8')
+    arduinoStatus = arduinoStatus[:-1] # Remove the line break from the end of the string
+    # print(arduinoStatus) # Show the status string in the Terminal - for debugging
 
     # Read Edwards pressure gauge and temperature sensor every 10 cycles
     if(i == 10):
@@ -71,19 +74,24 @@ while( 2 > 1 ):
         
         # room temperature from sensor
         sensor.get_sensor_data()
-        roomT = '{:05.3f}'.format(sensor.data.temperature)
-        roomH = '{:05.3f}'.format(sensor.data.humidity)
-        roomP = '{:05.3f}'.format(sensor.data.pressure)
+        roomT = '{:05.2f}'.format(sensor.data.temperature)
+        roomH = '{:05.2f}'.format(sensor.data.humidity)
         
         time.sleep(0.05)
         i = 0
 
-    # Create a status string from the information from Arduino, TILDAS, and Edwards gauge and store it for PHP in the shared variable 'key'
-    if( status != "" ):
-        status = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ',' + status[:-1]
-        m.set('key', status + ',' + pressure[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + tempr + ',' + vacuum  + ',' + str(roomT)+ ',' + str(roomH) + ',' + str(roomP))
-        Show status string in terminal - for debugging
-        print(status + ',' + pressure[:-1] + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4 + ',' + tempr + ',' + vacuum  + ',' + str(roomT)+ ',' + str(roomH) + ',' + str(roomP))
+    # Create a status string from the information from Arduino, TILDAS, Edwards gauge, and room sensor and store it for PHP in the shared variable 'key'
+    if( arduinoStatus != "" ):
+
+        # Create the status string
+        timeNow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        status = timeNow + ',' + arduinoStatus[:-1] + ',' + laserStatus + ',' + vacuum  + ',' + str(roomT)+ ',' + str(roomH)
+
+        # Set shared variable: this is what the sendCommand.php files recieves
+        m.set('key', status)
+
+        # print(status) # Show the status string in the Terminal - for debugging
+
         time.sleep(0.05)
 
     # Receive commands for Arduino from PHP via shared variable 'key2'
