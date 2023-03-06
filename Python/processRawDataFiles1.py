@@ -1,4 +1,6 @@
 # this script plots the TILDAS data and calculates the isotope ratios
+# NOTE: this is the script used to process data made before 2023-03-06
+# for newer data, use the processRawDataFiles2.py
 
 # the script has to start with this, do not move these lines
 import os
@@ -691,7 +693,7 @@ outlierPlot = outlierPlot.loc[outlierPlot['IH_score'].abs() >= 5]
 OutLab = "No outliers"
 if nIHOutliers > 0 and polynomial == "100":
     OutLab = "Outlier (N: " + str(nIHOutliers) +")"
-    plt.scatter(outlierPlot['Time'],  outlierPlot['D17O'], marker = "*", s = 20, c = "C4", label = OutLab, zorder = 6)
+    plt.scatter(outlierPlot['Time'], outlierPlot['D17O'], marker = "*", s = 20, c = "C4", label = OutLab, zorder = 6)
     if nIHOutliers == 1 :
         OutLab = str(nIHOutliers) + " outlier cycle"
     else:
@@ -726,7 +728,7 @@ plt.legend()
 
 plt.tight_layout()
 plt.savefig(str(folder + "FitPlot.svg"))
-plt.savefig(str(folder +  "FitPlot.png"), dpi = 300)
+plt.savefig(str(folder + "FitPlot.png"), dpi = 300)
 
 ##### Bracketing trend ####
 if (polynomial == "100"):
@@ -748,7 +750,7 @@ if (polynomial == "100"):
     plt.legend()
     plt.tight_layout()
     plt.savefig(str(folder + "bracketingResults.svg"))
-    plt.savefig(str(folder +  "bracketingResults.png"), dpi = 300)
+    plt.savefig(str(folder + "bracketingResults.png"), dpi = 300)
 
 
 # Print out the values. This is what the evaluateData.php reads out

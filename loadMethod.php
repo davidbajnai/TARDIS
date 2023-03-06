@@ -3,13 +3,13 @@
     // This script is used to:
     // load a specific method .csv file from the Methods folder
 
-    /* Get the name of the uploaded file */
+    // Get the name of the uploaded file
     $filename = $_POST['methodFileName'];
 
-    /* Choose where to save the uploaded file */
+    // Choose where to save the uploaded file
     $location = "./Methods/" . $filename;
 
-    /* Save the uploaded file to the local filesystem */
+    // Save the uploaded file to the local filesystem
     $file = fopen($location, "r");
     $col1_array = [];
     $col2_array = [];

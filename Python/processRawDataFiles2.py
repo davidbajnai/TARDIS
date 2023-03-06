@@ -1,4 +1,7 @@
 # this script plots the TILDAS data and calculates the isotope ratios
+# NOTE: this is the script used to process data made after 2023-03-06
+#       this script is not back-compatible with older results
+#       for older data, use the processRawDataFiles2.py
 
 # the script has to start with this, do not move these lines
 import os
@@ -184,17 +187,16 @@ plt.ylabel("Temperature (°C, coolant)")
 mean = np.round(np.mean(y), 3)
 std = np.round(np.std(y), 3)
 labelCoolantT = str(mean) + "±" + str(std) + " °C"
-if (exists(folder + "logFile.csv")) and ('roomTemperature' in dfLogFile.columns):
-    ax5b = ax6.twinx()
-    ax5b.spines['right'].set_color('C1')
-    x = x_logFile
-    y = dfLogFile['roomTemperature']
-    plt.plot(x, y, color = "C1")
-    plt.ylabel("Temperature (°C, room)")
-    mean = np.round(np.mean(y), 3)
-    std = np.round(np.std(y), 3)
-    labelRoomT = str(mean) + "±" + str(std) + " °C"
-    plt.text(1 - 0.01, 0.02, labelRoomT, size=8, color="C1", ha = 'right', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
+ax5b = ax6.twinx()
+ax5b.spines['right'].set_color('C1')
+x = x_logFile
+y = dfLogFile['roomTemperature']
+plt.plot(x, y, color = "C1")
+plt.ylabel("Temperature (°C, room)")
+mean = np.round(np.mean(y), 3)
+std = np.round(np.std(y), 3)
+labelRoomT = str(mean) + "±" + str(std) + " °C"
+plt.text(1 - 0.01, 0.02, labelRoomT, size=8, color="C1", ha = 'right', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
 plt.text(0.01, 0.02, labelCoolantT, size=8, color="black", ha = 'left', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
 plt.text(0.99, 0.98, 'F', size = 14, ha ='right', va = 'top', transform = ax6.transAxes)
 
@@ -276,7 +278,7 @@ plt.savefig(folder + "rawData.png", dpi = 300)
 
 # Fit the ref and sam data with the same a1, a2, a3 and only different intercepts r0, s0
 # Modified after https://stackoverflow.com/questions/51482486/python-global-fitting-for-data-sets-of-different-sizes
-def function1(data, r0, s0, a1, a2, a3):  # not all parameters are used here, a1, a2 are sha#b51d14
+def function1(data, r0, s0, a1, a2, a3): # not all parameters are used here, a1, a2 are sha#b51d14
     if polynomial == "100":
         return r0 + a1 * data + a2 * data * data # second order polynomial data calculated for bracketing resutls too
     if polynomial == "3":
@@ -674,7 +676,7 @@ outlierPlot = outlierPlot.loc[outlierPlot['IH_score'].abs() >= 5]
 OutLab = "No outliers"
 if nIHOutliers > 0 and polynomial == "100":
     OutLab = "Outlier (N: " + str(nIHOutliers) +")"
-    plt.scatter(outlierPlot['Time'],  outlierPlot['D17O'], marker = "*", s = 20, c = "C4", label = OutLab, zorder = 6)
+    plt.scatter(outlierPlot['Time'], outlierPlot['D17O'], marker = "*", s = 20, c = "C4", label = OutLab, zorder = 6)
     if nIHOutliers == 1 :
         OutLab = str(nIHOutliers) + " outlier cycle"
     else:
@@ -709,7 +711,7 @@ plt.legend()
 
 plt.tight_layout()
 plt.savefig(str(folder + "FitPlot.svg"))
-plt.savefig(str(folder +  "FitPlot.png"), dpi = 300)
+plt.savefig(str(folder + "FitPlot.png"), dpi = 300)
 
 ##### Bracketing trend ####
 if (polynomial == "100"):
@@ -731,7 +733,7 @@ if (polynomial == "100"):
     plt.legend()
     plt.tight_layout()
     plt.savefig(str(folder + "bracketingResults.svg"))
-    plt.savefig(str(folder +  "bracketingResults.png"), dpi = 300)
+    plt.savefig(str(folder + "bracketingResults.png"), dpi = 300)
 
 
 # Print out the values. This is what the evaluateData.php reads out

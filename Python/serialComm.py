@@ -85,7 +85,7 @@ while( 2 > 1 ):
 
         # Create the status string
         timeNow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        status = timeNow + ',' + arduinoStatus[:-1] + ',' + laserStatus + ',' + vacuum  + ',' + str(roomT)+ ',' + str(roomH)
+        status = timeNow + ',' + arduinoStatus[:-1] + ',' + laserStatus + ',' + vacuum + ',' + str(roomT)+ ',' + str(roomH)
 
         # Set shared variable: this is what the sendCommand.php files recieves
         m.set('key', status)
