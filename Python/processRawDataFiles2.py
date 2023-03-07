@@ -1,7 +1,7 @@
-# this script plots the TILDAS data and calculates the isotope ratios
-# NOTE: this is the script used to process data made after 2023-03-06
-#       this script is not back-compatible with older results
-#       for older data, use the processRawDataFiles2.py
+# This script plots the TILDAS data and calculates the isotope ratios
+# NOTE: This is the script used to process data made after 2023-03-06
+#       This script is not back-compatible with older results
+#       For older data, use the processRawDataFiles1.py
 
 # the script has to start with this, do not move these lines
 import os

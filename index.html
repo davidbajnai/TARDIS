@@ -157,9 +157,10 @@
 						// Now split the status string
 						const statusArr = response.split(","); // The status array is received from serialComm.py via sendCommand.php
 						
+
 						$('#moveStatus').html( statusArr[1] );
 
-						// Lets display some images if conditions are met
+						// Lets display some images based on moveStatus
 						if( statusArr[1] == "AX" && $('#loadingA').attr('src') != 'Images/loading.gif')
 						{
 							$('#loadingA').attr('src','Images/loading.gif');
@@ -167,15 +168,6 @@
 						else if( statusArr[1] != "AX")
 						{
 							$('#loadingA').attr('src',"");
-						}
-
-						if( statusArr[6] != 7980 && $('#warningZ').attr('src') != 'Images/warning.png')
-						{
-							$('#warningZ').attr('src','Images/warning.png');
-						}
-						else if( statusArr[6] == 7980)
-						{
-							$('#warningZ').attr('src',"");
 						}
 
 						if( statusArr[1] == "MX" && $('#motorX').attr('src') == 'Images/standing_motor.gif' )
@@ -196,13 +188,15 @@
 							$('#motorY').attr('src','Images/standing_motor.gif');
 							$('#motorZ').attr('src','Images/standing_motor.gif');
 						}
-						var percentageX = statusArr[3];
+
 						// X bellows
+						var percentageX = statusArr[3];
 						$('#bellowsX').css('height', parseInt( 10 + 0.9 * percentageX ) + 'px');
 						$('#percentageX').html( parseFloat(percentageX).toFixed(1) );
 						$('#percentageX').css("color","gray");
 						$('#percentageXsteps').html( parseFloat(statusArr[2]).toFixed(2) );
 						$('#stepsX').html( statusArr[2] + ' steps' );
+
 						// Y bellows
 						var percentageY = statusArr[5];
 						$('#bellowsY').css('height', ( 10 + 0.9 * percentageY ) + 'px');
@@ -210,20 +204,34 @@
 						$('#percentageY').css("color","gray");
 						$('#percentageYsteps').html( parseFloat(statusArr[4]).toFixed(2) );
 						$('#stepsY').html( statusArr[4] + ' steps' );
+
 						// Z bellows
 						$('#percentageZsteps').html( parseFloat(statusArr[7]).toFixed(1) );
 						$('#stepsZ').html( statusArr[6]); //Steps
 						$('#bellowsZ').css('height',parseFloat( 10 + 0.9 * statusArr[7] ).toFixed(1) + 'px');
+
+						if( statusArr[6] != 7980 && $('#warningZ').attr('src') != 'Images/warning.png')
+						{
+							$('#warningZ').attr('src','Images/warning.png');
+						}
+						else if( statusArr[6] == 7980)
+						{
+							$('#warningZ').attr('src',"");
+						}
+
 						// X baratron
 						var pressureX = parseFloat(statusArr[8]);
 						$('#pressureX').html( pressureX.toFixed(3) );
+
 						// Y baratron
 						var pressureY = parseFloat(statusArr[9]);
 						$('#pressureY').html( pressureY.toFixed(3) );
+
 						// A baratron
 						var pressureA = parseFloat(statusArr[10]);
 						$('#pressureA').html( pressureA.toFixed(1) );
-						// Valves
+
+						// Valve status
 						var valveArray = statusArr[12];
 						const positions = [
 							"horizontal",
@@ -259,7 +267,6 @@
 							"horizontal",
 							"horizontal"	// V32
 						];
-						// Valve status
 						var i = 1;
 						var n = '0';
 						while(i <= 33)
@@ -287,46 +294,44 @@
 						// Box humidity
 						var roomRH = statusArr[13];
 						$('#roomRH').html( roomRH );
+
 						// Box temperature
 						var housingT = statusArr[14];
 						$('#housingT').html( housingT );
+
+						// Fan speed
 						var fanSpeed = statusArr[15];
 						$('#fanSpeed').html(fanSpeed);
 
-						// Here starts the part of the status array related to the laserSpectrometer
-
-						var baratronMbar = statusArr[16] * 1.33322 + 0.406 + 0.223;
-						var baratronTorr = statusArr[16] * 1 + (0.406+0.223)/1.33322;
+						// Cell pressure from the TILDAS
+						var baratronTorr = parseFloat(statusArr[16]) * 1 + (0.406+0.223)/1.33322;
 						$('#baratron').html( baratronTorr.toFixed(3) );
-						// Absorption lines and CO2 concentrations from spectrometer
+
+						// CO2 mixing ratios from the TILDAS
 						var mr1 = statusArr[17];
-						$('#mr1').html( '<sup>16</sup>C<sup>12</sup>O<sup>17</sup>O: ' + Math.round( Number(mr1)/1000 ) + ' ppmv' );
+						$('#mr1').html( parseFloat(mr1).toFixed(1) );
 						var mr2 = statusArr[18];
-						$('#mr2').html( '<sup>16</sup>C<sup>12</sup>O<sup>18</sup>O: ' + Math.round( Number(mr2)/1000 ) + ' ppmv' );
+						$('#mr2').html( parseFloat(mr2).toFixed(1) );
 						var mr3 = statusArr[19];
-						$('#mr3').html( '<sup>16</sup>C<sup>12</sup>O<sup>16</sup>O: ' + Math.round( Number(mr3)/1000 ) + ' ppmv' );
+						$('#mr3').html( parseFloat(mr3).toFixed(1) );
 						var mr4 = statusArr[20];
-						$('#mr4').html( 'free path CO<sub>2</sub>: ' + Math.round( Number(mr4)/1000 ) + ' ppmv' );
-						var edwards = statusArr[22];
-						$('#edwards').html( edwards );
-						var CellTemperature = statusArr[21]-273.15;
-						$('#CellTemperature').html( CellTemperature.toFixed(3) );
-						var d17O = ((mr1/mr3) / 1.08 - 1) * 1000;
-						var d18O = ((mr2/mr3) / 1.06 - 1) * 1000;
-						$('#d18O').html( 'δ<sup>18</sup>O: ' + d18O.toFixed(1) + "‰");
-						var D17O = d17O - 0.528 * d18O;
-						$('#D17O').html( "Δ<sup>'17</sup>O: " + D17O.toFixed(3) + "‰");
+						$('#mr4').html( parseFloat(mr4).toFixed(1) );
 
-						$('#pCO2').html(Math.round( Number(mr3)/1000));
+						// Edwards vacuum gauge
+						var edwards = statusArr[21];
+						$('#edwards').html( parseFloat(edwards).toExponential() );
 
-						// Room humidity and temperature
-						var roomHumidity = statusArr[24];
+						// Room humidity
+						var roomHumidity = statusArr[22];
 						$('#roomHumidity').html( roomHumidity );
+
+						// Room temperature
 						var roomTemperature = statusArr[23];
 						$('#roomTemperature').html( roomTemperature );
 
 						// Reset the command string
 						cmd = "";
+
 					},
 					error: function(xhr, status, error){
 						console.error(error);
@@ -627,11 +632,11 @@
 						
 			<span id="cycleJS" style="position:absolute;top:35px;left:150px;height:30px;width:130px; border:4px solid #061350; font-family:monospace; color: #ffffff; background-color: #1455C0;padding-left:8px;padding-top:5px;">NaN</span>
 			
-			<div id="baratron" class="box" style="top:35px;left:660px;width:60px;">CellP </div>
-				<p class="label" style="top:15px;left:730px;color:white;">Torr (cell)</p>
+			<div id="baratron" class="box" style="top:55px;left:660px;width:60px;">CellP </div>
+				<p class="label" style="top:35px;left:730px;color:white;">Torr (cell)</p>
 				
-			<div id="CellTemperature" class="box" style="top:75px;left:660px;width:60px;">CellT</div>
-				<p class="label" style="top:55px;left:730px;color:white;">°C (cell)</p>
+			<!-- <div id="CellTemperature" class="box" style="top:75px;left:660px;width:60px;">CellT</div>
+				<p class="label" style="top:55px;left:730px;color:white;">°C (cell)</p> -->
 
 			<img id="bellowsX" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:295px;" />
 			<img id="bellowsY" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:1100px;" />
@@ -668,12 +673,16 @@
 			<span id="percentageY" class="box" style="top:425px;left:1750px;width:40px;">NaN</span>
 			<span id="stepsZ" class="box" style="top:425px;left:1800px;width:40px;">NaN</span>
 			
-			<span id="mr1" class="box" style="top:100px;left:1100px;width:180px;">mr1</span>
-			<span id="mr2" class="box" style="top:130px;left:1100px;width:180px;">mr2</span>
-			<span id="mr3" class="box" style="top:160px;left:1100px;width:180px;">mr3</span>
-			<span id="mr4" class="box" style="top:190px;left:1100px;width:180px;">mr4</span>
-			<span id="d18O" class="box" style="top:220px;left:1100px;width:180px;">d18O</span>
-			<span id="D17O" class="box" style="top:250px;left:1100px;width:180px;">D17O</span>
+			<span id="mr1" class="box" style="top:165px;left:1060px;width:60px;">mr1</span>
+			<p class="label" style="top:145px;left:1130px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr2" class="box" style="top:195px;left:1060px;width:60px;">mr2</span>
+			<p class="label" style="top:175px;left:1130px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr3" class="box" style="top:225px;left:1060px;width:60px;">mr3</span>
+			<p class="label" style="top:205px;left:1130px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr4" class="box" style="top:255px;left:1060px;width:60px;">mr4</span>
+			<p class="label" style="top:235px;left:1130px;">free-path CO<sub>2</sub> (ppmv)</p>
+			<!-- <span id="d18O" class="box" style="top:220px;left:1040px;width:180px;">d18O</span>
+			<span id="D17O" class="box" style="top:250px;left:1040px;width:180px;">D17O</span> -->
 			
 			<span id="edwards" class="box" style="top:353px;left:858px;width:70px;">edwards</span>
 			<p class="label" style="top:308px;left:858px;">Vacuum (mbar)</p>
@@ -746,7 +755,7 @@
 			<div id="sample_pCO2" class="info" style="top:580px;left:1700px;">0</div>
 			<div id="reference_pCO2" class="info" style="top:600px;left:1700px;">0</div>
 			<div id="correction_pCO2" class="info" style="top:620px;left:1700px;">1.000</div>
-			<div id="pCO2" class="info" style="top:640px;left:1700px;">undefined</div>
+			<!-- <div id="pCO2" class="info" style="top:640px;left:1700px;">undefined</div> -->
 
 			<div id="cycle" style="position:absolute;top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
 
@@ -779,6 +788,7 @@
 					processData: false,
 					contentType: false,
 					success: function(result) {
+						console.log( "Method uploaded successfully.");
 					}
 				});
 			});
@@ -786,22 +796,23 @@
 			function loadMethod( methodFileName ) {
 				var xM = methodFileName;
 				$.ajax({
-					url: 'loadMethod.php',
+					url: 'uploadMethod.php',
 					data: {
 						methodFileName: xM
 						},
 					type: 'POST',
 					success: function( result ) {
-						console.log( "loadMethod-Funktion",result );
+						console.log( "Method loaded successfully.");
 						$('#method').empty();
 						colArr = result.split("|");
 						commandsArray = [];
 						commandsArray = colArr[0].split(","); // This is a 1D array here
-						console.log("commandsArray",commandsArray);
-						parameterArray = colArr[1].split(","); // For valves: 0 = close, 1 = open, for bellows position in %
-						console.log("parameterArray",parameterArray);
+						// console.log("commandsArray",commandsArray); // Log the commands array - for debugging
+						parameterArray = colArr[1].split(",");
+						// console.log("parameterArray",parameterArray); // Log the parameter array - for debugging
 						timeArray = colArr[2].split(",");
-						console.log("timeArray",timeArray);
+						// console.log("timeArray",timeArray); // Log the wait time array - for debugging
+
 						// Create list with commands on frontpanel
 						var vertical = 0;
 						for (let i = 0; i < commandsArray.length; i++) {
@@ -822,20 +833,22 @@
 					processData: false,
 					contentType: false,
 					success: function(result) {
+						console.log( "Sequence sucessfully uploaded.");
 						// Delete all elements in div sequence
 						$('#sequence').empty();
 						var colSeqArr = result.split("|");
 						let sampleNameArr = colSeqArr[0].split(",");
-						console.log( "Sample array", sampleNameArr );
+						// console.log( "Sample array", sampleNameArr ); // Log the sample array - for debugging
 						let methodFileArr = colSeqArr[1].split(",");
-						console.log( "Methods file name array", methodFileArr );
+						// console.log( "Methods file name array", methodFileArr ); // Log the methods file name array - for debugging
+						
 						// Create list with commands on frontpanel
 						var vertical = 0;
 						for (let i = 0; i < sampleNameArr.length; i++) {
 							if( i == 0 )
 							{
 								// Loading the method of the first sample
-								console.log( "First method file:", methodFileArr[i] );
+								// console.log( "First method file:", methodFileArr[i] );
 								loadMethod( methodFileArr[i] );
 								$('#sampleName').val( sampleNameArr[i] );
 							}
@@ -1081,7 +1094,7 @@
 
 							if( parameterArray[line] == 0 )
 							{
-								$("#reference_pCO2").html( $("#pCO2").html() );
+								$("#reference_pCO2").html( $("#mr3").html() );
 
 								if( $( "#sample_pCO2" ).html() != "0" )
 								{
@@ -1090,7 +1103,7 @@
 							}
 							else if( parameterArray[line] == 1 )
 							{
-								$("#sample_pCO2").html( $("#pCO2").html() );
+								$("#sample_pCO2").html( $("#mr3").html() );
 								
 								if( $( "#reference_pCO2" ).html() != "0" )
 								{
@@ -1412,6 +1425,7 @@
 								if( $('#sample' + sample ).length )
 								{
 									// OK, next sample exists, read out sample name & method file name now
+									console.log("Moving on to next sample.");
 									$("#sample" + sample).prepend("&#9758; ");
 									let sampleName = $( '#sample' + sample ).html().split(",")[1];
 									let methodFileName = $( '#sample' + sample ).html().split(",")[2];
@@ -1419,7 +1433,9 @@
 									loadMethod( methodFileName );
 									line = 0;
 									cycle = 0;
+									$("#timeMeasurementStarted").html( parseInt( new Date().getTime() / 1000 ) );
 									createFolder();
+									console.log("Folder for next sample created.");
 									$("#methodStatus").html('Method running');
 									$('#cycle').html("0");
 									$( "#sample_pCO2" ).html( "0" );
