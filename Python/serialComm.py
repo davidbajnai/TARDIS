@@ -3,6 +3,7 @@ import time
 import serial
 import bme680
 import datetime
+import re
 
 # Arduino serial communication
 arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
@@ -19,6 +20,7 @@ sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
 # Set initial values, that are obviously fake
 # edwardsGauge = '1.00E+40'
 vacuum = '9.999'
+arduinoStatus = ""
 roomT = 1
 roomH = 1
 roomP = 1
@@ -50,19 +52,20 @@ while( 2 > 1 ):
         mr2 = str(round(float(laserStatusArray[2]) / 1000,1)) # 628
         mr3 = str(round(float(laserStatusArray[3]) / 1000,1)) # 626
         mr4 = str(round(float(laserStatusArray[4]) / 1000,1)) # free-path CO2
-        # cellT = laserStatusArray[9] # cell temperature
-        # cellP = laserStatusArray[10] # cell pressure (Torr)
         cellP = str(round(float(laserStatusArray[10]),3)) # cell pressure (Torr)
 
         laserStatus = cellP + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4
         # print(laserStatus) # Show laser status string in the Terminal - for debugging
 
     # Read Arduino data
-    arduinoStatus = arduino.readline()
+    arduinoStatusNew = arduino.readline().decode('utf-8').strip()
     # print(arduinoStatus) # Show the raw serial output of the Arduino in the Terminal - for debugging
-    arduinoStatus = arduinoStatus.decode('utf-8')
-    arduinoStatus = arduinoStatus[:-1] # Remove the line break from the end of the string
-    # print(arduinoStatus) # Show the status string in the Terminal - for debugging
+
+    # Check if we have a complete string using a regular expression
+    pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,][SW][,]\d{32}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,](?:0|[1-9]\d?|100)$')
+    if re.match(pattern, arduinoStatusNew) :
+        arduinoStatus = arduinoStatusNew
+    print(arduinoStatus) # Show the modified status string in the Terminal - for debugging
 
     # Read Edwards pressure gauge and temperature sensor every 10 cycles
     if(i == 10):
@@ -87,12 +90,12 @@ while( 2 > 1 ):
 
         # Create the status string
         timeNow = datetime.datetime.now().strftime("%H:%M:%S")
-        status = timeNow + ',' + arduinoStatus[:-1] + ',' + laserStatus + ',' + vacuum + ',' + str(roomT)+ ',' + str(roomH)
+        status = timeNow + ',' + arduinoStatus + ',' + laserStatus + ',' + vacuum + ',' + str(roomT)+ ',' + str(roomH)
 
         # Set shared variable: this is what the sendCommand.php files recieves
         m.set('key', status)
 
-        print(status) # Show the status string in the Terminal - for debugging
+        # print(status) # Show the status string in the Terminal - for debugging
 
         time.sleep(0.05)
 

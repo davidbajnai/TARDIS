@@ -16,14 +16,7 @@ if( file_exists( $folderName . "/logFile.csv" ) === false )
 
 // Add data to the logfile
 foreach ($logData as $row) {
-
-    // Add data to logfile if no data is missing.
-    $rowLength = count($row);
-    $desiredLength = 14;
-    if( $rowLength === $desiredLength )
-    {
-        file_put_contents( $folderName . "/logFile.csv", $sampleName . "," . trim(implode(",",$row)) . "\n", FILE_APPEND  | LOCK_EX );
-    }
+    file_put_contents( $folderName . "/logFile.csv", $sampleName . "," . trim(implode(",",$row)) . "\n", FILE_APPEND  | LOCK_EX );
 }
 
 echo "Data written to logfile at " . date("ymd_His");

@@ -53,7 +53,7 @@
 						});
 			}
 
-			function writeLogfile( logData,folderName ) {
+			function writeLogfile( logData, folderName ) {
 				// Write logdata
 				$.ajax({
 						type: "POST",
@@ -118,11 +118,6 @@
 				cmd = 'FS' + temp;
 				console.log( cmd );
 			}
-
-			// function setPIDStatus(status) {
-			// 	cmd = 'TC' + status;
-			// 	console.log( cmd );
-			// }
 
 			function startingPosition() {
 				cmd = 'KL';
@@ -319,7 +314,7 @@
 
 						// Edwards vacuum gauge
 						var edwards = statusArr[21];
-						$('#edwards').html( parseFloat(edwards).toExponential() );
+						$('#edwards').html( parseFloat(edwards).toFixed(4) );
 
 						// Room humidity
 						var roomHumidity = statusArr[22];

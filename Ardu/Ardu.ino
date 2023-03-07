@@ -403,16 +403,16 @@ void refillSample( float tPress )
 {
   // Get the pressure in bellows Y
   int expN = 0;
-  sendStatus("RS" + String(expN));
+  sendStatus("RS");
   while ( Ypressure < tPress && expN < 10 )
   {
     switchValve("V22O" );
-    wait(20,"RS" + String(expN));
+    wait(20,"RS");
     switchValve( "V22C" );
     switchValve( "V10O" );
-    wait(20,"RS" + String(expN));
+    wait(20,"RS");
     switchValve( "V10C" );
-    wait(20,"RS" + String(expN));
+    wait(20,"RS");
     expN = expN + 1;
   }
 }
@@ -797,15 +797,6 @@ void loop()
     command = "";
     sendStatus("-");
   }
-
-  // else if ( string.substring(0, 2) == "TC" )
-  // {
-  //   // Turns the fans on/off
-  //   PID_Status = string.substring(2, 9).toInt();
-  //   string = "";
-  //   command = "";
-  //   sendStatus("-");
-  // }
 
   else if ( string.substring(0, 2) == "YP" )
   {
