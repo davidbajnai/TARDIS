@@ -42,8 +42,7 @@ while( 2 > 1 ):
     #       The final measurement results are evaluated using the .str and .stc files
 
     if( laser.inWaiting() > 10 ):
-        laserStatus = laser.readline().decode('utf-8')
-        laserStatus = laserStatus[:-1] # Remove the line break from the end of the string
+        laserStatus = laser.readline().decode('utf-8').strip()
         # print(laserStatus) # Show the raw serial output of the TILDAS in the Terminal - for debugging
 
         laserStatusArray = laserStatus.split(',')
@@ -63,9 +62,9 @@ while( 2 > 1 ):
 
     # Check if we have a complete string using a regular expression
     pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,][SW][,]\d{32}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,](?:0|[1-9]\d?|100)$')
-    if re.match(pattern, arduinoStatusNew) :
+    if re.match(pattern, arduinoStatusNew):
         arduinoStatus = arduinoStatusNew
-    print(arduinoStatus) # Show the modified status string in the Terminal - for debugging
+    # print(arduinoStatus) # Show the modified status string in the Terminal - for debugging
 
     # Read Edwards pressure gauge and temperature sensor every 10 cycles
     if(i == 10):
