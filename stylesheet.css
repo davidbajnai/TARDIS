@@ -26,9 +26,19 @@ div {
     padding: 2px;
 }
 
-.label {
+.box_unimportant {
+    border: 1px solid black;
+    border-radius: 2px;
     position: absolute;
-    font-size: 18px;
+    text-align: left;
+    color: black !important;
+    background-color: #F5F4F1;
+    padding: 2px;
+}
+
+.label {
+    position: absolute !important;
+    font-size: 16px;
     color: black;
 }
 
@@ -68,7 +78,7 @@ div {
 }
 
 input[type=text], input[type=number]{
-    position: absolute;
+    position: absolute !important;
     color: #4F4B41;
     background-color:#F5F4F1;
     border: 1px solid black;

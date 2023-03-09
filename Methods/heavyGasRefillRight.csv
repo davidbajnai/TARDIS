@@ -9,27 +9,20 @@ V19,1,2
 V16,1,1
 BY,100,25
 V17,1,40
-V11,0,1
+V11,0,1, <- Close up the X-piece left of Y bellow 
 V12,0,1
 V13,0,1
-V09,1,10, <- Fill the X-piece (left of Y bellow) with CO2
-V16,0,1
-V17,0,1
+V09,1,10, <- Fill the X-piece left of Y bellow with CO2
 V09,0,1
-V11,1,1
-V13,1,5
-V11,0,1
-V13,0,1
-V12,1,1
-V16,1,1
-V27,1,5
+V12,1,10
 V12,0,1
+V27,1,2, <- Evacuate the line 
 V13,1,1
-V11,1,10
+V11,1,20
 V17,1,40
-V11,0,1
+V11,0,1, <- Close up the X-piece left of Y bellow 
 V13,0,1
-V12,1,1
+V12,1,5
 PY,1.861,1, <- Adjust the pressure in the sample bellow
 V12,0,1
 V13,1,1

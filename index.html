@@ -335,7 +335,6 @@
 			}
 
 			sendCommand();
-			// debug();
 
 		</script>
 
@@ -365,7 +364,7 @@
 				hourAngle = ( hour / 12 * 2 * Math.PI + 1/12 * minutes / 60 * 2 * Math.PI ) - 0.5 * Math.PI;
 				$('#digital').html( hour + ":" + pad(minutes,2) + ":" + pad(seconds,2) + "<br> Göttingen Hbf" );
 				// Write on canvas
-				var c = document.getElementById("myCanvas");
+				var c = document.getElementById("Bahnhofsuhr");
 				var ctx = c.getContext("2d");
 				ctx.clearRect(0, 0, c.width, c.height);
 				ctx.lineCap = 'round';
@@ -448,13 +447,17 @@
 
 	<body style="background-color: #38342F ;">
 	
-		<div id="wrap" style="position:relative; border:1.5px solid #F5F4F1; width:2010px;height:840px;border-radius: 4px;">
+		<div id="wrap" style="position:relative; border:1.5px solid #F5F4F1;width:2010px;height:840px;border-radius: 4px;">
 			
+			<!-- This is the schematic of the inlet system -->
 			<img src="Images/schaltbild.png" style="position:absolute;top:5px;left:5px;border-radius: 4px;" />
 
+			<!-- Some desing elements and labels -->
 			<img src="Images/GZG_logo_text_color.png" style="position:absolute;top:19px;left:1700px;width:290px;" />
 			<img src="Images/GOE_Logo.png" style="position:absolute;top:770px;left:1700px;width:290px;" />
-
+			<p class="label" style="top:39px;left:960px;">N<sub>2</sub> purging</p>
+			<p class="label" style="top:90px;left:960px;">Turbo</p>
+			<p class="label" style="top:250px;left:960px;">Scroll</p>
 
 			<div style="position:absolute;top:131px;left:725px;">
 				<span style="position:relative;top:-35px;left:77px;">V01</span>
@@ -615,7 +618,7 @@
 			</div>
 			-->
 			<div style="position:absolute;top:767px;left:1100px;">
-				<span style="position:relative;top:-35px;left:2px;">pump</span>
+				<span style="position:relative;top:-35px;left:27px;">pump</span>
 				<span style="position:relative;top:-35px;left:77px;">V32</span>
 				<img id="V32" src="Images/vertical_closed.png" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" style="width:50px;"/>
 				<span id="V32_label" style="display:none;">undefined</span>
@@ -628,23 +631,20 @@
 			<span id="cycleJS" style="position:absolute;top:35px;left:150px;height:30px;width:130px; border:4px solid #061350; font-family:monospace; color: #ffffff; background-color: #1455C0;padding-left:8px;padding-top:5px;">NaN</span>
 			
 			<div id="baratron" class="box" style="top:55px;left:660px;width:60px;">CellP </div>
-				<p class="label" style="top:35px;left:730px;color:white;">Torr (cell)</p>
-				
-			<!-- <div id="CellTemperature" class="box" style="top:75px;left:660px;width:60px;">CellT</div>
-				<p class="label" style="top:55px;left:730px;color:white;">°C (cell)</p> -->
+				<p class="label" style="top:39px;left:730px;color:white;">Torr (cell)</p>
 
 			<img id="bellowsX" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:295px;" />
 			<img id="bellowsY" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:1100px;" />
 			<img id="bellowsZ" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:320px;left:688px;" />
 			
 			<span id="pressureX" class="box" style="top:353px;left:319px;width:50px;">NaN</span>
-				<p class="label" style="top:308px;left:319px;">X (mbar)</p>
+				<p class="label" style="top:312px;left:319px;">X (mbar)</p>
 
 			<span id="pressureY" class="box" style="top:353px;left:1128px;width:50px;">NaN</span>
-				<p class="label" style="top:308px;left:1128px;">Y (mbar)</p>
+				<p class="label" style="top:312px;left:1128px;">Y (mbar)</p>
 
 			<div id='pressureA' class="box" style="top:555px;left:650px;width:50px;"><em>NaN</em></div>
-				<p class="label" style="top:513px;left:650px;">A (mbar)</p>
+				<p class="label" style="top:517px;left:650px;">A (mbar)</p>
 			<img id="loadingA" src="" style="width:25px;position:absolute;top:585px;left:650px;" />
 
 			<img id="motorX" src="Images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:380px;" />
@@ -663,24 +663,26 @@
 			<button onclick="moveBellows('Z');" class="button" style="top:480px;left:740px;width:50px;">Set Z</button>
 			<img id="warningZ" src="" style="height:25px;position:absolute;top:450px;left:650px;" />
 
-			<!-- Bellow parameters only necessary for the index.php to work -->
-			<span id="percentageX" class="box" style="top:425px;left:1700px;width:40px;">NaN</span>
-			<span id="percentageY" class="box" style="top:425px;left:1750px;width:40px;">NaN</span>
-			<span id="stepsZ" class="box" style="top:425px;left:1800px;width:40px;">NaN</span>
+			<!-- Bellow parameters only necessary for the script to work -->
+			<span id="percentageX" class="box_unimportant" style="top:653px;left:1700px;width:40px;">NaN</span>
+			<span id="percentageY" class="box_unimportant" style="top:653px;left:1750px;width:40px;">NaN</span>
+			<span id="stepsZ" class="box_unimportant" style="top:653px;left:1800px;width:40px;">NaN</span>
 			
-			<span id="mr1" class="box" style="top:165px;left:1060px;width:60px;">mr1</span>
-			<p class="label" style="top:145px;left:1130px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr2" class="box" style="top:195px;left:1060px;width:60px;">mr2</span>
-			<p class="label" style="top:175px;left:1130px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr3" class="box" style="top:225px;left:1060px;width:60px;">mr3</span>
-			<p class="label" style="top:205px;left:1130px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr4" class="box" style="top:255px;left:1060px;width:60px;">mr4</span>
-			<p class="label" style="top:235px;left:1130px;">free-path CO<sub>2</sub> (ppmv)</p>
+			<!-- Mixing ratio indicators -->
+			<p class="label" style="top:170px;left:1700px;">Mixing ratios  <span style="color: #EC0016;font-weight: bold;">_________</span></p>
+			<span id="mr1" class="box" style="top:215px;left:1700px;width:60px;">mr1</span>
+				<p class="label" style="top:200px;left:1770px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr2" class="box" style="top:245px;left:1700px;width:60px;">mr2</span>
+				<p class="label" style="top:230px;left:1770px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr3" class="box" style="top:275px;left:1700px;width:60px;">mr3</span>
+				<p class="label" style="top:260px;left:1770px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr4" class="box" style="top:305px;left:1700px;width:60px;">mr4</span>
+				<p class="label" style="top:290px;left:1770px;">free-path CO<sub>2</sub> (ppmv)</p>
 			<!-- <span id="d18O" class="box" style="top:220px;left:1040px;width:180px;">d18O</span>
 			<span id="D17O" class="box" style="top:250px;left:1040px;width:180px;">D17O</span> -->
 			
 			<span id="edwards" class="box" style="top:353px;left:858px;width:70px;">edwards</span>
-			<p class="label" style="top:308px;left:858px;">Vacuum (mbar)</p>
+			<p class="label" style="top:312px;left:858px;">Vacuum (mbar)</p>
 			
 			<div style="position:absolute;top:19px;left:1370px;">
 				Sequence: <input type="file" id="uploadSequence">
@@ -712,57 +714,57 @@
 			<div id="sequence" class="scroll" style="top:190px;left:1370px;width:300px;height:150px;"></div>
 			<div id="method" class="scroll" style="top:353px;left:1370px;width:300px;height:318px;"></div>
 			
-			<input id='housingTargetT' value=32.000 type="number" style="top:163px;left:30px;width:58px;"/>
-			<!-- <p class="label" style="top:143px;left:100px;">°C set point</p> -->
-			<button onclick="setHousingTCmd(housingTargetT);" class="button" style="top:163px;left:100px;width:50px;">Set T</button>
-			<!-- <button onclick="setPIDStatus(1);" class="button" style="top:163px;left:130px;width:50px;">Fan on</button>
-			<button onclick="setPIDStatus(2);" class="button" style="top:163px;left:190px;width:50px;">Fan off</button> -->
-			
-			<div id='fanSpeed' class="box" style="top:190px;left:30px;width:60px;">999</div>
-			<p class="label" style="top:170px;left:100px;">fan speed</p>
+			<p class="label" style="top:170px;left:30px;">Environment  <span style="color: #EC0016;font-weight: bold;">_________</span></p>
 
-			<div id='housingT' class="box" style="top:225px;left:30px;width:60px;">undefined</div>
-			<p class="label" style="position:absolute;top:205px;left:100px;">°C (box)</p>
+			<input id='housingTargetT' value=32.000 type="number" style="top:215px;left:30px;width:58px;"/>
+			<button onclick="setHousingTCmd(housingTargetT);" class="button" style="top:215px;left:100px;width:50px;">Set T</button>
 
-			<div id='roomRH' class="box" style="top:252px;left:30px;width:60px;">undefined</div>
-			<p class="label" style="position:absolute;top:235px;left:100px;">%rH (box)</p>
+			<div id='fanSpeed' class="box" style="top:245px;left:30px;width:60px;">999</div>
+			<p class="label" style="top:230px;left:100px;">fan speed</p>
 
-			<div id='roomTemperature' class="box" style="top:287px;left:30px;width:60px;">undefined</div>
-			<p class="label" style="position:absolute;top:267px;left:100px;">°C (room)</p>
+			<div id='housingT' class="box" style="top:275px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="top:260px;left:100px;">°C (box)</p>
 
-			<div id='roomHumidity' class="box" style="top:314px;left:30px;width:60px;">undefined</div>
-			<p class="label" style="position:absolute;top:294px;left:100px;">%rH (room)</p>
+			<div id='roomRH' class="box" style="top:305px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="top:290px;left:100px;">%rH (box)</p>
+
+			<div id='roomTemperature' class="box" style="top:335px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="top:320px;left:100px;">°C (room)</p>
+
+			<div id='roomHumidity' class="box" style="top:365px;left:30px;width:60px;">undefined</div>
+			<p class="label" style="top:350px;left:100px;">%rH (room)</p>
+
 
 			<div id='progressBar' style='position:absolute;top:140px;left:1370px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
 			<div id='progress' style='position:absolute;top:140px;left:1370px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
 			<div id="moveStatus" class="info" style="width:307px;top:120px;left:1370px;text-align: right;">-</div>
 			<div id='methodStatus' class="info" style='top:120px;left:1370px;'>Standby</div>
-					
-			<input type="text" id="sampleName" placeholder="Sample name" style="top:353px;left:1700px;">
 
-			<div id="timeMeasurementStarted" class="info" style="top:460px;left:1700px;">Time started</div>
-			<div id="folderName" class="info" style="top:480px;left:1700px;width:200px;">Folder name</div>
-			<div id="cellTargetPressure" class="info" style="top:500px;left:1700px;">Cell target p</div>
-			<div id="nitrogenTargetPressure" class="info" style="top:520px;left:1700px;">N2 target p</div>
-			<div id="refgasTargetPressure" class="info" style="top:540px;left:1700px;">Refgas target p</div>
-			<div id="samgasTargetPressure" class="info" style="top:560px;left:1700px;">Sample target p</div>
+			<p class="label" style="top:335px;left:1700px;">Script variables  <span style="color: #EC0016;font-weight: bold;">_________</span></p>
 
-			<div id="sample_pCO2" class="info" style="top:580px;left:1700px;">0</div>
-			<div id="reference_pCO2" class="info" style="top:600px;left:1700px;">0</div>
+			<input type="text" id="sampleName" placeholder="Sample name" style="top:430px;left:1700px;">
+
+			<div id="timeMeasurementStarted" class="info" style="top:460px;left:1700px;">Time measurement started</div>
+			<div id="folderName" class="info" style="top:480px;left:1700px;">Folder name</div>
+			<div id="cellTargetPressure" class="info" style="top:500px;left:1700px;">Cell target pressure</div>
+			<div id="nitrogenTargetPressure" class="info" style="top:520px;left:1700px;">N<sub>2</sub> target pressure</div>
+			<div id="refgasTargetPressure" class="info" style="top:540px;left:1700px;">Reference target pressure</div>
+			<div id="samgasTargetPressure" class="info" style="top:560px;left:1700px;">Sample target pressure</div>
+
+			<div id="sample_pCO2" class="info" style="top:580px;left:1700px;">Sample pCO<sub>2</sub></div>
+			<div id="reference_pCO2" class="info" style="top:600px;left:1700px;">Reference pCO<sub>2</sub></div>
 			<div id="correction_pCO2" class="info" style="top:620px;left:1700px;">1.000</div>
-			<!-- <div id="pCO2" class="info" style="top:640px;left:1700px;">undefined</div> -->
 
 			<div id="cycle" style="position:absolute;top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
 
 			<div style="position:absolute;top:85px;left:150px;height:30px;width:130px;border:4px solid #061350;font-family:monospace;color: #ffffff;background-color: #1455C0;padding-left:8px;padding-top:5px;" id="digital">Time</div>			
 			
-			<button type='button' class="button" style='top:140px;left:1700px;height:28px;width:120px;background-color:#63A615;' onclick='var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 ); $("#timeMeasurementStarted").html( timeMeasurementStarted ); createFolder(); $("#methodStatus").html("Method running"); $("#sample0").prepend("&#9758; ");'>Start sequence</button>
+			<!-- The main buttons -->
+			<button type='button' class="button" style='top:140px;left:1240px;height:28px;width:120px;background-color:#63A615;' onclick='var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 ); $("#timeMeasurementStarted").html( timeMeasurementStarted ); createFolder(); $("#methodStatus").html("Method running"); $("#sample0").prepend("&#9758; ");'>Start sequence</button>
+			<button onclick="startingPosition();" class="button" style="top:190px;left:1240px;width:120px;height:28px;background-color:#9A6CA6;">Starting position</button>
+			<a href="http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2" target="_blank"> <button class="button" style="top:230px;left:1240px;width:120px;height:28px;">See results</button></a>
 
-			<button onclick="startingPosition();" class="button" style="top:190px;left:1700px;width:120px;height:28px;background-color:#9A6CA6;">Starting position</button>
-			
-			<a href="http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2" target="_blank"> <button class="button" style="top:230px;left:1700px;width:120px;height:28px;">See results</button></a>
-
-			<canvas style="position:absolute;top:30px;left:30px;" id="myCanvas" width="100" height="100" style="border:1px solid black;"></canvas>
+			<canvas style="position:absolute;top:30px;left:30px;" id="Bahnhofsuhr" width="100" height="100" style="border:1px solid black;"></canvas>
 
 		</div>
 
@@ -1038,7 +1040,7 @@
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$( "#command" + line).prepend("&#9758; " );
 							// Keep the target pressure (ref) for all samples in sequence
-							if( $( "#refgasTargetPressure" ).html() == "Refgas target p" )
+							if( $( "#refgasTargetPressure" ).html() == "Reference target pressure" )
 							{
 								$( "#refgasTargetPressure" ).html( "1.700" );
 							}
@@ -1063,7 +1065,7 @@
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$( "#command" + line).prepend("&#9758; " );
 							// Keep the target pressure (sam) for all samples in sequence
-							if( $( "#samgasTargetPressure" ).html() == "Sample target p" )
+							if( $( "#samgasTargetPressure" ).html() == "Sample target pressure" )
 							{
 								$( "#samgasTargetPressure" ).html( "1.700" );
 							}
@@ -1091,7 +1093,7 @@
 							{
 								$("#reference_pCO2").html( $("#mr3").html() );
 
-								if( $( "#sample_pCO2" ).html() != "0" )
+								if( $( "#sample_pCO2" ).html() != "Sample pCO<sub>2</sub>" )
 								{
 									$( "#correction_pCO2" ).html( ($("#sample_pCO2").html() / $("#reference_pCO2").html() * $("#correction_pCO2").html() ).toFixed(3) );
 								}
@@ -1100,7 +1102,7 @@
 							{
 								$("#sample_pCO2").html( $("#mr3").html() );
 								
-								if( $( "#reference_pCO2" ).html() != "0" )
+								if( $( "#reference_pCO2" ).html() != "Reference pCO<sub>2</sub>" )
 								{
 									$( "#correction_pCO2" ).html( ( $("#sample_pCO2").html() / $("#reference_pCO2" ).html() * $("#correction_pCO2").html() ).toFixed(3) );
 								}
@@ -1185,7 +1187,7 @@
 							$("#command" + line).prepend("&#9758; ");
 							if( commandsArray[line][1] == "X" )
 							{
-								if( $( "#refgasTargetPressure" ).html() == "Refgas target p" )
+								if( $( "#refgasTargetPressure" ).html() == "Reference target pressure" )
 								{
 									var pTarget = parseFloat( parameterArray[line] );
 								}
@@ -1196,7 +1198,7 @@
 							}
 							else if( commandsArray[line][1] == "Y" )
 							{
-								if( $( "#samgasTargetPressure" ).html() == "Sample target p" )
+								if( $( "#samgasTargetPressure" ).html() == "Sample target pressure" )
 								{
 									var pTarget = parseFloat( parameterArray[line] );
 								}
@@ -1231,7 +1233,7 @@
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
 	
-							if( $( "#nitrogenTargetPressure" ).html() == "N2 target p" )
+							if( $( "#nitrogenTargetPressure" ).html() == "N<sub>2</sub> target pressure" )
 							{
 								var pTarget = 0;
 							}
@@ -1433,8 +1435,8 @@
 									console.log("Folder for next sample created.");
 									$("#methodStatus").html('Method running');
 									$('#cycle').html("0");
-									$( "#sample_pCO2" ).html( "0" );
-									$( "#reference_pCO2" ).html( "0" );
+									$( "#sample_pCO2" ).html( "Sample pCO<sub>2</sub>" );
+									$( "#reference_pCO2" ).html( "Reference pCO<sub>2</sub>" );
 									$( "#correction_pCO2" ).html( "1.000" );
 								}
 								else
@@ -1445,9 +1447,9 @@
 									line = 0;
 									cycle = 0;
 									$('#cycle').html("9¾");
-									$( "#refgasTargetPressure" ).html( "Refgas target p" );
-									$( "#sample_pCO2" ).html( "0" );
-									$( "#reference_pCO2" ).html( "0" );
+									$( "#refgasTargetPressure" ).html( "Reference target pressure" );
+									$( "#sample_pCO2" ).html( "Sample pCO<sub>2</sub>" );
+									$( "#reference_pCO2" ).html( "Reference pCO<sub>2</sub>" );
 									$( "#correction_pCO2" ).html( "1.000" );
 								}
 							}
