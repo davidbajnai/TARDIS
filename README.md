@@ -14,5 +14,4 @@ The methodology is described in a paper currently in prep. All files relevant to
 The computer codes in this package were written and maintained by Andreas Pack and David Bajnai.
 
 <hr>
-<img src="Images/GZG_logo_text_white.png" align="left" height="100"/>
-<img src="Images/GOE_logo_white.png" align="right" height="80"/>
+<img src="Images/GZG_logo_text_white.png" align="left" height="100"/><img src="Images/GOE_logo_white.png" align="right" height="80"/>
