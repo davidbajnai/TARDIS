@@ -15,4 +15,4 @@ The computer codes in this package were written and maintained by Andreas Pack a
 
 <hr>
 <img src="Images/GZG_logo_text_white.png" align="left" height="100"/>
-<img src="Images/GOE_logo_white.png" align="right" height="800"/>
+<img src="Images/GOE_logo_white.png" align="right" height="80"/>
