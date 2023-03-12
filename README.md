@@ -8,14 +8,14 @@
 
 This repository includes files used to control the custom-built dual inlet system of the Aerodyne Research TILDAS laser spectrometer located at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
 
-The methods used to measure the triple oxygen isotope compostion of CO<sub>2</sub> is described in a paper currently in prep. All files relevant to the manuscript are stored in the **Paper** folder.
+The inlet system and the methods used to measure the triple oxygen isotope compostion of CO<sub>2</sub> is described in a paper currently in prep. All files relevant to the manuscript are stored in the **Paper** folder.
 
-The computer codes in this package were written and maintained by <a href="https://www.uni-goettingen.de/en/78572.html" target="_blank">Andreas Pack</a> and <a href="https://davidbajnai.eu" target="_blank">David Bajnai</a>.
+The computer codes in this package were written and maintained by <a href="https://www.uni-goettingen.de/en/78572.html">Andreas Pack</a> and <a href="https://davidbajnai.eu">David Bajnai</a>.
 
 <hr>
-<a href="https://www.uni-goettingen.de/de/125309.html" target="_blank">
+<a href="https://www.uni-goettingen.de/de/125309.html">
     <img src="Images/GZG_logo_text_white.png" align="left" height="90"/>
 </a>
-<a href="https://www.uni-goettingen.de/de/125309.html" target="_blank">
+<a href="https://www.uni-goettingen.de/de/125309.html">
     <img src="Images/GOE_logo_white.png" align="right" height="80"/>
 </a>
