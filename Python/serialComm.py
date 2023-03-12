@@ -10,7 +10,7 @@ try:
     arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
     print("Connection to Arduino established")
     time.sleep(2)
-except:
+except serial.SerialException:
     print("Connection to Arduino could not be established. Stopping the script.")
     quit()
 
