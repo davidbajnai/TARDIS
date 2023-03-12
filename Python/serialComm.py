@@ -96,7 +96,7 @@ while( 2 > 1 ):
             sensor.get_sensor_data()
             roomT = '{:05.2f}'.format(sensor.data.temperature)
             roomH = '{:05.2f}'.format(sensor.data.humidity)
-        except:
+        except OSError:
             roomT = 1
             roomH = 1
         
