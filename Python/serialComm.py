@@ -6,33 +6,48 @@ import datetime
 import re
 
 # Arduino serial communication
-arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
+try:
+    arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
+    print("Connection to Arduino established")
+    time.sleep(2)
+except:
+    print("Connection to Arduino could not be established. Stopping the script.")
+    quit()
 
-# Laser spectrometer serial communication (can also be ttyUSB1)
-laser = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=1)
+# Laser spectrometer serial communication
+try:
+    laser = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=1)
+    print("Connection to the TILDAS established over /dev/ttyUSB0")
+    time.sleep(2)
+except serial.SerialException:
+    laser = serial.Serial('/dev/ttyUSB1', baudrate=57600, timeout=1)
+    print("Connection to the TILDAS established over /dev/ttyUSB1")
+    time.sleep(2)
 
 # Edwards pressure gauge serial communication (can also be ttyUSB0)
-edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
+try:
+    edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
+    print("Connection to the Edwards gauge established over /dev/ttyUSB1")
+    time.sleep(2)
+except serial.SerialException:
+    edwards = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
+    print("Connection to the Edwards gauge established over /dev/ttyUSB0")
+    time.sleep(2)
 
 # Initialize the breakout sensors
 sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
 
 # Set initial values, that are obviously fake
-# edwardsGauge = '1.00E+40'
 vacuum = '9.999'
 arduinoStatus = ""
 roomT = 1
 roomH = 1
-roomP = 1
 
 # Connect to the shared variable
 m = base.Client(('127.0.0.1', 11211))
 m.set('key2', "")
 
-arduino.readline()
-time.sleep(2) # This is to wait until the Arduino is ready and the status message shows up
-
-print("Starting continuously reading data from Arduino.")
+print("Transmitting to and recieving data from sendCommand.php...")
 
 i = 0
 while( 2 > 1 ):
@@ -76,9 +91,14 @@ while( 2 > 1 ):
             vacuum = str(round(float(edwardsGauge), 4))
         
         # room temperature from sensor
-        sensor.get_sensor_data()
-        roomT = '{:05.2f}'.format(sensor.data.temperature)
-        roomH = '{:05.2f}'.format(sensor.data.humidity)
+        try:
+            # Dont break the loop if the sensor does not respond
+            sensor.get_sensor_data()
+            roomT = '{:05.2f}'.format(sensor.data.temperature)
+            roomH = '{:05.2f}'.format(sensor.data.humidity)
+        except:
+            roomT = 1
+            roomH = 1
         
         i = 0
 

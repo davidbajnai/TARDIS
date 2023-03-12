@@ -10,6 +10,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 		<script>
 			var cmd = "";
+
 			function wait(sec){
  				var start = new Date().getTime();
 				var end = start;
@@ -17,6 +18,18 @@
 				{
 					end = new Date().getTime();
 				}
+			}
+
+			function showResults() {
+				window.open('http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2', '_blank');
+			}
+
+			function startSequence() {
+			var timeMeasurementStarted = parseInt(new Date().getTime() / 1000);
+				$("#timeMeasurementStarted").html(timeMeasurementStarted);
+				createFolder();
+				$("#methodStatus").html("Method running");
+				$("#sample0").prepend("&#9758; ");
 			}
 
 			function toggleValve(valve,status) {
@@ -384,7 +397,7 @@
 					ctx.lineTo( 50 + 48 * Math.cos( ticksAngle ), 50 + 48 * Math.sin( ticksAngle ) );
 				}
 				ctx.lineWidth = 2.2;
-				ctx.strokeStyle = '#061350';
+				ctx.strokeStyle = "#0A1E6E";
 				ctx.stroke();
 
 				ctx.beginPath();
@@ -395,18 +408,18 @@
 					ctx.lineTo( 50 + 48 * Math.cos( ticksAngle ), 50 + 48 * Math.sin( ticksAngle ) );
 				}
 				ctx.lineWidth = 3;
-				ctx.strokeStyle = '#061350';
+				ctx.strokeStyle = '#0A1E6E';
 				ctx.stroke();
 
 				// Write hour
-				ctx.strokeStyle = '#061350';
+				ctx.strokeStyle = '#0A1E6E';
 				ctx.beginPath();
 				ctx.moveTo(50, 50); // Center
 				ctx.lineTo( 50 + radiusHour * Math.cos( hourAngle ), 50 + radiusHour * Math.sin( hourAngle ) );
 				ctx.lineWidth = 6;
 				ctx.stroke();
 				// Write minutes
-				ctx.strokeStyle = '#061350';
+				ctx.strokeStyle = '#0A1E6E';
 				ctx.beginPath();
 				ctx.moveTo(50, 50); // Center
 				ctx.lineTo( 50 + radiusMinutes * Math.cos( minutesAngle ), 50 + radiusMinutes * Math.sin( minutesAngle ) );
@@ -435,8 +448,8 @@
 				ctx.stroke();
 
 				ctx.beginPath();
-				ctx.strokeStyle = '#061350';
-				ctx.fillStyle = "#061350";
+				ctx.strokeStyle = '#0A1E6E';
+				ctx.fillStyle = "#0A1E6E";
 				ctx.moveTo(50, 50); // Center
 				ctx.arc(50, 50, 4, 0, 2 * Math.PI);
 				ctx.fill();
@@ -445,254 +458,252 @@
 		</script>
 	</head>
 
-	<body style="background-color: #38342F ;">
+	<body style="background-color:#38342F;">
 	
-		<div id="wrap" style="position:relative; border:1.5px solid #F5F4F1;width:2010px;height:840px;border-radius: 4px;">
+		<div id="wrap" style="position:relative;border:1.5px solid #F5F4F1;width:2010px;height:840px;border-radius:4px;">
 			
 			<!-- This is the schematic of the inlet system -->
-			<img src="Images/schaltbild.png" style="position:absolute;top:5px;left:5px;border-radius: 4px;" />
+			<img src="Images/schaltbild.png" class="schaltbild" />
 
-			<!-- Some desing elements and labels -->
-			<img src="Images/GZG_logo_text_color.png" style="position:absolute;top:19px;left:1700px;width:290px;" />
-			<img src="Images/GOE_Logo.png" style="position:absolute;top:770px;left:1700px;width:290px;" />
+			<!-- Some design elements and labels -->
+			<img src="Images/GZG_logo_color.png" class="logo" style="top:19px;" />
+			<img src="Images/GOE_logo_color.png" class="logo" style="top:770px;" />
 			<p class="label" style="top:39px;left:960px;">N<sub>2</sub> purging</p>
 			<p class="label" style="top:90px;left:960px;">Turbo</p>
 			<p class="label" style="top:250px;left:960px;">Scroll</p>
 
-			<div style="position:absolute;top:131px;left:725px;">
-				<span style="position:relative;top:-35px;left:77px;">V01</span>
-				<img id="V01" src="Images/horizontal_closed.png" onclick="var status=$('#V01_label').html();toggleValve('V01',status);" style="width:50px;"/>
+			<div style="top:131px;left:725px;">
+				<span class="valveNumberLabel">V01</span>
+				<img id="V01" src="Images/horizontal_closed.png" class="small" onclick="var status=$('#V01_label').html();toggleValve('V01',status);"/>
 				<span id="V01_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:178px;left:685px;">
-				<span style="position:relative;top:2px;left:77px;">V02</span>
-				<img id="V02" src="Images/vertical_closed.png" onclick="var status=$('#V02_label').html();toggleValve('V02',status);" style="width:50px;"/>
+			<div style="top:178px;left:685px;">
+				<span class="valveNumberLabel">V02</span>
+				<img id="V02" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V02_label').html();toggleValve('V02',status);"/>
 				<span id="V02_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:470px;">
-				<span style="position:relative;top:-35px;left:77px;">V03</span>
-				<img id="V03" src="Images/vertical_closed.png" onclick="var status=$('#V03_label').html();toggleValve('V03',status);" style="width:50px;"/>
+			<div style="top:410px;left:470px;">
+				<span class="valveNumberLabel">V03</span>
+				<img id="V03" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V03_label').html();toggleValve('V03',status);"/>
 				<span id="V03_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:240px;">
-				<span style="position:relative;top:-35px;left:77px;">V04</span>
-				<img id="V04" src="Images/vertical_closed.png" onclick="var status=$('#V04_label').html();toggleValve('V04',status);" style="width:50px;"/>
+			<div style="top:410px;left:240px;">
+				<span class="valveNumberLabel">V04</span>
+				<img id="V04" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V04_label').html();toggleValve('V04',status);" />
 				<span id="V04_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:340px;left:410px;">
-				<span style="position:relative;top:-35px;left:77px;">V05</span>
-				<img id="V05" src="Images/vertical_closed.png" onclick="var status=$('#V05_label').html();toggleValve('V05',status);" style="width:50px;"/>
+			<div style="top:340px;left:410px;">
+				<span class="valveNumberLabel">V05</span>
+				<img id="V05" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V05_label').html();toggleValve('V05',status);" />
 				<span id="V05_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:345px;">
-				<span style="position:relative;top:-35px;left:77px;">V06</span>
-				<img id="V06" src="Images/vertical_closed.png" onclick="var status=$('#V06_label').html();toggleValve('V06',status);" style="width:50px;"/>
+			<div style="top:410px;left:345px;">
+				<span class="valveNumberLabel">V06</span>
+				<img id="V06" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V06_label').html();toggleValve('V06',status);" />
 				<span id="V06_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:475px;left:410px;">
-				<span style="position:relative;top:-35px;left:77px;">V07</span>
-				<img id="V07" src="Images/vertical_closed.png" onclick="var status=$('#V07_label').html();toggleValve('V07',status);" style="width:50px;"/>
+			<div style="top:475px;left:410px;">
+				<span class="valveNumberLabel">V07</span>
+				<img id="V07" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V07_label').html();toggleValve('V07',status);" />
 				<span id="V07_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:475px;left:190px;">
-				<span style="position:relative;top:-35px;left:77px;">V08</span>
-				<img id="V08" src="Images/vertical_closed.png" onclick="var status=$('#V08_label').html();toggleValve('V08',status);" style="width:50px;"/>
+			<div style="top:475px;left:190px;">
+				<span class="valveNumberLabel">V08</span>
+				<img id="V08" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V08_label').html();toggleValve('V08',status);" />
 				<span id="V08_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:905px;">
-				<span style="position:relative;top:-35px;left:77px;">V09</span>
-				<img id="V09" src="Images/vertical_closed.png" onclick="var status=$('#V09_label').html();toggleValve('V09',status);" style="width:50px;"/>
+			<div style="top:410px;left:905px;">
+				<span class="valveNumberLabel">V09</span>
+				<img id="V09" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V09_label').html();toggleValve('V09',status);" />
 				<span id="V09_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:1145px;">
-				<span style="position:relative;top:-35px;left:77px;">V10</span>
-				<img id="V10" src="Images/vertical_closed.png" onclick="var status=$('#V10_label').html();toggleValve('V10',status);" style="width:50px;"/>
+			<div style="top:410px;left:1145px;">
+				<span class="valveNumberLabel">V10</span>
+				<img id="V10" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V10_label').html();toggleValve('V10',status);" />
 				<span id="V10_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:345px;left:972px;">
-				<span style="position:relative;top:-35px;left:77px;">V11</span>
-				<img id="V11" src="Images/vertical_closed.png" onclick="var status=$('#V11_label').html();toggleValve('V11',status);" style="width:50px;"/>
+			<div style="top:345px;left:972px;">
+				<span class="valveNumberLabel">V11</span>
+				<img id="V11" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V11_label').html();toggleValve('V11',status);" />
 				<span id="V11_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:1040px;">
-				<span style="position:relative;top:-35px;left:77px;">V12</span>
-				<img id="V12" src="Images/vertical_closed.png" onclick="var status=$('#V12_label').html();toggleValve('V12',status);" style="width:50px;"/>
+			<div style="top:410px;left:1040px;">
+				<span class="valveNumberLabel">V12</span>
+				<img id="V12" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V12_label').html();toggleValve('V12',status);" />
 				<span id="V12_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:470px;left:972px;">
-				<span style="position:relative;top:-35px;left:77px;">V13</span>
-				<img id="V13" src="Images/vertical_closed.png" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" style="width:50px;"/>
+			<div style="top:470px;left:972px;">
+				<span class="valveNumberLabel">V13</span>
+				<img id="V13" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" />
 				<span id="V13_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:472px;left:1190px;">
-				<span style="position:relative;top:-35px;left:77px;">V14</span>
-				<img id="V14" src="Images/vertical_closed.png" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" style="width:50px;"/>
+			<div style="top:472px;left:1190px;">
+				<span class="valveNumberLabel">V14</span>
+				<img id="V14" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" />
 				<span id="V14_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:686px;">
-				<span style="position:relative;top:-35px;left:77px;">V15</span>
-				<img id="V15" src="Images/vertical_closed.png" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" style="width:50px;"/>
+			<div style="top:720px;left:686px;">
+				<span class="valveNumberLabel">V15</span>
+				<img id="V15" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" />
 				<span id="V15_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:595px;left:686px;">
-				<span style="position:relative;top:-35px;left:77px;">V16</span>
-				<img id="V16" src="Images/vertical_closed.png" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" style="width:50px;"/>
+			<div style="top:595px;left:686px;">
+				<span class="valveNumberLabel">V16</span>
+				<img id="V16" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" />
 				<span id="V16_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:131px;left:843px;">
-				<span style="position:relative;top:-35px;left:77px;">V17</span>
-				<img id="V17" src="Images/vertical_closed.png" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" style="width:50px;"/>
+			<div style="top:131px;left:843px;">
+				<span class="valveNumberLabel">V17</span>
+				<img id="V17" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" />
 				<span id="V17_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:145px;">
-				<span style="position:relative;top:-35px;left:77px;">V18</span>
-				<img id="V18" src="Images/vertical_closed.png" onclick="var status=$('#V18_label').html();toggleValve('V18',status);" style="width:50px;"/>
+			<div style="top:410px;left:145px;">
+				<span class="valveNumberLabel">V18</span>
+				<img id="V18" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V18_label').html();toggleValve('V18',status);" />
 				<span id="V18_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:231px;left:620px;">
-				<span style="position:relative;top:-35px;left:77px;">V19</span>
-				<img id="V19" src="Images/vertical_closed.png" onclick="var status=$('#V19_label').html();toggleValve('V19',status);" style="width:50px;"/>
+			<div style="top:231px;left:620px;">
+				<span class="valveNumberLabel">V19</span>
+				<img id="V19" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V19_label').html();toggleValve('V19',status);" />
 				<span id="V19_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:231px;left:540px;">
-				<span style="position:relative;top:-35px;left:77px;">V20</span>
-				<img id="V20" src="Images/vertical_closed.png" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" style="width:50px;"/>
+			<div style="top:231px;left:540px;">
+				<span class="valveNumberLabel">V20</span>
+				<img id="V20" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" />
 				<span id="V20_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:767px;left:843px;">
-				<span style="position:relative;top:-35px;left:77px;">V21</span>
-				<img id="V21" src="Images/vertical_closed.png" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" style="width:50px;"/>
+			<div style="top:767px;left:843px;">
+				<span class="valveNumberLabel">V21</span>
+				<img id="V21" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" />
 				<span id="V21_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:410px;left:1235px;">
-				<span style="position:relative;top:-35px;left:77px;">V22</span>
-				<img id="V22" src="Images/vertical_closed.png" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" style="width:50px;"/>
+			<div style="top:410px;left:1235px;">
+				<span class="valveNumberLabel">V22</span>
+				<img id="V22" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" />
 				<span id="V22_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1319px;">
-				<span style="position:relative;top:-35px;left:77px;">V23</span>
-				<img id="V23" src="Images/vertical_closed.png" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" style="width:50px;"/>
+			<div style="top:720px;left:1319px;">
+				<span class="valveNumberLabel">V23</span>
+				<img id="V23" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" />
 				<span id="V23_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1409px;">
-				<span style="position:relative;top:-35px;left:77px;">V24</span>
-				<img id="V24" src="Images/vertical_closed.png" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" style="width:50px;"/>
+			<div style="top:720px;left:1409px;">
+				<span class="valveNumberLabel">V24</span>
+				<img id="V24" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" />
 				<span id="V24_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1499px;">
-				<span style="position:relative;top:-35px;left:77px;">V25</span>
-				<img id="V25" src="Images/vertical_closed.png" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" style="width:50px;"/>
+			<div style="top:720px;left:1499px;">
+				<span class="valveNumberLabel">V25</span>
+				<img id="V25" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" />
 				<span id="V25_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:720px;left:1589px;">
-				<span style="position:relative;top:-35px;left:77px;">V26</span>
-				<img id="V26" src="Images/vertical_closed.png" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" style="width:50px;"/>
+			<div style="top:720px;left:1589px;">
+				<span class="valveNumberLabel">V26</span>
+				<img id="V26" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" />
 				<span id="V26_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:212px;left:843px;">
-				<span style="position:relative;top:-35px;left:77px;">V27</span>
-				<img id="V27" src="Images/vertical_closed.png" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" style="width:50px;"/>
+			<div style="top:212px;left:843px;">
+				<span class="valveNumberLabel" >V27</span>
+				<img id="V27" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" />
 				<span id="V27_label" style="display:none;">undefined</span>
 			</div>
 			
-			<!-- These valves are free
-			<div style="position:absolute;top:740px;left:1190px;">
-				<span style="position:relative;top:-35px;left:77px;">V28</span>
-				<img id="V28" src="Images/vertical_closed.png" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" style="width:50px;"/>
+			<!-- These valves are free to use
+			<div style="top:740px;left:1190px;">
+				<span class="valveNumberLabel">V28</span>
+				<img id="V28" src="Images/vertical_closed.png" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" />
 				<span id="V28_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:740px;left:1240px;">
-				<span style="position:relative;top:-35px;left:77px;">V29</span>
-				<img id="V29" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" style="width:50px;"/>
+			<div style="top:740px;left:1240px;">
+				<span class="valveNumberLabel">V29</span>
+				<img id="V29" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" />
 				<span id="V29_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:740px;left:1290px;">
-				<span style="position:relative;top:-35px;left:77px;">V30</span>
-				<img id="V30" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V30',status);" style="width:50px;"/>
+			<div style="top:740px;left:1290px;">
+				<span class="valveNumberLabel">V30</span>
+				<img id="V30" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V30',status);" />
 				<span id="V30_label" style="display:none;">undefined</span>
 			</div>
-			<div style="position:absolute;top:740px;left:1340px;">
-				<span style="position:relative;top:-35px;left:77px;">V31</span>
-				<img id="V31" src="Images/vertical_closed.png" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" style="width:50px;"/>
+			<div style="top:740px;left:1340px;">
+				<span class="valveNumberLabel">V31</span>
+				<img id="V31" src="Images/vertical_closed.png" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" />
 				<span id="V31_label" style="display:none;">undefined</span>
 			</div>
 			-->
-			<div style="position:absolute;top:767px;left:1100px;">
+			<div style="top:767px;left:1100px;">
 				<span style="position:relative;top:-35px;left:27px;">pump</span>
-				<span style="position:relative;top:-35px;left:77px;">V32</span>
-				<img id="V32" src="Images/vertical_closed.png" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" style="width:50px;"/>
+				<span class="valveNumberLabel">V32</span>
+				<img id="V32" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" />
 				<span id="V32_label" style="display:none;">undefined</span>
 			</div>
 			
 
-			<button onclick="startWritingData();" class="button" style="top:36px;left:585px;width:60px;height:30px;">WD on</button>
-			<button onclick="stopWritingData();" class="button" style="top:66px;left:585px;width:60px;height:30px;">WD off</button>
-						
-			<span id="cycleJS" style="position:absolute;top:35px;left:150px;height:30px;width:130px; border:4px solid #061350; font-family:monospace; color: #ffffff; background-color: #1455C0;padding-left:8px;padding-top:5px;">NaN</span>
-			
-			<div id="baratron" class="box" style="top:55px;left:660px;width:60px;">CellP </div>
+			<button onclick="startWritingData();" class="button medium" style="top:36px;left:585px;height:30px;">WD on</button>
+			<button onclick="stopWritingData();" class="button medium" style="top:66px;left:585px;height:30px;">WD off</button>
+									
+			<div id="baratron" class="box medium" style="top:55px;left:660px;">CellP </div>
 				<p class="label" style="top:39px;left:730px;color:white;">Torr (cell)</p>
 
-			<img id="bellowsX" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:295px;" />
-			<img id="bellowsY" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:510px;left:1100px;" />
-			<img id="bellowsZ" src="Images/bellows.png" style="width:100px;height:60px;position:absolute;top:320px;left:688px;" />
+			<img id="bellowsX" src="Images/bellows.png" class="bellows" style="top:510px;left:295px;" />
+			<img id="bellowsY" src="Images/bellows.png" class="bellows" style="top:510px;left:1100px;" />
+			<img id="bellowsZ" src="Images/bellows.png" class="bellows" style="top:320px;left:688px;" />
 			
-			<span id="pressureX" class="box" style="top:353px;left:319px;width:50px;">NaN</span>
+			<span id="pressureX" class="box small" style="top:353px;left:319px;">NaN</span>
 				<p class="label" style="top:312px;left:319px;">X (mbar)</p>
 
-			<span id="pressureY" class="box" style="top:353px;left:1128px;width:50px;">NaN</span>
+			<span id="pressureY" class="box small" style="top:353px;left:1128px;">NaN</span>
 				<p class="label" style="top:312px;left:1128px;">Y (mbar)</p>
 
-			<div id='pressureA' class="box" style="top:555px;left:650px;width:50px;"><em>NaN</em></div>
+			<div id='pressureA' class="box small" style="top:555px;left:650px;"><em>NaN</em></div>
 				<p class="label" style="top:517px;left:650px;">A (mbar)</p>
-			<img id="loadingA" src="" style="width:25px;position:absolute;top:585px;left:650px;" />
+			<img id="loadingA" src="" class="icon" style="top:585px;left:650px;" />
 
-			<img id="motorX" src="Images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:380px;" />
-			<span id="percentageXsteps" class="box" style="top:625px;left:315px;width:50px;">NaN</span>
+			<img id="motorX" src="Images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
+			<span id="percentageXsteps" class="box small" style="top:625px;left:315px;">NaN</span>
 			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
-			<button onclick="moveBellows('X');" class="button" style="top:655px;left:365px;width:50px;">Set X</button>
+			<button onclick="moveBellows('X');" class="button small" style="top:655px;left:365px;">Set X</button>
 
-			<img id="motorY" src="Images/standing_motor.gif" style="width:25px;position:absolute;top:625px;left:1184px;" />
-			<span id="percentageYsteps" class="box" style="top:625px;left:1120px;width:50px;">NaN</span>
+			<img id="motorY" src="Images/standing_motor.gif" class="icon" style="top:625px;left:1184px;" />
+			<span id="percentageYsteps" class="box small" style="top:625px;left:1120px;">NaN</span>
 			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
-			<button onclick="moveBellows('Y');" class="button" style="top:655px;left:1169px;width:50px;">Set Y</button>
+			<button onclick="moveBellows('Y');" class="button small" style="top:655px;left:1169px;">Set Y</button>
 			
-			<img id="motorZ" src="Images/standing_motor.gif" style="width:25px;position:absolute;top:450px;left:755px;" />
-			<span id="percentageZsteps" class="box" style="top:450px;left:690px;width:50px;">NaN</span>
+			<img id="motorZ" src="Images/standing_motor.gif" class="icon" style="top:450px;left:755px;" />
+			<span id="percentageZsteps" class="box small" style="top:450px;left:690px;">NaN</span>
 			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
-			<button onclick="moveBellows('Z');" class="button" style="top:480px;left:740px;width:50px;">Set Z</button>
-			<img id="warningZ" src="" style="height:25px;position:absolute;top:450px;left:650px;" />
+			<button onclick="moveBellows('Z');" class="button small" style="top:480px;left:740px;">Set Z</button>
+			<img id="warningZ" src="" class="icon" style="top:450px;left:650px;" />
 
 			<!-- Bellow parameters only necessary for the script to work -->
-			<span id="percentageX" class="box_unimportant" style="top:653px;left:1700px;width:40px;">NaN</span>
-			<span id="percentageY" class="box_unimportant" style="top:653px;left:1750px;width:40px;">NaN</span>
-			<span id="stepsZ" class="box_unimportant" style="top:653px;left:1800px;width:40px;">NaN</span>
+			<span id="percentageX" class="box unimportant" style="top:653px;left:1700px;">NaN</span>
+			<span id="percentageY" class="box unimportant" style="top:653px;left:1750px;">NaN</span>
+			<span id="stepsZ" class="box unimportant" style="top:653px;left:1800px;">NaN</span>
 			
 			<!-- Mixing ratio indicators -->
-			<p class="label" style="top:170px;left:1700px;">Mixing ratios  <span style="color: #EC0016;font-weight: bold;">_________</span></p>
-			<span id="mr1" class="box" style="top:215px;left:1700px;width:60px;">mr1</span>
+			<p class="label" style="top:170px;left:1700px;">Mixing ratios  <span class="decorative" >_________</span></p>
+			<span id="mr1" class="box medium" style="top:215px;left:1700px;">mr1</span>
 				<p class="label" style="top:200px;left:1770px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr2" class="box" style="top:245px;left:1700px;width:60px;">mr2</span>
+			<span id="mr2" class="box medium" style="top:245px;left:1700px;">mr2</span>
 				<p class="label" style="top:230px;left:1770px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr3" class="box" style="top:275px;left:1700px;width:60px;">mr3</span>
+			<span id="mr3" class="box medium" style="top:275px;left:1700px;">mr3</span>
 				<p class="label" style="top:260px;left:1770px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr4" class="box" style="top:305px;left:1700px;width:60px;">mr4</span>
+			<span id="mr4" class="box medium" style="top:305px;left:1700px;">mr4</span>
 				<p class="label" style="top:290px;left:1770px;">free-path CO<sub>2</sub> (ppmv)</p>
 			<!-- <span id="d18O" class="box" style="top:220px;left:1040px;width:180px;">d18O</span>
 			<span id="D17O" class="box" style="top:250px;left:1040px;width:180px;">D17O</span> -->
 			
-			<span id="edwards" class="box" style="top:353px;left:858px;width:70px;">edwards</span>
+			<span id="edwards" class="box medium" style="top:353px;left:858px;">edwards</span>
 			<p class="label" style="top:312px;left:858px;">Vacuum (mbar)</p>
 			
-			<div style="position:absolute;top:19px;left:1370px;">
+			<div style="top:19px;left:1370px;">
 				Sequence: <input type="file" id="uploadSequence">
 			</div>
 
-			<div style="position:absolute;top:50px;left:1370px;">
+			<div style="top:50px;left:1370px;">
 				Method: <input type="file" id="uploadMethod">
 			</div>
 
-			<div style="position:absolute;top:81px;left:1370px;">
+			<div style="top:81px;left:1370px;">
 				User: 
 				<select name='userName' id='userName'>	
 					<option value='David Bajnai'>Bajnai, David</option>
@@ -707,40 +718,40 @@
 				</select>
 			</div>
 
-			<div style="position:absolute;top:390px;left:1700px;">
+			<div style="top:390px;left:1700px;">
 				Polynomial: <input type="number" id="polynomial" value="100" style="width:100px;">
 			</div>
 
 			<div id="sequence" class="scroll" style="top:190px;left:1370px;width:300px;height:150px;"></div>
 			<div id="method" class="scroll" style="top:353px;left:1370px;width:300px;height:318px;"></div>
 			
-			<p class="label" style="top:170px;left:30px;">Environment  <span style="color: #EC0016;font-weight: bold;">_________</span></p>
+			<p class="label" style="top:170px;left:30px;">Environment  <span class="decorative">_________</span></p>
 
-			<input id='housingTargetT' value=32.000 type="number" style="top:215px;left:30px;width:58px;"/>
-			<button onclick="setHousingTCmd(housingTargetT);" class="button" style="top:215px;left:100px;width:50px;">Set T</button>
+			<input id='housingTargetT' value=32.000 type="number" class="medium" style="top:215px;left:30px;"/>
+			<button onclick="setHousingTCmd(housingTargetT);" class="button small" style="top:215px;left:100px;">Set T</button>
 
-			<div id='fanSpeed' class="box" style="top:245px;left:30px;width:60px;">999</div>
+			<div id='fanSpeed' class="box medium" style="top:245px;left:30px;">999</div>
 			<p class="label" style="top:230px;left:100px;">fan speed</p>
 
-			<div id='housingT' class="box" style="top:275px;left:30px;width:60px;">undefined</div>
+			<div id='housingT' class="box medium" style="top:275px;left:30px;">undefined</div>
 			<p class="label" style="top:260px;left:100px;">°C (box)</p>
 
-			<div id='roomRH' class="box" style="top:305px;left:30px;width:60px;">undefined</div>
+			<div id='roomRH' class="box medium" style="top:305px;left:30px;">undefined</div>
 			<p class="label" style="top:290px;left:100px;">%rH (box)</p>
 
-			<div id='roomTemperature' class="box" style="top:335px;left:30px;width:60px;">undefined</div>
+			<div id='roomTemperature' class="box medium" style="top:335px;left:30px;">undefined</div>
 			<p class="label" style="top:320px;left:100px;">°C (room)</p>
 
-			<div id='roomHumidity' class="box" style="top:365px;left:30px;width:60px;">undefined</div>
+			<div id='roomHumidity' class="box medium" style="top:365px;left:30px;">undefined</div>
 			<p class="label" style="top:350px;left:100px;">%rH (room)</p>
 
 
-			<div id='progressBar' style='position:absolute;top:140px;left:1370px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
-			<div id='progress' style='position:absolute;top:140px;left:1370px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
+			<div id='progressBar' style='top:140px;left:1370px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
+			<div id='progress' style='top:140px;left:1370px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
 			<div id="moveStatus" class="info" style="width:307px;top:120px;left:1370px;text-align: right;">-</div>
 			<div id='methodStatus' class="info" style='top:120px;left:1370px;'>Standby</div>
 
-			<p class="label" style="top:335px;left:1700px;">Script variables  <span style="color: #EC0016;font-weight: bold;">_________</span></p>
+			<p class="label" style="top:335px;left:1700px;">Script variables  <span class="decorative">_________</span></p>
 
 			<input type="text" id="sampleName" placeholder="Sample name" style="top:430px;left:1700px;">
 
@@ -755,16 +766,17 @@
 			<div id="reference_pCO2" class="info" style="top:600px;left:1700px;">Reference pCO<sub>2</sub></div>
 			<div id="correction_pCO2" class="info" style="top:620px;left:1700px;">1.000</div>
 
-			<div id="cycle" style="position:absolute;top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
-
-			<div style="position:absolute;top:85px;left:150px;height:30px;width:130px;border:4px solid #061350;font-family:monospace;color: #ffffff;background-color: #1455C0;padding-left:8px;padding-top:5px;" id="digital">Time</div>			
-			
 			<!-- The main buttons -->
-			<button type='button' class="button" style='top:140px;left:1240px;height:28px;width:120px;background-color:#63A615;' onclick='var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 ); $("#timeMeasurementStarted").html( timeMeasurementStarted ); createFolder(); $("#methodStatus").html("Method running"); $("#sample0").prepend("&#9758; ");'>Start sequence</button>
-			<button onclick="startingPosition();" class="button" style="top:190px;left:1240px;width:120px;height:28px;background-color:#9A6CA6;">Starting position</button>
-			<a href="http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2" target="_blank"> <button class="button" style="top:230px;left:1240px;width:120px;height:28px;">See results</button></a>
+			<!-- <button type='button' class="button big" style='top:140px;left:1240px;background-color:#63A615;' onclick='var timeMeasurementStarted = parseInt( new Date().getTime() / 1000 ); $("#timeMeasurementStarted").html( timeMeasurementStarted ); createFolder(); $("#methodStatus").html("Method running"); $("#sample0").prepend("&#9758; ");'>Start sequence</button> -->
+			<button onclick="startSequence();" class="button big" style="top:140px;left:1240px;background-color:#63A615;">Start sequence</button>
+			<button onclick="startingPosition();" class="button big" style="top:190px;left:1240px;background-color:#9A6CA6;">Starting position</button>
+			<button onclick="showResults();" class="button big" style="top:230px;left:1240px;">See results</button>
 
-			<canvas style="position:absolute;top:30px;left:30px;" id="Bahnhofsuhr" width="100" height="100" style="border:1px solid black;"></canvas>
+			<!-- Zugzielanzeiger -->
+			<span id="cycleJS" class="Zugzielanzeiger" style="top:35px;left:150px;">NaN</span>
+			<div id="cycle" style="top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
+			<div id="digital" class="Zugzielanzeiger" style="top:85px;left:150px;">Time</div>
+			<canvas id="Bahnhofsuhr" class="clock"></canvas>
 
 		</div>
 

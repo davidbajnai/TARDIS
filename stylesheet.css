@@ -3,6 +3,7 @@
 }
 
 div {
+    position:absolute;
 	border: none;
 }
 
@@ -16,24 +17,43 @@ div {
     src: url(https://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff);
 }
 
+/* The Clock */
+.clock {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 100;
+    height: 100;
+}
+
+/* Text and box styles */
 .box {
+    position: absolute;
     border: 1px solid black;
     border-radius: 2px;
-    position: absolute;
     text-align: left;
     color: black;
     background-color: white;
     padding: 2px;
 }
 
-.box_unimportant {
-    border: 1px solid black;
-    border-radius: 2px;
-    position: absolute;
-    text-align: left;
+.small {
+    width: 50px;
+}
+
+.medium {
+    width: 60px;
+}
+
+.big {
+    width: 120px;
+    height: 28px;
+}
+
+.unimportant {
     color: black !important;
-    background-color: #F5F4F1;
-    padding: 2px;
+    background-color: #F5F4F1 !important;
+    width: 40px;
 }
 
 .label {
@@ -42,20 +62,69 @@ div {
     color: black;
 }
 
+.valveNumberLabel {
+    position:relative;
+    top: -35px;
+    left: 77px;
+}
+
 .info {
     position: absolute;
-    /* font-style: italic; */
     color: black;
 }
 
 .scroll {
     position: absolute;
     overflow: scroll;
-    padding:2px;
-    border:1px solid #4F4B41;
+    padding: 2px;
+    border: 1px solid #4F4B41;
     border-radius: 2px;
 }
 
+.decorative {
+    color: #0A1E6E;
+    font-weight: bold;
+}
+
+.Zugzielanzeiger {
+    position: absolute;
+    height: 30px;
+    width: 130px;
+    border: 4px solid #0A1E6E;
+    font-family: monospace;
+    color: #ffffff;
+    background-color: #1455C0;
+    padding-left: 8px;
+    padding-top: 5px;
+    border-radius: 2px;
+}
+
+/* Image styles */
+.icon {
+    position: absolute;
+    width: 25px;
+}
+
+.bellows {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+}
+
+.logo {
+    position: absolute;
+    left: 1700px;
+    width: 290px;
+}
+
+.schaltbild {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border-radius: 4px;
+}
+
+/* Button styles */
 .button {
     position: absolute;
     cursor: pointer;
@@ -77,6 +146,7 @@ div {
     background-color:#1455C0 !important;
 }
 
+/* Input styles */
 input[type=text], input[type=number]{
     position: absolute !important;
     color: #4F4B41;
@@ -91,6 +161,7 @@ input:focus {
     border: 1px solid black;
 }
 
+/* Other elements */
 body{
     font-family: open-sans;
     font-size: 13px;
@@ -118,4 +189,3 @@ details[open]{
 details[open] summary {
     padding: 0px;
 }
-
