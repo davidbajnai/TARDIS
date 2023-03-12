@@ -5,11 +5,10 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/davidbajnai/tardis/badge?s=e60c8acc0095fc83f8522a69115b1e3ed10c7320)](https://www.codefactor.io/repository/github/davidbajnai/tardis)
 [![Python](https://img.shields.io/badge/Python-3.7-FFD43B)](https://www.python.org)
 [![PHP](https://img.shields.io/badge/PHP-8.2-%234f5b93)](https://www.php.net/releases/8.2/en.php)
-<!-- [![Debian](https://img.shields.io/badge/Debian-10-CE0058)]() -->
 
-This repository includes files used to control the custom-built dual inlet system of the Aerodyne TILDAS laser spectrometer at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
+This repository includes files used to control the custom-built dual inlet system of the Aerodyne Research TILDAS laser spectrometer located at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
 
-The methodology is described in a paper currently in prep. All files relevant to the article are stored in the **Paper** folder.
+The methods used to measure the triple oxygen isotope compostion of CO<sub>2</sub> is described in a paper currently in prep. All files relevant to the manuscript are stored in the **Paper** folder.
 
 The computer codes in this package were written and maintained by Andreas Pack and David Bajnai.
 
