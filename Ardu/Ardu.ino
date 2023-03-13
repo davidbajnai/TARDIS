@@ -1,10 +1,7 @@
 #include <AccelStepper.h>
 
-// there are two temperature sensors connected
-// #include "Adafruit_Si7021.h"
+// Temperature sensos
 #include "Adafruit_SHTC3.h"
-
-// Adafruit_Si7021 si7021 = Adafruit_Si7021();
 Adafruit_SHTC3 shtc3 = Adafruit_SHTC3();
 
 long XstartPos = 0;
@@ -77,7 +74,6 @@ void setup()
     delay(10);
   }
 
-  // si7021.begin();
   shtc3.begin();
 
   // Configure the output pins and set them to low, for valves (via relay boards)
@@ -646,13 +642,10 @@ void sendStatus( String param )
   Xpercentage = -100.00 / 800 * analogRead(A0) + 100 + 10000 / 800;
   Ypercentage = -100.00 / 800 * analogRead(A1) + 100 + 10000 / 800;
 
-  // boxTemp = si7021.readTemperature();
-
   sensors_event_t humidity, temp; // objects for the shtc3 sensor data
   shtc3.getEvent(&humidity, &temp);
   boxTemp = temp.temperature;
   boxHum = humidity.relative_humidity;
-
   
   int n = 50; // Integration cycles
   for (int i = 0; i < n; i++) {
@@ -853,25 +846,6 @@ void loop()
     command = "";
     sendStatus("-");
   }
-
-  // else if ( string.substring(0, 1) == "S" )
-  // {
-  // Get the current status & sleep (set motor currents to zero)
-  //   digitalWrite(XYZsleepPin, LOW);
-  //   string = "";
-  //   command = "";
-  //   stat = "S";
-  //   sendStatus("-");
-  // }
-  // Get current status & wake up
-  // else if ( string.substring(0, 1) == "W" )
-  // {
-  //   digitalWrite(XYZsleepPin, HIGH);
-  //   string = "";
-  //   command = "";
-  //   stat = "W";
-  //   sendStatus("-");
-  // }
 
   else if ( string.substring(0, 1) == "V" )
   {

@@ -918,7 +918,7 @@
 							currentTimeOld = currentTime;
 						}
 
-						// Valve commands V03 1
+						// Valve commands
 						if( commandsArray[line][0] == "V" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
 							// Do this before every command in method
@@ -957,22 +957,6 @@
 							$("#command" + line).append(" &#10003;");
 							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
-
-						// Set fan ON /OFF
-						// else if( commandsArray[line][0] == "T" && commandsArray[line][1] == "C" && executed == "yes" && moving == "no" && waiting == "no" )
-						// {
-						// 	// Do this before every command in method
-						// 	if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-						// 	$("#command" + line).prepend("&#9758; ");
-						// 	cmd = "TC" + parameterArray[line];
-						// 	// Do this after every command
-						// 	timeExecuted = new Date().getTime() / 1000;
-						// 	moving = "no";
-						// 	executed = "yes";
-						// 	waiting = "yes";
-						// 	$("#command" + line).append(" &#10003;");
-						// 	console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
-						// }
 
 						// This command waits until A target pressure is reached, than closes valves
 						else if( commandsArray[line][0] == "A" && commandsArray[line][1] == "X" && executed == "yes" && moving == "no" && waiting == "no" )
@@ -1107,6 +1091,7 @@
 
 								if( $( "#sample_pCO2" ).html() != "Sample pCO<sub>2</sub>" )
 								{
+									// Adjust the correction factor
 									$( "#correction_pCO2" ).html( ($("#sample_pCO2").html() / $("#reference_pCO2").html() * $("#correction_pCO2").html() ).toFixed(3) );
 								}
 							}
@@ -1116,6 +1101,7 @@
 								
 								if( $( "#reference_pCO2" ).html() != "Reference pCO<sub>2</sub>" )
 								{
+									// Adjust the correction factor
 									$( "#correction_pCO2" ).html( ( $("#sample_pCO2").html() / $("#reference_pCO2" ).html() * $("#correction_pCO2").html() ).toFixed(3) );
 								}
 							}
@@ -1180,7 +1166,7 @@
 							moveBellows( commandsArray[line][1] );
 							console.log( "Just started to move bellows, move status:", $('#moveStatus').html() );
 		
-							// After each command
+							// Do this after each command
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
 							timeExecuted = new Date().getTime() / 1000; // Start time of command
@@ -1227,41 +1213,48 @@
 							console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");
 							// alert( pTarget.toFixed(3) );							
 							sendCommand( commandsArray[line][1] + "S" + pTarget.toFixed(3) );
-							$('#moveStatus').html( 'M' + commandsArray[line][1] );
-							// Resetting the progress bar						
+							$('#moveStatus').html( 'M' + commandsArray[line][1] );					
+							
+							// Do this after every command
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
-							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "yes";
 							executed = "no";
 							waiting = "no";
 						}
 
-						// Set bellows to pressure target (X,Y) "PX 1.723"
+						// Set collision gas pressure to target "SN,366,10"
 						else if( commandsArray[line][0] == "S" && commandsArray[line][1] == "N" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
-	
-							if( $( "#nitrogenTargetPressure" ).html() == "N<sub>2</sub> target pressure" )
-							{
-								var pTarget = 0;
+
+							// Measure the current nitrogen pressure (in Torr)
+							let p = parseFloat( $("#pressureA").text() );
+							console.log("Current nitrogen pressure is: ", p.toFixed(1), "mbar");
+							
+							// Decide what to do
+							if( ( parseFloat($("#nitrogenTargetPressure").html()) > 0 ) && (parseFloat(parameterArray[line]) == 0) )
+							{	
+								// Pressure is given in the nitrogenTargetPressure window AND parameter is 0
+								var pTarget = parseFloat( $( "#nitrogenTargetPressure" ).html() );
 							}
 							else
 							{
-								var pTarget = parseFloat( $( "#nitrogenTargetPressure" ).html() );
+								// Parameter is not 0, regardless that a pressure is given in the nitrogenTargetPressure
+								var pTarget = parseFloat( parameterArray[line] );
 							}
-							console.log("The target N2 pressure (A) is: ", pTarget, " Torr");
-							// alert( pTarget.toFixed(3) );							
+
+							console.log("The target collison gas pressure (A) is: ", pTarget, " Torr");
+
 							sendCommand( "SN" + pTarget.toFixed(1) );
 							$('#moveStatus').html( 'SN' );
 
-							// Resetting the progress bar						
+							// Do this after every command					
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
-							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "yes";
 							executed = "no";
@@ -1287,23 +1280,6 @@
 							executed = "no";
 							waiting = "no";
 						}
-
-						// Mixes and inserts gas into bellows X
-						// else if( commandsArray[line][0] == "X" && commandsArray[line][1] == "I" && executed == "yes" && moving == "no" && waiting == "no" )
-						// {
-						// 	// Do this before every command in method
-						// 	if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-						// 	$("#command" + line).prepend("&#9758; ");	
-						// 	sendCommand( "XI" );
-						// 	// Resetting the progress bar						
-						// 	$("#progressBar").css( "width","0px" );
-						// 	$("#progress").html("0%");
-						// 	// Do this after every command
-						// 	timeExecuted = new Date().getTime() / 1000;
-						// 	moving = "yes";
-						// 	executed = "no";
-						// 	waiting = "no";
-						// }
 
 						// Set bellows Z to cell pressure target (40.000 Torr) "QZ 40.1"
 						else if( commandsArray[line][0] == "Q" && executed == "yes" && moving == "no" && waiting == "no" )
@@ -1345,44 +1321,44 @@
 							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
 						}
 
-						// Set bellows Z to nitrogen pressure target "AZ 178.2"
-						else if( commandsArray[line][0] == "A" && executed == "yes" && moving == "no" && waiting == "no" )
-						{
-							// Do this before every command in method
-							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-							$("#command" + line).prepend("&#9758; ");
-							// Measure the current nitrogen pressure (in Torr)
-							let p = parseFloat( $("#pressureA").text() );
-							console.log("Current nitrogen pressure is: ", p.toFixed(1), "Torr");
-							// Check if any pressure is given in the nitrogenTargetPressure window
-							if( parseFloat( $("#cellTargetPressure").html() ) > 0 )
-							{
-								var pTarget = parseFloat( $("#nitrogenTargetPressure").html() );
-							}
-							else
-							{
-								var pTarget = parseFloat( parameterArray[line] ); // Normally about 40 Torr
-							}
-							console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
-							let percent = parseFloat( $("#percentageZsteps").text() );
-							console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
-							var percentTarget = percent + ( pTarget - p ) / -0.1118;
-							percentTarget = parseFloat( percentTarget ).toFixed(1);
-							console.log("Target percentage is: ", percentTarget, "%");
-							// Move bellows
-							$( "#setPercentageZ" ).val( percentTarget );
-							console.log( "Sends the move Z bellows command." );
-							moveBellows( "Z" );	
-							// Resetting the progress bar						
-							$("#progressBar").css( "width","0px" );
-							$("#progress").html("0%");
-							// Do this after every command
-							// timeExecuted = new Date().getTime() / 1000; In this case only comes after the movement has finished
-							moving = "yes";
-							executed = "no";
-							waiting = "no";
-							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
-						}
+						// // Set bellows Z to nitrogen pressure target "AZ 178.2"
+						// else if( commandsArray[line][0] == "A" && executed == "yes" && moving == "no" && waiting == "no" )
+						// {
+						// 	// Do this before every command in method
+						// 	if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
+						// 	$("#command" + line).prepend("&#9758; ");
+						// 	// Measure the current nitrogen pressure (in Torr)
+						// 	let p = parseFloat( $("#pressureA").text() );
+						// 	console.log("Current nitrogen pressure is: ", p.toFixed(1), "Torr");
+						// 	// Check if any pressure is given in the nitrogenTargetPressure window
+						// 	if( parseFloat( $("#cellTargetPressure").html() ) > 0 )
+						// 	{
+						// 		var pTarget = parseFloat( $("#nitrogenTargetPressure").html() );
+						// 	}
+						// 	else
+						// 	{
+						// 		var pTarget = parseFloat( parameterArray[line] ); // Normally about 40 Torr
+						// 	}
+						// 	console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
+						// 	let percent = parseFloat( $("#percentageZsteps").text() );
+						// 	console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
+						// 	var percentTarget = percent + ( pTarget - p ) / -0.1118;
+						// 	percentTarget = parseFloat( percentTarget ).toFixed(1);
+						// 	console.log("Target percentage is: ", percentTarget, "%");
+						// 	// Move bellows
+						// 	$( "#setPercentageZ" ).val( percentTarget );
+						// 	console.log( "Sends the move Z bellows command." );
+						// 	moveBellows( "Z" );	
+						// 	// Resetting the progress bar						
+						// 	$("#progressBar").css( "width","0px" );
+						// 	$("#progress").html("0%");
+						// 	// Do this after every command
+						// 	// timeExecuted = new Date().getTime() / 1000; In this case only comes after the movement has finished
+						// 	moving = "yes";
+						// 	executed = "no";
+						// 	waiting = "no";
+						// 	console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
+						// }
 
 						// ^^^ The command "if" series ends here ^^^
 
@@ -1478,15 +1454,16 @@
 		<details>
 			<summary>Quick start</summary>
 			<ol>
+				<li>Ensure that no sequence is currently running.</li>
 				<li>Reload the front panel webpage (http://localhost).</li>
 				<li>Attach the manifold to the inlet system and plug in the corresponding yellow tubes.</li>
 				<li>Pump the vented volume between the green valve on the manifold and V22. First use the scroll pump then the turbo.</li>
-				<li>After the vacuum reached 1.00E-04, open the green valve manually.</li>
+				<li>Once the vacuum reaches 0.0001 mbar, open the green valve manually.</li>
 				<li>Click the <b><span style="color: #9A6CA6">violet</span></b> <em>Starting position</em> button.</li>
-				<li>To select the measurement sequence, click the <em>Sequence: Choose File</em> button.</li>
+				<li>To choose the measurement sequence, click the <em>Sequence: Choose File</em> button.</li>
 				<ul>
 				<li>The sequence .csv files are usually in the /home/pi/Desktop folder.</li>
-				<li>You can modify the existing sampleSequence.csv file, or create a new file. The name does not matter.</li>
+				<li>You can modify the existing sampleSequence.csv file, or create a new file. The file name does not matter.</li>
 				<li>Modifying a sequence file after it is loaded in will not automatically update on the front panel. You have to refresh the front panel and upload the modified sequence.</li>
 				</ul>
 				<li>To start the measurement, click the <b><span style="color: #63A615">green</span></b> <em>Start sequence</em> button.</li>
@@ -1500,7 +1477,7 @@
 			<ul>
 				<li>Before stopping the serialComm.py or the Arduino, make sure the Z bellow is at 50%!</li>
 				<li>To reprocess a single measurement: http://192.168.1.242/evaluateData.php?sampleName=221223_025949_test_Air&polynomial=100</li>
-				<li>To reprocess a multiple measurements: /usr/bin/python3 /var/www/html/Python/batchReprocess.py</li>
+				<li>To reprocess a multiple measurements: /usr/bin/python /var/www/html/Python/batchReprocess.py</li>
 
 			</ul>
 			
@@ -1514,29 +1491,29 @@
 			</ul>
 
 			<h3>Methods and sequences</h3>
-			<p>The general structure of a command line in the method files is "command,parameter,wait". The method files are CSV files with a separation by comma. 
-			You can edit them using a text editor or VSCode. The parameter is used for most commands, ignored for some, but it always has to be present.</br>
+			<p>The general structure of a command-line in the method files is "command,parameter,wait".
+			You can edit the method .csv files using a text editor or VSCode. The parameter is used for most command types, ignored for some, but it always has to be present.</br>
 			<b>Sequences and methods should always start from a specific starting situation.</b> You can reset the valves to this situation by pressing the <em>Starting Position</em> button.</p>
 			<ul>
 				<li>V03,0,15, &lt;--- Close valve 3 and wait 15 s</li>
 				<li>V13,1,12, &lt;--- Open valve 13 and wait 12 s</li>
-				<li>WC,0,5, &lt;--- Write current cell presure (Baratron at absorption cell) on front panel for later use (cell presure adjustment) and wait 5 s</li>
-				<li>WA,0,7, &lt;--- Write current N<sub>2</sub> pressure (Baratron gauge A) on front panel for later use (N<sub>2</sub> presure adjustment) and wait 7 s</li>
-				<li>WR,0,12, &lt;--- Write current reference CO<sub>2</sub> pressure (Baratron bellows X) on front panel for later use (CO<sub>2</sub> presure adjustment) and wait 12 s, this value is kept for the entire measurement</li>
-				<li>WS,0,6, &lt;--- Write current sample CO<sub>2</sub> pressure (Baratron bellows Y) on front panel for later use (CO<sub>2</sub> presure adjustment) and wait 6 s, this value is kept for the entire measurement</li>
-				<li>CM,0,1, &lt;--- Write current <em>p</em>CO<sub>2</sub> (mr3) on front panel for mixing ratio adjustment. Parameter 0 is for reference gas and 1 for sample gas.</li>
-				<li>AX,0,7, &lt;--- Used for the air measurements. Waits until the pressure on Baratron gauge A reaches the value set in the parameter, then closes valves V15 and V21.</li>
+				<li>WC,0,5, &lt;--- Write current cell presure on front panel.</li>
+				<li>WA,0,7, &lt;--- Write current pressure at gauge A on the front panel.</li>
+				<li>WR,0,12, &lt;--- Write current reference CO<sub>2</sub> pressure (gauge X) on the front panel. This value is reset after the method is finished.</li>
+				<li>WS,0,6, &lt;--- Write current sample CO<sub>2</sub> pressure (gauge Y) on the front panel. This value is reset after the method is finished.</li>
+				<li>CM,0,1, &lt;--- Write current <em>p</em>CO<sub>2</sub> on the front panel for mixing ratio adjustment. Parameter 0 is for reference gas and 1 for sample gas. This value is reset after the method is finished.</li>
+				<li>AX,0,7, &lt;--- Used for the air measurements. Waits until the pressure on gauge A reaches the value set in the parameter, then closes valves V15 and V21.</li>
 				<li>TWD,1,1, &lt;--- Starts writing the data from the TILDAS in hard disk</li>
 				<li>TWD,0,1, &lt;--- Stops writing the data from the TILDAS in hard disk</li>
-				<li>BX,45.3,12, &lt;--- Move bellows X to 45.3% and wait 12 s. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
-				<li>BX,-7.2,12, &lt;--- Move bellows X by -7.2% (percent points) reative to the current position and wait 12 s.</li>
-				<li>BY,25.3,12, &lt;--- Move bellows Y to 25.3% and wait 12 s. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
-				<li>BY,+4.5,12, &lt;--- Move bellows Y by 4.5% (percent points) reative to the current position and wait 12 s.</li>
-				<li>BZ,25.3,12, &lt;--- Move bellows Z to 25.3% and wait 12 s. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
+				<li>BX,45.3,12, &lt;--- Move bellows X to 45.3%.</li>
+				<li>BX,-7.2,12, &lt;--- Move bellows X by -7.2% relative to the current position.</li>
+				<li>BY,25.3,12, &lt;--- Move bellows Y to 25.3%.</li>
+				<li>BY,+4.5,12, &lt;--- Move bellows Y by 4.5% relative to the current position.</li>
+				<li>BZ,25.3,12, &lt;--- Move bellows Z to 25.3%. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
 				<li>PX,1.653,10, &lt;--- Move bellows X or expand the gas so that the pressure is 1.653 mbar in bellows X. If the bellows are compressed to &lt; 11%, reference gas is refilled. <b>The starting situation should be V05C, V07C, V06O.</b></li>
 				<li>PY,1.653,10, &lt;--- Move bellows Y so that the pressure is 1.653 mbar in bellows Y. <b>The starting situation should be V11C, V13C, V12O.</b></li></li>
-				<li>QC,39.387,10, &lt;--- Set the cell pressure by moving bellows Z to the pressure written by command WC on the frontpanel. The parameter 39.387 is only used in case that there is no value given on the frontpanel. Only a small range can be adjusted.</li>
-				<li>SN,277.13,10, &lt;--- Set the N<sub>2</sub> pressure (Baratron gauge A) by moving bellows Z to the pressure written by command WA on the frontpanel. The parameter 277.13 is only used in case that there is no value given on the frontpanel. Only a small range can be adjusted.</li>
+				<li>QC,39.387,10, &lt;--- Set the cell pressure by moving bellows Z to the pressure written by command WC on the front panel. The parameter 39.387 is only used in case that there is no value given on the frontpanel.</li>
+				<li>SN,366,10, &lt;--- Set the pressure at gauge A by moving bellows Z. The parameter (e.g., 366) is used, unless it is 0. Otherwise the value written by command WA on the front panel is used.</li>
 			</ul>
 		</details>
 	</body>
