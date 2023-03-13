@@ -1287,7 +1287,7 @@
 							waiting = "no";
 						}
 
-						// Set bellows Z to cell pressure target (40.000 Torr) "QZ 40.1"
+						// Set bellows Z to cell pressure target (40.000 Torr) "QZ,40.1,10"
 						else if( commandsArray[line][0] == "Q" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
 							// Do this before every command in method
@@ -1306,6 +1306,7 @@
 							{
 								var pTarget = parseFloat( parameterArray[line] ); // Normally about 40 Torr
 							}
+
 							console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
 							let percent = parseFloat( $("#percentageZsteps").text() );
 							console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
@@ -1320,7 +1321,7 @@
 							// Do this after every command
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
-							timeExecuted = new Date().getTime() / 1000; // In this case only comes after the movement has finished
+							timeExecuted = new Date().getTime() / 1000;
 							moving = "yes";
 							executed = "no";
 							waiting = "no";
@@ -1469,15 +1470,15 @@
 				<li>WR,0,12, &lt;--- Write current reference CO<sub>2</sub> pressure (gauge X) on the front panel. This value is reset after the method is finished.</li>
 				<li>WS,0,6, &lt;--- Write current sample CO<sub>2</sub> pressure (gauge Y) on the front panel. This value is reset after the method is finished.</li>
 				<li>CM,0,1, &lt;--- Write current <em>p</em>CO<sub>2</sub> on the front panel for mixing ratio adjustment. Parameter 0 is for reference gas and 1 for sample gas. This value is reset after the method is finished.</li>
-				<li>AX,0,7, &lt;--- Used for the air measurements. Waits until the pressure on gauge A reaches the value set in the parameter, then closes valves V15 and V21.</li>
-				<li>TWD,1,1, &lt;--- Starts writing the data from the TILDAS in hard disk</li>
-				<li>TWD,0,1, &lt;--- Stops writing the data from the TILDAS in hard disk</li>
+				<li>AX,363,7, &lt;--- Waits until the pressure on gauge A reaches the value set in the parameter, then closes valves V15 and V21. Used for the air measurements. </li>
+				<li>TWD,1,1, &lt;--- Starts the TILDAS writing data.</li>
+				<li>TWD,0,1, &lt;--- Stops the TILDAS writing data.</li>
 				<li>BX,45.3,12, &lt;--- Move bellows X to 45.3%.</li>
 				<li>BX,-7.2,12, &lt;--- Move bellows X by -7.2% relative to the current position.</li>
 				<li>BY,25.3,12, &lt;--- Move bellows Y to 25.3%.</li>
 				<li>BY,+4.5,12, &lt;--- Move bellows Y by 4.5% relative to the current position.</li>
 				<li>BZ,25.3,12, &lt;--- Move bellows Z to 25.3%. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
-				<li>PX,1.653,10, &lt;--- Move bellows X or expand the gas so that the pressure is 1.653 mbar in bellows X. If the bellows are compressed to &lt; 11%, reference gas is refilled. <b>The starting situation should be V05C, V07C, V06O.</b></li>
+				<li>PX,1.653,10, &lt;--- Move bellows X or expand the gas so that the pressure is 1.653 mbar in bellows X. <b>The starting situation should be V05C, V07C, V06O.</b></li>
 				<li>PY,1.653,10, &lt;--- Move bellows Y so that the pressure is 1.653 mbar in bellows Y. <b>The starting situation should be V11C, V13C, V12O.</b></li></li>
 				<li>QC,39.387,10, &lt;--- Set the cell pressure by moving bellows Z to the pressure written by command WC on the front panel. The parameter 39.387 is only used in case that there is no value given on the frontpanel.</li>
 				<li>SN,366,10, &lt;--- Set the pressure at gauge A by moving bellows Z. The parameter (e.g., 366) is used, unless it is 0. Otherwise the value written by command WA on the front panel is used.</li>

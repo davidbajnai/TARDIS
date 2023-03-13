@@ -685,7 +685,7 @@ void sendStatus( String param )
   // Preferably adjust the reference bellow
   Xpressure = (Xpressure / n - 0.325) / 0.933007 / 1.09901 / 1.003107; // Reference gas bellow
   Ypressure = (Ypressure / n - 0.297); // Sample bellow
-  Apressure = Apressure / n - 4.4; // A pressure
+  Apressure = Apressure / n - 4.2; // A pressure
 
   Xpercentage = Xpercentage / n;
   Ypercentage = Ypercentage / n;
