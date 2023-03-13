@@ -918,12 +918,15 @@
 							currentTimeOld = currentTime;
 						}
 
-						// Valve commands
+						// vvv The command "if" series starts here vvv
+
+						// Open or close valves
 						if( commandsArray[line][0] == "V" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
+
 							// Valve that needs to be switched
 							if( parameterArray[line] == 0 )
 							{
@@ -933,13 +936,14 @@
 							{
 								toggleValve(commandsArray[line],"0");
 							}
+
 							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "no";
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// Set housing temperature
@@ -948,14 +952,16 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
+
 							cmd = "FS" + parameterArray[line];
+
 							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "no";
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// This command waits until A target pressure is reached, than closes valves
@@ -966,17 +972,14 @@
 							$("#command" + line).prepend("&#9758; ");
 							cmd = "AX" + parameterArray[line];
 
-							// Resetting the progress bar						
+							// Do this after every command					
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
-							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "yes";
 							executed = "no";
 							waiting = "no";
-							// $("#command" + line).append(" &#10003;");
-							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
-							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
 						}
 
 						// Reset valves to starting position
@@ -985,14 +988,16 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
+
 							cmd = "KL" + parameterArray[line];
+
 							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "no";
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// Write cell pressure for the first sample on frontpanel "WC <no parameter>"
@@ -1001,14 +1006,16 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
+
 							$("#cellTargetPressure").html( $("#baratron").html() );
+
 							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "no";
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// Write nitrogen pressure for the first sample on the frontpanel "WA <no parameter>"
@@ -1026,7 +1033,7 @@
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// Write reference gas target pressure for the first sample on the frontpanel "WR <no parameter>"
@@ -1035,6 +1042,7 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$( "#command" + line).prepend("&#9758; " );
+
 							// Keep the target pressure (ref) for all samples in sequence
 							if( $( "#refgasTargetPressure" ).html() == "Reference target pressure" )
 							{
@@ -1044,13 +1052,14 @@
 							{
 								$( "#refgasTargetPressure" ).html( (parseFloat($( "#refgasTargetPressure" ).html()) * 1.0026).toFixed(3) );
 							}
+
 							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "no";
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 					
 
@@ -1060,6 +1069,7 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$( "#command" + line).prepend("&#9758; " );
+
 							// Keep the target pressure (sam) for all samples in sequence
 							if( $( "#samgasTargetPressure" ).html() == "Sample target pressure" )
 							{
@@ -1069,13 +1079,14 @@
 							{
 								$( "#samgasTargetPressure" ).html( (parseFloat($( "#samgasTargetPressure" ).html()) * 1.0026).toFixed(3) );
 							}
+
 							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "no";
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// Write gas mixing ratio to the frontpanel "CM, 0=Reference 1=Sample"
@@ -1112,7 +1123,7 @@
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// Execute command at laser spectrometer: Start writing data to disk "TWD 0"
@@ -1121,7 +1132,7 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
-							// Do something here
+
 							// Execute command at laser spectrometer: Stop writing data to disk
 							if( parameterArray[line] == 0 )
 							{
@@ -1133,13 +1144,14 @@
 								$('#cycle').html( cycle );
 								cycle++;						
 							}
+
 							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "no";
 							executed = "yes";
 							waiting = "yes";
 							$("#command" + line).append(" &#10003;");
-							console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
 						}
 
 						// Move bellows (X,Y,Z) "BY 53" with the percentage as parameter BX 34.5
@@ -1148,7 +1160,7 @@
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
-							// Move bellows
+
 							if( parameterArray[line].substr(0,1) == "+" || parameterArray[line].substr(0,1) == "-" )
 							{
 								// Move increment
@@ -1163,6 +1175,7 @@
 								// Move absolute
 								$( "#setPercentage" + commandsArray[line][1] ).val( parameterArray[line] );
 							}
+
 							moveBellows( commandsArray[line][1] );
 							console.log( "Just started to move bellows, move status:", $('#moveStatus').html() );
 		
@@ -1173,8 +1186,7 @@
 							moving = "yes";
 							executed = "no";
 							waiting = "no";
-
-							console.log('Command',commandsArray[line],timeExecuted,'started.');
+							// console.log('Command',commandsArray[line],timeExecuted,'started.');
 						}
 
 						// Set bellows to pressure target (X,Y) "PX 1.723"
@@ -1210,8 +1222,7 @@
 							// The corrrection factor is 1.000 by default, but can be adjusted by the CM command
 							var pTarget = pTarget * parseFloat( $( "#correction_pCO2" ).html() ).toFixed(3);
 
-							console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");
-							// alert( pTarget.toFixed(3) );							
+							console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");						
 							sendCommand( commandsArray[line][1] + "S" + pTarget.toFixed(3) );
 							$('#moveStatus').html( 'M' + commandsArray[line][1] );					
 							
@@ -1224,16 +1235,12 @@
 							waiting = "no";
 						}
 
-						// Set collision gas pressure to target "SN,366,10"
+						// Set collision gas pressure to target: SN,366,10
 						else if( commandsArray[line][0] == "S" && commandsArray[line][1] == "N" && executed == "yes" && moving == "no" && waiting == "no" )
 						{
 							// Do this before every command in method
 							if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
 							$("#command" + line).prepend("&#9758; ");
-
-							// Measure the current nitrogen pressure (in Torr)
-							let p = parseFloat( $("#pressureA").text() );
-							console.log("Current nitrogen pressure is: ", p.toFixed(1), "mbar");
 							
 							// Decide what to do
 							if( ( parseFloat($("#nitrogenTargetPressure").html()) > 0 ) && (parseFloat(parameterArray[line]) == 0) )
@@ -1247,7 +1254,7 @@
 								var pTarget = parseFloat( parameterArray[line] );
 							}
 
-							console.log("The target collison gas pressure (A) is: ", pTarget, " Torr");
+							// console.log("The target collison gas pressure (A) is: ", pTarget, " Torr");
 
 							sendCommand( "SN" + pTarget.toFixed(1) );
 							$('#moveStatus').html( 'SN' );
@@ -1271,10 +1278,9 @@
 							sendCommand( "RS" + parseFloat( parameterArray[line] ).toFixed(3) );
 							$('#moveStatus').html( 'RS' );
 
-							// Resetting the progress bar						
+							// Do this after every command				
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
-							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000;
 							moving = "yes";
 							executed = "no";
@@ -1310,55 +1316,16 @@
 							$( "#setPercentageZ" ).val( percentTarget );
 							console.log( "Sends the move Z bellows command." );
 							moveBellows( "Z" );
-							// Resetting the progress bar						
+
+							// Do this after every command
 							$("#progressBar").css( "width","0px" );
 							$("#progress").html("0%");
-							// Do this after every command
 							timeExecuted = new Date().getTime() / 1000; // In this case only comes after the movement has finished
 							moving = "yes";
 							executed = "no";
 							waiting = "no";
-							console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
+							// console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
 						}
-
-						// // Set bellows Z to nitrogen pressure target "AZ 178.2"
-						// else if( commandsArray[line][0] == "A" && executed == "yes" && moving == "no" && waiting == "no" )
-						// {
-						// 	// Do this before every command in method
-						// 	if( $("#command" + (line+2)).length ){ $("#command" + (line+2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-						// 	$("#command" + line).prepend("&#9758; ");
-						// 	// Measure the current nitrogen pressure (in Torr)
-						// 	let p = parseFloat( $("#pressureA").text() );
-						// 	console.log("Current nitrogen pressure is: ", p.toFixed(1), "Torr");
-						// 	// Check if any pressure is given in the nitrogenTargetPressure window
-						// 	if( parseFloat( $("#cellTargetPressure").html() ) > 0 )
-						// 	{
-						// 		var pTarget = parseFloat( $("#nitrogenTargetPressure").html() );
-						// 	}
-						// 	else
-						// 	{
-						// 		var pTarget = parseFloat( parameterArray[line] ); // Normally about 40 Torr
-						// 	}
-						// 	console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
-						// 	let percent = parseFloat( $("#percentageZsteps").text() );
-						// 	console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
-						// 	var percentTarget = percent + ( pTarget - p ) / -0.1118;
-						// 	percentTarget = parseFloat( percentTarget ).toFixed(1);
-						// 	console.log("Target percentage is: ", percentTarget, "%");
-						// 	// Move bellows
-						// 	$( "#setPercentageZ" ).val( percentTarget );
-						// 	console.log( "Sends the move Z bellows command." );
-						// 	moveBellows( "Z" );	
-						// 	// Resetting the progress bar						
-						// 	$("#progressBar").css( "width","0px" );
-						// 	$("#progress").html("0%");
-						// 	// Do this after every command
-						// 	// timeExecuted = new Date().getTime() / 1000; In this case only comes after the movement has finished
-						// 	moving = "yes";
-						// 	executed = "no";
-						// 	waiting = "no";
-						// 	console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
-						// }
 
 						// ^^^ The command "if" series ends here ^^^
 
@@ -1487,7 +1454,7 @@
 				<li>The rPi has to be turned on after the TILDAS, otherwise reboot it: sudo shutdown -r now.</li>
 				<li>To allow streaming data from the TILDAS to the rPi, click the "RS" on (TDLWintel bottom left) and set the mode to "Stream Data" (TDLWintel top left).</li>
 				<li>Make sure that "RS" is active at TILDAS and that mode is in "Stream Data", otherwise Python does not get data.</li>
-				<li>Start the communication script: /usr/bin/python3 /var/www/html/Python/serialComm.py</li>
+				<li>Start the communication script: /usr/bin/python /var/www/html/Python/serialComm.py</li>
 			</ul>
 
 			<h3>Methods and sequences</h3>
