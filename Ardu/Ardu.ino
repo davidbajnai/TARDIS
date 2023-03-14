@@ -1,7 +1,6 @@
 #include <AccelStepper.h>
-
-// Temperature sensos
 #include "Adafruit_SHTC3.h"
+
 Adafruit_SHTC3 shtc3 = Adafruit_SHTC3();
 
 long XstartPos = 0;
@@ -12,7 +11,7 @@ long steps = 0;
 char command;
 String string;
 String stat = "S";
-String statusMessage = "";
+// String statusMessage = "";
 float Xpercentage = 0.00;
 float Ypercentage = 0.00;
 float Zpercentage = 0.00;
@@ -28,55 +27,52 @@ float boxTempArray[200];
 int fanSpeed = 0;
 float boxTemp = 0.000;
 float boxHum = 0.00;
-long now = 0;
-long lastTime = 0;
-long timeChange = 0;
+unsigned long now = 0;
+unsigned long lastTime = 0;
+unsigned long timeChange = 0;
 float Terror = 0.000;
 float errSum = 0.000;
 float dErr = 0.000;
 float lastErr = 0.000;
-int cycl = 0;
+byte cycl = 0;
 float housingSetT = 32.000;
 float targetPercent = 0.000;
 long Xsteps = 0;
 long Ysteps = 0;
 long Zsteps = 0;
-long XstepsIni = 0;
-long YstepsIni = 0;
-long ZstepsIni = 0;
+// long XstepsIni = 0;
+// long YstepsIni = 0;
+// long ZstepsIni = 0;
 // int bellowsCalibratedX = 0;
 
-long startMillis = 0;
+unsigned long startMillis = 0;
 
 AccelStepper Xaxis(1, 3, 2); // pin 3 = step, pin 2 = direction
 AccelStepper Yaxis(1, 5, 4); // pin 5 = step, pin 4 = direction
 AccelStepper Zaxis(1, 15, 14); // pin 15 = step, pin 14 = direction
 
-// Pins 22-53 are used for the valve control
-
 // Reset pin is set to +5V (HIGH)
 const byte XYZsleepPin = 16;
 
-// For the microstep setting of the DRV8825 driver module
-const byte MO0Pin = 9;
-const byte MO1Pin = 10;
-const byte MO2Pin = 11;
-
-float relDiff = 0; // Relative pressure difference in %
+// float relDiff = 0; // Relative pressure difference in %
 
 // 0-100 (x) are 62438 steps, at 1/8 microsteps
 
 void setup()
 {
   Serial.begin(115200);
+
   // Wait for serial port to open
   while (!Serial) {
     delay(10);
   }
 
+  // Start temperature sensor
   shtc3.begin();
 
-  // Configure the output pins and set them to low, for valves (via relay boards)
+  // Configure pins
+
+  // Pins 22-53 are used for the valve control
   int pinNr = 22;
   while ( pinNr <= 53 )
   {
@@ -85,12 +81,13 @@ void setup()
     pinNr = pinNr + 1;
   }
 
-  digitalWrite(21 + 17, HIGH); // Ventil #17 (turbo pump) close
-  digitalWrite(21 + 27, HIGH); // Ventil #27 (fore vacuum pump) close
+  digitalWrite(21 + 17, HIGH);
+  digitalWrite(21 + 27, HIGH);
   digitalWrite(21 + 16, HIGH);
 
   pinMode(A0, INPUT); // Potentiometer X
   pinMode(A1, INPUT); // Potentiometer Y
+
   pinMode(A2, INPUT); // Bellows pressure X (0-10 Torr)
   pinMode(A3, INPUT); // Bellows pressure Y (0-10 Torr)
   pinMode(A4, INPUT); // Baratron (A, 0-1000 mbar)
@@ -100,25 +97,20 @@ void setup()
   analogWrite(6, 45); // Set the maximum voltage to little less than 12 V (maximum is 60 V)
   analogWrite(8, 0); // Set the maximum current to about 2 A (maximum is 8 A) valid range 4-40 (10-100%)
 
-
-  // pinMode(XYZenablePin, OUTPUT);
-  // digitalWrite(XYZenablePin, LOW);
-
   pinMode(XYZsleepPin, OUTPUT);
   digitalWrite(XYZsleepPin, LOW); // Drivers for X and Y sleeping
 
   // This is the pinout for motors X, Y, and Z (microstepping)
-  pinMode(MO0Pin, OUTPUT);
-  pinMode(MO1Pin, OUTPUT);
-  pinMode(MO2Pin, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
 
   // Set the microstepping 1/32: 1 1 1, 1/8: 1 1 0, motors X, Y, and Z
-  digitalWrite(MO0Pin, HIGH);
-  digitalWrite(MO1Pin, HIGH);
-  digitalWrite(MO2Pin, LOW);
+  digitalWrite(9, HIGH);
+  digitalWrite(10, HIGH);
+  digitalWrite(11, LOW);
 
-  // From the potentiometer of the two bellows
-  // Do an averaging here
+  // Calculate X and Y bellow percentages based on the potentiometer
   int i = 0;
   while ( i < 200 )
   {
@@ -154,9 +146,11 @@ void setup()
 
   delay(100);
 
-  Xpressure = analogRead(A2) * 5.00 * 1.333 / 1024.00;
-  Ypressure = analogRead(A3) * 5.00 * 1.333 / 1024.00;
-  Apressure = analogRead(A4) * 500.00 / 1024.00;
+  // Pressure readings from the three Baratrons
+  // Read all values as mbar
+  Xpressure = analogRead(A2) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
+  Ypressure = analogRead(A3) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
+  Apressure = analogRead(A4) * 500.00 / 1024.00; // 0-1000 mbar Baratron
 
   delay(100);
 }
@@ -760,7 +754,7 @@ void loop()
     // Set the stepper motor positions
     runXP( string.substring(2, 9).toFloat(), "MX" );
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -769,7 +763,7 @@ void loop()
     // Set the pressure in bellows X to the given pressure
     setPressureX( string.substring(2, 9).toFloat() );
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -778,7 +772,7 @@ void loop()
     // Sets the housing temperature
     housingSetT = string.substring(2, 9).toFloat();
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -787,7 +781,7 @@ void loop()
     // Resets the valves to starting position
     startingPosition();
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -796,7 +790,7 @@ void loop()
     // Move bellow Y (sample side)
     runYP( string.substring(2, 9).toFloat(), "MY" );
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -805,7 +799,7 @@ void loop()
     // Wait until gauge A reaches the required pressure - for air refill
     runAX(string.substring(2, 9).toFloat());
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -814,7 +808,7 @@ void loop()
     // Set pressure in bellow Y (sample side)
     setPressureY( string.substring(2, 9).toFloat() );
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -823,7 +817,7 @@ void loop()
     // Move bellow Z
     runZP( string.substring(2, 9).toFloat(), "MZ" );
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -832,7 +826,7 @@ void loop()
     // Set N2 pressure by moving the Z bellow
     setN2Pressure( string.substring(2, 9).toFloat() );
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -843,7 +837,7 @@ void loop()
     // that the sample gas is aleady in the manifold and not the autofinger
     refillSample( string.substring(2, 9).toFloat() );
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -881,7 +875,7 @@ void loop()
       digitalWrite(21 + v, HIGH); // Close valve
     }
     string = "";
-    command = "";
+    command = ' ';
     sendStatus("-");
   }
 
@@ -890,7 +884,7 @@ void loop()
     // Just send the status
     sendStatus("-");
     string = "";
-    command = "";
+    command = ' ';
   }
 
   // Print out the current settings

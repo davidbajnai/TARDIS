@@ -1,12 +1,10 @@
-﻿refill_normal,refGasRefillLeft.csv
+﻿heavyVsRef,changeoverMethodMismatch1.csv
+refill_normal,refGasRefillLeft.csv
 refill_heavy,lightGasRefillRight.csv
-lightVsRef,changeoverMethod.csv
+lightVsRef,changeoverMethodMismatch2.csv
 refill_normal,refGasRefillLeft.csv
 refill_heavy,heavyGasRefillRight.csv
-heavyVsRef,changeoverMethod.csv
-refill_normal,refGasRefillLeft.csv
-refill_heavy,lightGasRefillRight.csv
-lightVsRef,changeoverMethod.csv
+heavyVsRef,changeoverMethodMismatch2.csv
 refill_normal,refGasRefillLeft.csv
 refill_heavy,heavyGasRefillRight.csv
 heavyVsRef,changeoverMethod.csv
