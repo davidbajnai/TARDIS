@@ -121,7 +121,7 @@ function startingPosition() {
 // Move bellows
 function moveBellows(bellow) {
     $('#moveStatus').html('M' + bellow);
-    const percentage = parseFloat($('#setPercentage' + bellow).val()).toFixed(1);
+    var percentage = parseFloat($('#setPercentage' + bellow).val()).toFixed(1);
     if (percentage < 0) {
         percentage = 0.0;
         $('#setPercentage' + bellow).val("0.0");
