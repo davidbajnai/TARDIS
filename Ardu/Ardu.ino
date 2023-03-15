@@ -95,7 +95,7 @@ void setup()
   pinMode(6, OUTPUT); // Power supply analog in (I)
   pinMode(8, OUTPUT); // Power supply analog in (U)
   analogWrite(6, 45); // Set the maximum voltage to little less than 12 V (maximum is 60 V)
-  analogWrite(8, 0); // Set the maximum current to about 2 A (maximum is 8 A) valid range 4-40 (10-100%)
+  analogWrite(8, 0);  // Set the maximum current to about 2 A (maximum is 8 A) valid range 4-40 (10-100%)
 
   pinMode(XYZsleepPin, OUTPUT);
   digitalWrite(XYZsleepPin, LOW); // Drivers for X and Y sleeping
@@ -112,7 +112,7 @@ void setup()
 
   // Calculate X and Y bellow percentages based on the potentiometer
   int i = 0;
-  while ( i < 200 )
+  while (i < 200)
   {
     Xpercentage = Xpercentage + -100.00 / 800.00 * analogRead(A0) + 100 + 10000 / 800;
     Ypercentage = Ypercentage + -100.00 / 800.00 * analogRead(A1) + 100 + 10000 / 800;
@@ -150,7 +150,7 @@ void setup()
   // Read all values as mbar
   Xpressure = analogRead(A2) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
   Ypressure = analogRead(A3) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
-  Apressure = analogRead(A4) * 500.00 / 1024.00; // 0-1000 mbar Baratron
+  Apressure = analogRead(A4) * 500.00 / 1024.00;       // 0-1000 mbar Baratron
 
   delay(100);
 }
@@ -158,24 +158,26 @@ void setup()
 void wait(int seconds, String message)
 {
   startMillis = millis();
-  while ( millis() < startMillis + seconds * 1000 )
+  while (millis() < startMillis + seconds * 1000)
   {
-    sendStatus( message );
+    sendStatus(message);
     delay(10);
   }
 }
 
+// Controlls the housing temperature
 void controlT()
 {
   now = millis();
   timeChange = now - lastTime;
-  
+
   // Compute all the working error variables after cycle 60
   Terror = boxTemp - 32.000;
-  
-  if( cycl > 60 ) {
-    errSum += (Terror * timeChange/1000);
-    dErr = (Terror + lastErr) / timeChange*1000;
+
+  if (cycl > 60)
+  {
+    errSum += (Terror * timeChange / 1000);
+    dErr = (Terror + lastErr) / timeChange * 1000;
     // Remember some variables for next time
     lastErr = Terror;
     lastTime = now;
@@ -183,26 +185,19 @@ void controlT()
   cycl = cycl + 1;
 
   // Compute PID Output
-
-  // variables for the PID
-  // int PID_Status = 1;
-  // int kp = 395;
-  // float ki = 0.33;
-  // float kd = 0.033;
-  // The structure of the PID control string
-  // fanSpeed = kp * Terror + ki * errSum + kd * dErr;
+  // The structure of the PID control string: fanSpeed = kp * Terror + ki * errSum + kd * dErr;
   fanSpeed = 395 * Terror + 0.33 * errSum + 0.033 * dErr;
 
-  if( fanSpeed > 100 )
+  if (fanSpeed > 100)
   {
     fanSpeed = 100;
   }
-  else if( fanSpeed < 9)
+  else if (fanSpeed < 9)
   {
     fanSpeed = 9;
   }
-  
-  analogWrite(8, fanSpeed * 40 / 100 );
+
+  analogWrite(8, fanSpeed * 40 / 100);
 }
 
 void runXP(float percentage, String string)
@@ -219,13 +214,13 @@ void runXP(float percentage, String string)
     percentage = 0;
   }
   XstartPos = Xaxis.currentPosition();
-  long steps = ( percentage * 62438.00 / 100 ) - Xsteps;
+  long steps = (percentage * 62438.00 / 100) - Xsteps;
   // Check if bellows opens or compresses
   // If it opens, then open a bit more and then move back
   // If it closes, simply close
   sendStatus("MX");
   Xaxis.move(steps);
-  while ( Xaxis.currentPosition() != XstartPos + steps )
+  while (Xaxis.currentPosition() != XstartPos + steps)
   {
     Xaxis.run();
   }
@@ -252,7 +247,7 @@ void runYP(float percentage, String string)
   sendStatus("MY");
   Yaxis.move(steps);
   long i = 0;
-  while ( Yaxis.currentPosition() != YstartPos + steps )
+  while (Yaxis.currentPosition() != YstartPos + steps)
   {
     Yaxis.run();
   }
@@ -280,129 +275,128 @@ void runZP(float percentage, String string)
   sendStatus("MZ");
   Zaxis.move(steps);
   long i = 0;
-  while ( Zaxis.currentPosition() != ZstartPos + steps )
+  while (Zaxis.currentPosition() != ZstartPos + steps)
   {
     Zaxis.run();
   }
   Zsteps = Zsteps + steps;
   digitalWrite(XYZsleepPin, LOW);
   stat = "S";
-  
 }
 
 void startingPosition()
 {
-  switchValve( "V01C" );
-  switchValve( "V02C" );
-  switchValve( "V03C" );
-  switchValve( "V04C" );
-  switchValve( "V05O" );
-  switchValve( "V06C" );
-  switchValve( "V07O" );
-  switchValve( "V08C" );
-  switchValve( "V09C" );
-  switchValve( "V10C" );
-  switchValve( "V11O" );
-  switchValve( "V12C" );
-  switchValve( "V13O" );
-  switchValve( "V14C" );
-  switchValve( "V15C" );
-  switchValve( "V16O" );
-  switchValve( "V17O" );
-  switchValve( "V18C" );
-  switchValve( "V19O" );
-  switchValve( "V20C" );
-  switchValve( "V22C" );
-  switchValve( "V27C" );
-
+  switchValve("V01C");
+  switchValve("V02C");
+  switchValve("V03C");
+  switchValve("V04C");
+  switchValve("V05O");
+  switchValve("V06C");
+  switchValve("V07O");
+  switchValve("V08C");
+  switchValve("V09C");
+  switchValve("V10C");
+  switchValve("V11O");
+  switchValve("V12C");
+  switchValve("V13O");
+  switchValve("V14C");
+  switchValve("V15C");
+  switchValve("V16O");
+  switchValve("V17O");
+  switchValve("V18C");
+  switchValve("V19O");
+  switchValve("V20C");
+  switchValve("V21C");
+  switchValve("V22C");
+  switchValve("V27C");
   delay(50);
 }
 
 void expandX(int number)
 {
-  if ( number == 1 ) // 1.5% reduction
+  if (number == 1) // 1.5% reduction
   {
-    switchValve( "V06C" );
-    switchValve( "V07O" );
+    switchValve("V06C");
+    switchValve("V07O");
     wait(20, "EX");
-    switchValve( "V07C" );
-    switchValve( "V06O" );
+    switchValve("V07C");
+    switchValve("V06O");
     wait(5, "EX");
   }
-  else if ( number == 2 ) // 14% reduction
+  else if (number == 2) // 14% reduction
   {
-    switchValve( "V11C" );
-    switchValve( "V16C" );
-    switchValve( "V07O" );
+    switchValve("V11C");
+    switchValve("V16C");
+    switchValve("V07O");
     wait(10, "EX");
-    switchValve( "V07C" );
-    switchValve( "V16O" );
-    switchValve( "V11O" );
+    switchValve("V07C");
+    switchValve("V16O");
+    switchValve("V11O");
     wait(20, "EX");
   }
-  else if ( number == 3 ) // 32% reduction
+  else if (number == 3) // 32% reduction
   {
-    switchValve( "V16C" );
-    switchValve( "V06O" ); // this line is redundant
-    switchValve( "V05O" );
-    switchValve( "V07O" );
+    switchValve("V16C");
+    switchValve("V06O"); // this line is redundant
+    switchValve("V05O");
+    switchValve("V07O");
     wait(15, "EX");
-    switchValve( "V07C" );
-    switchValve( "V05C" );
-    switchValve( "V16O" );
+    switchValve("V07C");
+    switchValve("V05C");
+    switchValve("V16O");
     wait(20, "EX");
   }
 }
 
 void expandY(int number)
 {
-  if ( number == 1 ) // 5.3% reduction
+  if (number == 1) // 5.3% reduction
   {
-    switchValve( "V12C" );
-    switchValve( "V13O" );
-    wait(20,"EY");
-    switchValve( "V13C" );
-    switchValve( "V12O" );
-    wait(5,"EY");
+    switchValve("V12C");
+    switchValve("V13O");
+    wait(20, "EY");
+    switchValve("V13C");
+    switchValve("V12O");
+    wait(5, "EY");
   }
-  else if ( number == 2 ) // 37% reduction
+  else if (number == 2) // 37% reduction
   {
-    switchValve( "V05C" );
-    switchValve( "V16C" );
-    switchValve( "V13O" );
-    wait(10,"EY");
-    switchValve( "V13C" );
-    switchValve( "V16O" );
-    switchValve( "V05O" );
-    wait(20,"EY");
+    switchValve("V05C");
+    switchValve("V16C");
+    switchValve("V13O");
+    wait(10, "EY");
+    switchValve("V13C");
+    switchValve("V16O");
+    switchValve("V05O");
+    wait(20, "EY");
   }
-  else if ( number == 3 ) // 61% reduction
+  else if (number == 3) // 61% reduction
   {
-    switchValve( "V16C" );
-    switchValve( "V11O" );
-    switchValve( "V13O" );
-    wait(15,"EY");
-    switchValve( "V13C" );
-    switchValve( "V11C" );
-    switchValve( "V16O" );
-    wait(20,"EY");
+    switchValve("V16C");
+    switchValve("V11O");
+    switchValve("V13O");
+    wait(15, "EY");
+    switchValve("V13C");
+    switchValve("V11C");
+    switchValve("V16O");
+    wait(20, "EY");
   }
 }
 
-void refillSample( float tPress )
+void refillSample(float tPress)
 {
   // Get the pressure in bellows Y
   int expN = 0;
   sendStatus("RS");
-  while ( Ypressure < tPress && expN < 10 )
+  while (Ypressure < tPress && expN < 10)
   {
-    switchValve("V22O" );
-    wait(20,"RS");
-    switchValve( "V22C" );
-    switchValve( "V10O" );
-    wait(20,"RS");
-    switchValve( "V10C" );
-    wait(20,"RS");
+    switchValve("V22O");
+    wait(20, "RS");
+    switchValve("V22C");
+    switchValve("V10O");
+    wait(20, "RS");
+    switchValve("V10C");
+    wait(20, "RS");
     expN = expN + 1;
   }
 }
@@ -416,12 +410,10 @@ void runAX(float pressureTarget)
 
     if (Apressure >= pressureTarget)
     {
-      switchValve( "V15C" );
-      switchValve( "V21C" );
+      switchValve("V15C");
       break;
     }
-
-  }  
+  }
 }
 
 void setPressureX(float targetPressure)
@@ -564,9 +556,9 @@ void setPressureY(float targetPressure)
 
 void setN2Pressure(float targetPressure)
 {
-  if ( targetPressure > 10 )
+  if (targetPressure > 10)
   {
-    for ( int a = 0; a < 10; a++ )
+    for (int a = 0; a < 10; a++)
     {
       // Get current pressure
       int m = 100; // Integration cycles
@@ -577,7 +569,7 @@ void setN2Pressure(float targetPressure)
       }
       delay(100);
       // Now decide what to do
-      if ( abs(Apressure - targetPressure) <= 0.1 )
+      if (abs(Apressure - targetPressure) <= 0.1)
       {
         // Serial.println( "Target pressure reached." );
         break;
@@ -587,7 +579,7 @@ void setN2Pressure(float targetPressure)
         // Compress/open bellows
         targetPercent = Zaxis.currentPosition() * 100.0000 / 15960.00 + (Apressure - targetPressure) / 0.1044;
         // Send the command to the bellows
-        runZP( targetPercent, "MZ" );
+        runZP(targetPercent, "MZ");
         delay(100);
       }
     }
@@ -598,34 +590,33 @@ void setN2Pressure(float targetPressure)
   }
 }
 
-void switchValve( String param )
+void switchValve(String param)
 {
   // param is a string like V03C or V12O
   // Extract an integer out of the valve number
   int v = param.substring(1, 3).toInt();
-  if ( param.substring(3, 4) == "O" )
+  if (param.substring(3, 4) == "O")
   {
     // Check the case for valve 17 (turbo) and 27 (fore vacuum)
-    if ( v == 17 )
+    if (v == 17)
     {
       digitalWrite(21 + 27, HIGH);
       delay(2000);
     }
-    else if ( v == 27 )
+    else if (v == 27)
     {
       digitalWrite(21 + 17, HIGH);
       delay(250);
     }
     digitalWrite(21 + v, LOW); // Open valve
   }
-  else if ( param.substring(3, 4) == "C" )
+  else if (param.substring(3, 4) == "C")
   {
     digitalWrite(21 + v, HIGH); // Close valve
   }
   sendStatus("SV");
   delay(50);
 }
-
 
 void sendStatus( String param )
 {
@@ -636,13 +627,16 @@ void sendStatus( String param )
   Xpercentage = -100.00 / 800 * analogRead(A0) + 100 + 10000 / 800;
   Ypercentage = -100.00 / 800 * analogRead(A1) + 100 + 10000 / 800;
 
-  sensors_event_t humidity, temp; // objects for the shtc3 sensor data
+  // Get box temperature and humidity from the sensor
+  sensors_event_t humidity, temp;
   shtc3.getEvent(&humidity, &temp);
   boxTemp = temp.temperature;
   boxHum = humidity.relative_humidity;
-  
+
+  // Integrate temperatures and pressures
   int n = 50; // Integration cycles
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++)
+  {
     // Move elements up in the array
     XpressureArray[i] = XpressureArray[i + 1];
     YpressureArray[i] = YpressureArray[i + 1];
@@ -665,7 +659,8 @@ void sendStatus( String param )
   Ypercentage = 0;
   boxTemp = 0;
 
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++)
+  {
     // Add all elements of the array
     Xpressure = Xpressure + XpressureArray[i];
     Ypressure = Ypressure + YpressureArray[i];
@@ -677,41 +672,42 @@ void sendStatus( String param )
 
   // The baratrons and pressure sensors are calibrated and zeroed here
   // Preferably adjust the reference bellow
-  Xpressure = (Xpressure / n - 0.325) / 0.933007 / 1.09901 / 1.003107; // Reference gas bellow
-  Ypressure = (Ypressure / n - 0.297); // Sample bellow
-  Apressure = Apressure / n - 4.2; // A pressure
+  // Divide Xpressure by pCO2Sam/pCO2Ref
+  Xpressure = (Xpressure / n - 0.325) / 0.933007 / 1.09901 / 1.003107 / 0.997623; // Reference gas bellow
+  Ypressure = (Ypressure / n - 0.297);  // Gauge Y, sample bellow
+  Apressure = Apressure / n - 4.2;      // Gauge A
 
   Xpercentage = Xpercentage / n;
   Ypercentage = Ypercentage / n;
   boxTemp = boxTemp / n;
 
   // Print out the current settings
-  Serial.print( param );
-  Serial.print( "," );
-  Serial.print( Xaxis.currentPosition() * 100.0000 / 62438.00, 2 );
-  Serial.print( "," );
-  Serial.print( Xpercentage, 1 );
+  Serial.print(param);
   Serial.print(",");
-  Serial.print( Yaxis.currentPosition()  * 100.0000 / 62438.00, 2 );
-  Serial.print( "," );
-  Serial.print( Ypercentage, 1 );
-  Serial.print( "," );
-  Serial.print( Zaxis.currentPosition() );
+  Serial.print(Xaxis.currentPosition() * 100.0000 / 62438.00, 2);
   Serial.print(",");
-  Serial.print( Zaxis.currentPosition() * 100 / 15960.00, 2 );
+  Serial.print(Xpercentage, 1);
   Serial.print(",");
-  Serial.print( Xpressure, 3 );
-  Serial.print( "," );
-  Serial.print( Ypressure, 3 );
-  Serial.print( "," );
-  Serial.print( Apressure, 1 );
-  Serial.print( "," );
+  Serial.print(Yaxis.currentPosition() * 100.0000 / 62438.00, 2);
+  Serial.print(",");
+  Serial.print(Ypercentage, 1);
+  Serial.print(",");
+  Serial.print(Zaxis.currentPosition());
+  Serial.print(",");
+  Serial.print(Zaxis.currentPosition() * 100 / 15960.00, 2);
+  Serial.print(",");
+  Serial.print(Xpressure, 3);
+  Serial.print(",");
+  Serial.print(Ypressure, 3);
+  Serial.print(",");
+  Serial.print(Apressure, 1);
+  Serial.print(",");
   Serial.print(stat);
-  Serial.print( "," );
+  Serial.print(",");
   int pinNr = 22;
   while (pinNr <= 53)
   {
-    if ( digitalRead(pinNr) == LOW )
+    if (digitalRead(pinNr) == LOW)
     {
       Serial.print("1");
     }
@@ -727,10 +723,8 @@ void sendStatus( String param )
   Serial.print(boxTemp, 3);
   Serial.print(",");
   Serial.print(fanSpeed);
-  
   Serial.println(""); // End of status string
-  Serial.flush(); // Waits for the transmission of outgoing serial data to complete
-  
+  Serial.flush();     // Waits for the transmission of outgoing serial data to complete
 }
 
 
@@ -739,7 +733,8 @@ void sendStatus( String param )
 void loop()
 {
   // Monitor the serial port
-  while ( Serial.available() ) {
+  while (Serial.available())
+  {
     delay(10);
     command = Serial.read();
     string += command;
@@ -749,25 +744,25 @@ void loop()
 
   // Perform a function based on on the command sent by the index.html
 
-  if ( string.substring(0, 2) == "XP" )
+  if (string.substring(0, 2) == "XP")
   {
     // Set the stepper motor positions
-    runXP( string.substring(2, 9).toFloat(), "MX" );
+    runXP(string.substring(2, 9).toFloat(), "MX");
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "XS" )
+  else if (string.substring(0, 2) == "XS")
   {
     // Set the pressure in bellows X to the given pressure
-    setPressureX( string.substring(2, 9).toFloat() );
+    setPressureX(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "FS" )
+  else if (string.substring(0, 2) == "FS")
   {
     // Sets the housing temperature
     housingSetT = string.substring(2, 9).toFloat();
@@ -776,7 +771,7 @@ void loop()
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "KL" )
+  else if (string.substring(0, 2) == "KL")
   {
     // Resets the valves to starting position
     startingPosition();
@@ -785,16 +780,16 @@ void loop()
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "YP" )
+  else if (string.substring(0, 2) == "YP")
   {
     // Move bellow Y (sample side)
-    runYP( string.substring(2, 9).toFloat(), "MY" );
+    runYP(string.substring(2, 9).toFloat(), "MY");
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "AX" )
+  else if (string.substring(0, 2) == "AX")
   {
     // Wait until gauge A reaches the required pressure - for air refill
     runAX(string.substring(2, 9).toFloat());
@@ -803,74 +798,74 @@ void loop()
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "YS" )
+  else if (string.substring(0, 2) == "YS")
   {
     // Set pressure in bellow Y (sample side)
-    setPressureY( string.substring(2, 9).toFloat() );
+    setPressureY(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "ZP" )
+  else if (string.substring(0, 2) == "ZP")
   {
     // Move bellow Z
-    runZP( string.substring(2, 9).toFloat(), "MZ" );
+    runZP(string.substring(2, 9).toFloat(), "MZ");
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "SN" )
+  else if (string.substring(0, 2) == "SN")
   {
     // Set N2 pressure by moving the Z bellow
-    setN2Pressure( string.substring(2, 9).toFloat() );
+    setN2Pressure(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 2) == "RS" )
+  else if (string.substring(0, 2) == "RS")
   {
     // Refill sample from manifold
     // To work, this function needs a starting position, and
     // that the sample gas is aleady in the manifold and not the autofinger
-    refillSample( string.substring(2, 9).toFloat() );
+    refillSample(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 1) == "V" )
+  else if (string.substring(0, 1) == "V")
   {
     // Set the valve positions
     // Extract an integer out of the valve number
     int v = string.substring(1, 3).toInt();
-    if ( string.substring(3, 4) == "O" )
+    if (string.substring(3, 4) == "O")
     {
-      if ( v == 17 )
+      if (v == 17)
       {
         digitalWrite(21 + 27, HIGH); // Close valve 27
         delay(250);
       }
-      else if ( v == 27 )
+      else if (v == 27)
       {
         digitalWrite(21 + 17, HIGH); // Close valve 17
         delay(250);
       }
-      if ( v == 19 )
+      if (v == 19)
       {
         digitalWrite(21 + 20, HIGH); // Close valve 20
         delay(250);
       }
-      else if ( v == 20 )
+      else if (v == 20)
       {
         digitalWrite(21 + 19, HIGH); // Close valve 19
         delay(250);
       }
       digitalWrite(21 + v, LOW); // Open valve
     }
-    else if ( string.substring(3, 4) == "C" )
+    else if (string.substring(3, 4) == "C")
     {
       digitalWrite(21 + v, HIGH); // Close valve
     }
@@ -879,7 +874,7 @@ void loop()
     sendStatus("-");
   }
 
-  else if ( string.substring(0, 1) == "?" )
+  else if (string.substring(0, 1) == "?")
   {
     // Just send the status
     sendStatus("-");
