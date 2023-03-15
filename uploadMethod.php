@@ -75,5 +75,3 @@
     echo implode(",", $col2_array );
     echo "|";
     echo implode(",", $col3_array );
-    
-?>

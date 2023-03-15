@@ -1,18 +1,16 @@
 // This JavaScript file...
 // is the main program loop
 
-var startTime = 0;
-var timeExecuted = 0; // Time when cmd has been sent to Arduino
+var cmd = "";
+var timeExecuted = 0;   // Time when cmd has been sent to Arduino
 var line = 0;
 var moving = "no";
-var waiting = "no"; // Wait for the delay to goto next command
+var waiting = "no";     // Wait for the delay to goto next command
 var executed = "yes";
 var cycleJS = 0;
-var firstSample = "";
 var currentTimeOld = 0;
 var logData = [];
 var sample = 0;
-var diff = 0;
 var cycle = 0;
 
 setInterval(function () {

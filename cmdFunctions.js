@@ -1,8 +1,6 @@
 // This JavaScript file...
 // declares the functions which respond to specific commands
 
-var cmd = "";
-
 // Show results button
 function showResults() {
     window.open('http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2', '_blank');

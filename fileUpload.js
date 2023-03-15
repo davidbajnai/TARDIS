@@ -15,7 +15,7 @@ $('body').on('change', '#uploadMethod', function () {
         type: 'POST',
         processData: false,
         contentType: false,
-        success: function (result) {
+        success: function () {
             console.log("Method uploaded successfully.");
         }
     });
@@ -23,11 +23,9 @@ $('body').on('change', '#uploadMethod', function () {
 
 function loadMethod(methodFileName) {
 
-    var xM = methodFileName;
-
     $.ajax({
         url: 'uploadMethod.php',
-        data: { methodFileName: xM },
+        data: { methodFileName: methodFileName },
         type: 'POST',
         success: function (result) {
 
@@ -51,7 +49,7 @@ function loadMethod(methodFileName) {
             vertical = vertical + 0;
         }
     });
-};
+}
 
 $('body').on('change', '#uploadSequence', function() {
 
