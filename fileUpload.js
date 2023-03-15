@@ -51,7 +51,7 @@ function loadMethod(methodFileName) {
             vertical = vertical + 0;
         }
     });
-};
+}
 
 $('body').on('change', '#uploadSequence', function() {
 
