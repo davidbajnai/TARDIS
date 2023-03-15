@@ -5,6 +5,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/davidbajnai/tardis/badge?s=e60c8acc0095fc83f8522a69115b1e3ed10c7320)](https://www.codefactor.io/repository/github/davidbajnai/tardis)
 [![Python](https://img.shields.io/badge/Python-3.7-FFD43B)](https://www.python.org)
 [![PHP](https://img.shields.io/badge/PHP-8.2-%234f5b93)](https://www.php.net/releases/8.2/en.php)
+[![jQuery](https://img.shields.io/badge/jQuery-3.6.3-%230769AD)](https://jquery.com)
 
 This repository includes files used to control the custom-built dual inlet system of the Aerodyne Research TILDAS laser spectrometer located at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
 
