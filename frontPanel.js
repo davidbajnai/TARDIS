@@ -446,7 +446,6 @@ setInterval(function () {
 
         // Save data to logfile array every 5 seconds
         if (currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").val() != "") {
-            // IMPORTANT: if you add/remove elements below, you have to update the lenght filter in the writeLogfile.php!
             // Unix -> Mac timestamp, TILDAS uses Mac timestamp
             logData.push([parseInt(currentTime + 2082844800 + 3600), parseFloat($('#housingT').html()), parseFloat($('#housingTargetT').val()), parseFloat($('#roomRH').html()), $('#percentageXsteps').html(), $('#percentageYsteps').html(), $('#percentageZsteps').html(), $('#pressureX').html(), $('#pressureY').html(), $('#pressureA').html(), $('#edwards').html().trim(), parseFloat($('#fanSpeed').html()), parseFloat($('#roomTemperature').html()), parseFloat($('#roomHumidity').html())]);
 
@@ -838,11 +837,10 @@ setInterval(function () {
 
         // Check if bellows target position has been reached
         if (moving == "yes" && executed == "no" && waiting == "no" && ($('#moveStatus').html() != "-" || new Date().getTime() / 1000.00 - timeExecuted < 1)) {
-            // Case 1
-            // console.log( new Date().getTime() / 1000, "Case 1: Bellows are currently moving, nothing changed." );
+            // Case 1: Bellows are currently moving, do nothing
         }
         else if (moving == "yes" && executed == "no" && waiting == "no" && $('#moveStatus').html() == "-") {
-            // Case 2
+            // Case 2: Bellows finished moving, command complete, start waiting
             timeExecuted = new Date().getTime() / 1000;
             moving = "no";
             executed = "yes";
@@ -850,19 +848,17 @@ setInterval(function () {
             $("#command" + line).append(" &#10003;");
         }
         else if (moving == "no" && executed == "yes" && waiting == "yes" && $('#moveStatus').html() == "-" && new Date().getTime() / 1000 - timeExecuted < timeArray[line]) {
-            // Case 3
-            // Now move the progress bar
+            // Case 3: Move the progress bar
             var pbpc = (new Date().getTime() / 1000 - timeExecuted) * 307 / timeArray[line];
             $('#progressBar').css("width", pbpc + "px");
             $("#progress").html(parseInt(pbpc / 3.07) + "%");
         }
         else {
-            // Case 4
-            // console.log( new Date().getTime() / 1000, "Case 4: Jumps to next sample." );
+            // Case 4: Nothing moving and waiting is complete: jump to next sample if exists
             waiting = "no";
-            // Goto next line in method
             line++;
             console.log("Now goto next line", line);
+
             if (line == commandsArray.length) {
                 console.log("End of method.");
                 $('#progressBar').css("width", "0px");
@@ -873,11 +869,11 @@ setInterval(function () {
                 copyFiles();
                 // Execute Python script
                 evaluateData();
-                // Move to the next sample (by index)
+
+                // Move to the next sample and check if it exists
                 sample++;
-                // Check if this element exists
                 if ($('#sample' + sample).length) {
-                    // OK, next sample exists, read out sample name & method file name now
+                    // Next sample exists, read out sample name & method file name now
                     console.log("Moving on to next sample.");
                     $("#sample" + sample).prepend("&#9758; ");
                     let sampleName = $('#sample' + sample).html().split(",")[1];
