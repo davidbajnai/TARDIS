@@ -10,180 +10,206 @@ var cmd = "";
 function sendCommand(cmd) {
     $.ajax({
         type: "POST",
-        url: 'sendCommand.php',
+        url: "sendCommand.php",
         data: { cmd: cmd },
         async: false,
         success: function (response) {
-
             // Split the status string
             const statusArr = response.split(","); // The status array is received from serialComm.py via sendCommand.php
-            
-            $('#moveStatus').html(statusArr[1]);
+
+            $("#moveStatus").html(statusArr[1]);
 
             // Display some images based on moveStatus
-            if (statusArr[1] == "AX" && $('#loadingA').attr('src') != 'Images/loading.gif') {
-                $('#loadingA').attr('src', 'Images/loading.gif');
-            }
-            else if (statusArr[1] != "AX") {
-                $('#loadingA').attr('src', "");
+            if (
+                statusArr[1] == "AX" &&
+                $("#loadingA").attr("src") != "Images/loading.gif"
+            ) {
+                $("#loadingA").attr("src", "Images/loading.gif");
+            } else if (statusArr[1] != "AX") {
+                $("#loadingA").attr("src", "");
             }
 
-            if (statusArr[1] == "MX" && $('#motorX').attr('src') == 'Images/standing_motor.gif') {
-                $('#motorX').attr('src', 'Images/rotating_motor.gif');
-            }
-            else if (statusArr[1] == "MY" && $('#motorY').attr('src') == 'Images/standing_motor.gif') {
-                $('#motorY').attr('src', 'Images/rotating_motor.gif');
-            }
-            else if (statusArr[1] == "MZ" && $('#motorZ').attr('src') == 'Images/standing_motor.gif') {
-                $('#motorZ').attr('src', 'Images/rotating_motor.gif');
-            }
-            else if (statusArr[1] == "-" && ($('#motorX').attr('src') == 'Images/rotating_motor.gif' || $('#motorY').attr('src') == 'Images/rotating_motor.gif' || $('#motorZ').attr('src') == 'Images/rotating_motor.gif')) {
-                $('#motorX').attr('src', 'Images/standing_motor.gif');
-                $('#motorY').attr('src', 'Images/standing_motor.gif');
-                $('#motorZ').attr('src', 'Images/standing_motor.gif');
+            if (
+                statusArr[1] == "MX" &&
+                $("#motorX").attr("src") == "Images/standing_motor.gif"
+            ) {
+                $("#motorX").attr("src", "Images/rotating_motor.gif");
+            } else if (
+                statusArr[1] == "MY" &&
+                $("#motorY").attr("src") == "Images/standing_motor.gif"
+            ) {
+                $("#motorY").attr("src", "Images/rotating_motor.gif");
+            } else if (
+                statusArr[1] == "MZ" &&
+                $("#motorZ").attr("src") == "Images/standing_motor.gif"
+            ) {
+                $("#motorZ").attr("src", "Images/rotating_motor.gif");
+            } else if (
+                statusArr[1] == "-" &&
+                ($("#motorX").attr("src") == "Images/rotating_motor.gif" ||
+                    $("#motorY").attr("src") == "Images/rotating_motor.gif" ||
+                    $("#motorZ").attr("src") == "Images/rotating_motor.gif")
+            ) {
+                $("#motorX").attr("src", "Images/standing_motor.gif");
+                $("#motorY").attr("src", "Images/standing_motor.gif");
+                $("#motorZ").attr("src", "Images/standing_motor.gif");
             }
 
             // X bellows
             var percentageX = statusArr[3];
-            $('#bellowsX').css('height', parseInt( 10 + 0.9 * percentageX ) + 'px');
-            $('#percentageX').html( parseFloat(percentageX).toFixed(1) );
-            $('#percentageX').css("color","gray");
-            $('#percentageXsteps').html( parseFloat(statusArr[2]).toFixed(2) );
-            $('#stepsX').html( statusArr[2] + ' steps' );
+            $("#bellowsX").css(
+                "height",
+                parseInt(10 + 0.9 * percentageX) + "px"
+            );
+            $("#percentageX").html(parseFloat(percentageX).toFixed(1));
+            $("#percentageX").css("color", "gray");
+            $("#percentageXsteps").html(parseFloat(statusArr[2]).toFixed(2));
+            $("#stepsX").html(statusArr[2] + " steps");
 
             // Y bellows
             var percentageY = statusArr[5];
-            $('#bellowsY').css('height', (10 + 0.9 * percentageY) + 'px');
-            $('#percentageY').html(parseFloat(percentageY).toFixed(1));
-            $('#percentageY').css("color", "gray");
-            $('#percentageYsteps').html(parseFloat(statusArr[4]).toFixed(2));
-            $('#stepsY').html(statusArr[4] + ' steps');
+            $("#bellowsY").css("height", 10 + 0.9 * percentageY + "px");
+            $("#percentageY").html(parseFloat(percentageY).toFixed(1));
+            $("#percentageY").css("color", "gray");
+            $("#percentageYsteps").html(parseFloat(statusArr[4]).toFixed(2));
+            $("#stepsY").html(statusArr[4] + " steps");
 
             // Z bellows
-            $('#percentageZsteps').html(parseFloat(statusArr[7]).toFixed(1));
-            $('#stepsZ').html(statusArr[6]); //Steps
-            $('#bellowsZ').css('height', parseFloat(10 + 0.9 * statusArr[7]).toFixed(1) + 'px');
+            $("#percentageZsteps").html(parseFloat(statusArr[7]).toFixed(1));
+            $("#stepsZ").html(statusArr[6]); //Steps
+            $("#bellowsZ").css(
+                "height",
+                parseFloat(10 + 0.9 * statusArr[7]).toFixed(1) + "px"
+            );
 
-            if (statusArr[6] != 7980 && $('#warningZ').attr('src') != 'Images/warning.png') {
-                $('#warningZ').attr('src', 'Images/warning.png');
-            }
-            else if (statusArr[6] == 7980) {
-                $('#warningZ').attr('src', "");
+            if (
+                statusArr[6] != 7980 &&
+                $("#warningZ").attr("src") != "Images/warning.png"
+            ) {
+                $("#warningZ").attr("src", "Images/warning.png");
+            } else if (statusArr[6] == 7980) {
+                $("#warningZ").attr("src", "");
             }
 
-            // X baratron
+            // X baratron in mbar (max. 5 mbar)
             var pressureX = parseFloat(statusArr[8]);
-            $('#pressureX').html(pressureX.toFixed(3));
+            $("#pressureX").html(pressureX.toFixed(3));
 
-            // Y baratron
+            // Y baratron in mbar (max. 5 mbar)
             var pressureY = parseFloat(statusArr[9]);
-            $('#pressureY').html(pressureY.toFixed(3));
+            $("#pressureY").html(pressureY.toFixed(3));
 
-            // A baratron
+            // A baratron in mbar (max. 500 mbar)
             var pressureA = parseFloat(statusArr[10]);
-            $('#pressureA').html(pressureA.toFixed(1));
+            $("#pressureA").html(pressureA.toFixed(1));
 
             // Valve status
             var valveArray = statusArr[12];
             const positions = [
-                "horizontal",   // V01
-                "vertical",     // V02
-                "horizontal",
-                "horizontal",
-                "vertical",
-                "horizontal",
-                "vertical",
-                "vertical",
-                "horizontal",
-                "horizontal",
-                "vertical",
-                "horizontal",
-                "vertical",
-                "vertical",
-                "vertical",
-                "vertical",
-                "horizontal",
-                "horizontal",
-                "horizontal",
-                "horizontal",   // V20
-                "horizontal",   // V21
-                "horizontal",
-                "vertical",
-                "vertical",
-                "vertical",
-                "vertical",
-                "horizontal",
-                "horizontal",
-                "horizontal",
-                "horizontal",
-                "horizontal",
-                "horizontal"    // V32
+                "horizontal", // V01
+                "vertical", // V02
+                "horizontal", // V03
+                "horizontal", // V04
+                "vertical", // V05
+                "horizontal", // V06
+                "vertical", // V07
+                "vertical", // V08
+                "horizontal", // V09
+                "horizontal", // V10
+                "vertical", // V11
+                "horizontal", // V12
+                "vertical", // V13
+                "vertical", // V14
+                "vertical", // V15
+                "vertical", // V16
+                "horizontal", // V17
+                "horizontal", // V18
+                "horizontal", // V19
+                "horizontal", // V20
+                "horizontal", // V21
+                "horizontal", // V22
+                "vertical", // V23
+                "vertical", // V24
+                "vertical", // V25
+                "vertical", // V26
+                "horizontal", // V27
+                "horizontal", // V28
+                "horizontal", // V29
+                "horizontal", // V30
+                "horizontal", // V31
+                "horizontal", // V32
             ];
             var i = 1;
-            var n = '0';
+            var n = "0";
             while (i <= 33) {
                 if (i < 10) {
                     n = "0";
-                }
-                else {
+                } else {
                     n = "";
                 }
-                $('#V' + n + i.toString() + '_label').html(valveArray.charAt(i - 1));
-                if (valveArray.charAt(i - 1) == '0') {
-                    $('#V' + n + i.toString()).attr('src', 'Images/' + positions[i - 1] + '_closed.png');
-                }
-                else {
-                    $('#V' + n + i.toString()).attr('src', 'Images/' + positions[i - 1] + '_open.png');
+                $("#V" + n + i.toString() + "_label").html(
+                    valveArray.charAt(i - 1)
+                );
+                if (valveArray.charAt(i - 1) == "0") {
+                    $("#V" + n + i.toString()).attr(
+                        "src",
+                        "Images/" + positions[i - 1] + "_closed.png"
+                    );
+                } else {
+                    $("#V" + n + i.toString()).attr(
+                        "src",
+                        "Images/" + positions[i - 1] + "_open.png"
+                    );
                 }
                 i = i + 1;
             }
 
             // Box humidity
             var roomRH = statusArr[13];
-            $('#roomRH').html(roomRH);
+            $("#roomRH").html(roomRH);
 
             // Box temperature
             var housingT = statusArr[14];
-            $('#housingT').html(housingT);
+            $("#housingT").html(housingT);
 
             // Fan speed
             var fanSpeed = statusArr[15];
-            $('#fanSpeed').html(fanSpeed);
+            $("#fanSpeed").html(fanSpeed);
 
-            // Cell pressure from the TILDAS
-            var baratronTorr = parseFloat(statusArr[16]) * 1 + (0.406 + 0.223) / 1.33322;
-            // var baratronTorr = parseFloat(statusArr[16]);
-            $('#baratron').html(baratronTorr.toFixed(3));
+            // Cell pressure from the TILDAS in Torr
+            // The cell's baratron is zeroed here
+            var baratronTorr =
+                parseFloat(statusArr[16]) * 1 + (0.406 + 0.223) / 1.33322;
+            $("#baratron").html(baratronTorr.toFixed(3));
 
             // CO2 mixing ratios from the TILDAS
             var mr1 = statusArr[17];
-            $('#mr1').html(parseFloat(mr1).toFixed(1));
+            $("#mr1").html(parseFloat(mr1).toFixed(1));
             var mr2 = statusArr[18];
-            $('#mr2').html(parseFloat(mr2).toFixed(1));
+            $("#mr2").html(parseFloat(mr2).toFixed(1));
             var mr3 = statusArr[19];
-            $('#mr3').html(parseFloat(mr3).toFixed(1));
+            $("#mr3").html(parseFloat(mr3).toFixed(1));
             var mr4 = statusArr[20];
-            $('#mr4').html(parseFloat(mr4).toFixed(1));
+            $("#mr4").html(parseFloat(mr4).toFixed(1));
 
             // Edwards vacuum gauge
             var edwards = statusArr[21];
-            $('#edwards').html(parseFloat(edwards).toFixed(4));
+            $("#edwards").html(parseFloat(edwards).toFixed(4));
 
             // Room humidity
             var roomHumidity = statusArr[22];
-            $('#roomHumidity').html(roomHumidity);
+            $("#roomHumidity").html(roomHumidity);
 
             // Room temperature
             var roomTemperature = statusArr[23];
-            $('#roomTemperature').html(roomTemperature);
+            $("#roomTemperature").html(roomTemperature);
 
             // Reset the command string
             cmd = "";
-
         },
         error: function (xhr, status, error) {
             console.error(error);
-        }
+        },
     });
 }
 
@@ -256,14 +282,13 @@ var colArr = [];
 // Load next method in sequence
 function loadMethod(methodFileName) {
     $.ajax({
-        url: 'uploadMethod.php',
+        url: "uploadMethod.php",
         data: { methodFileName: methodFileName },
-        type: 'POST',
+        type: "POST",
         success: function (result) {
-
             console.log("Method loaded successfully.");
 
-            $('#method').empty();
+            $("#method").empty();
             colArr = result.split("|");
             commandsArray = [];
             commandsArray = colArr[0].split(","); // This is a 1D array here
@@ -276,63 +301,88 @@ function loadMethod(methodFileName) {
             // Create list with commands on frontpanel
             var vertical = 0;
             for (let i = 0; i < commandsArray.length; i++) {
-                $("#method").append("<div id='command" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + ": " + commandsArray[i] + " &rarr; " + parameterArray[i] + " &rarr; wait " + timeArray[i] + " s</div>");
+                $("#method").append(
+                    "<div id='command" +
+                        i +
+                        "' class='command' style='background-color: white;position:relative;top:" +
+                        (vertical + i * 1) +
+                        "px;left:0px;'>" +
+                        i +
+                        ": " +
+                        commandsArray[i] +
+                        " &rarr; " +
+                        parameterArray[i] +
+                        " &rarr; wait " +
+                        timeArray[i] +
+                        " s</div>"
+                );
             }
             vertical = vertical + 0;
-        }
+        },
     });
 }
 
 // Upload method by user
-$('body').on('change', '#uploadMethod', function () {
+$("body").on("change", "#uploadMethod", function () {
     var data = new FormData();
-    data.append('file', this.files[0]);
+    data.append("file", this.files[0]);
     $.ajax({
-        url: 'uploadMethod.php',
+        url: "uploadMethod.php",
         data: data,
-        type: 'POST',
+        type: "POST",
         processData: false,
         contentType: false,
         success: function () {
             console.log("Method uploaded successfully.");
-        }
+        },
     });
 });
 
 // Upload sequence by user
-$('body').on('change', '#uploadSequence', function() {
+$("body").on("change", "#uploadSequence", function () {
     var data = new FormData();
-    data.append('file', this.files[0]);
+    data.append("file", this.files[0]);
     $.ajax({
-        url: 'uploadSequence.php',
+        url: "uploadSequence.php",
         data: data,
-        type: 'POST',
+        type: "POST",
         processData: false,
         contentType: false,
-        success: function(result) {
+        success: function (result) {
+            console.log("Sequence uploaded sucessfully.");
 
-            console.log( "Sequence uploaded sucessfully.");
-            
             // Delete all elements in div sequence
-            $('#sequence').empty();
+            $("#sequence").empty();
             var colSeqArr = result.split("|");
             let sampleNameArr = colSeqArr[0].split(",");
             // console.log( "Sample array", sampleNameArr ); // Log the sample array - for debugging
             let methodFileArr = colSeqArr[1].split(",");
             // console.log( "Methods file name array", methodFileArr ); // Log the methods file name array - for debugging
-            
+
             // Create list with commands on frontpanel
             var vertical = 0;
             for (let i = 0; i < sampleNameArr.length; i++) {
                 if (i == 0) {
                     // Loading the method of the first sample
                     loadMethod(methodFileArr[i]);
-                    $('#sampleName').val(sampleNameArr[i]);
+                    $("#sampleName").val(sampleNameArr[i]);
                 }
-                $("#sequence").append("<div id='sample" + i + "' class='command' style='background-color: white;position:relative;top:" + (vertical + i * 1) + "px;left:0px;'>" + i + "," + sampleNameArr[i] + "," + methodFileArr[i] + "</div>");
+                $("#sequence").append(
+                    "<div id='sample" +
+                        i +
+                        "' class='command' style='background-color: white;position:relative;top:" +
+                        (vertical + i * 1) +
+                        "px;left:0px;'>" +
+                        i +
+                        "," +
+                        sampleNameArr[i] +
+                        "," +
+                        methodFileArr[i] +
+                        "</div>"
+                );
             }
             vertical = vertical + 0;
-        }
+        },
     });
 });
 
@@ -341,16 +391,16 @@ function createFolder() {
     console.log("Creating folder.");
     $.ajax({
         type: "POST",
-        url: 'createFolder.php',
+        url: "createFolder.php",
         async: false,
         data: {
-            date: $('#timeMeasurementStarted').html(), // Date and time when measurement started in UNIX format & UTC timezone
-            sampleName: $('#sampleName').val()
+            date: $("#timeMeasurementStarted").html(), // Date and time when measurement started in UNIX format & UTC timezone
+            sampleName: $("#sampleName").val(),
         },
         success: function (response) {
             console.log(response);
-            $('#folderName').html(response);
-        }
+            $("#folderName").html(response);
+        },
     });
 }
 
@@ -358,15 +408,15 @@ function createFolder() {
 function writeLogfile(logData, folderName) {
     $.ajax({
         type: "POST",
-        url: 'writeLogfile.php',
+        url: "writeLogfile.php",
         data: {
-            sampleName: $('#sampleName').val(),
+            sampleName: $("#sampleName").val(),
             logData: logData,
-            folderName: folderName
+            folderName: folderName,
         },
         success: function (response) {
             console.log(response);
-        }
+        },
     });
 }
 
@@ -375,30 +425,30 @@ function copyFiles() {
     console.log("Copy files.");
     $.ajax({
         type: "POST",
-        url: 'copyFiles.php',
+        url: "copyFiles.php",
         async: false,
         data: {
-            date: $('#timeMeasurementStarted').html(), // Date and time when measurement started in UNIX format & UTC timezone
-            folderName: $('#folderName').html() // Something like: Results/230306_123421_sampleName
+            date: $("#timeMeasurementStarted").html(), // In UNIX format & UTC timezone
+            folderName: $("#folderName").html(), // Something like: Results/230306_123421_sampleName
         },
         success: function (response) {
             console.log(response);
-        }
+        },
     });
 }
 
 // Evaluate data after the measurement is finished
 function evaluateData() {
-    console.log("Starting evaluateData.php")
+    console.log("Starting evaluateData.php");
     $.ajax({
         type: "POST",
         url: "evaluateData.php",
         async: true,
         data: {
-            sampleName: $('#folderName').html(),
-            userName: $('#userName').val(),
-            polynomial: $('#polynomial').val()
-        }
+            sampleName: $("#folderName").html(),
+            userName: $("#userName").val(),
+            polynomial: $("#polynomial").val(),
+        },
     }).done(function (result) {
         console.log(result);
         console.log("Data gotten from evaluateData.php");
@@ -407,7 +457,10 @@ function evaluateData() {
 
 // Show results button
 function showResults() {
-    window.open('http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2', '_blank');
+    window.open(
+        "http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2",
+        "_blank"
+    );
 }
 
 // Start sequence button
@@ -423,10 +476,10 @@ function startSequence() {
 ######################## This is the main program loop ########################
 ############################################################################ */
 
-var timeExecuted = 0;   // Time when cmd has been sent to Arduino
+var timeExecuted = 0; // Time when cmd has been sent to Arduino
 var line = 0;
 var moving = "no";
-var waiting = "no";     // Wait for the delay to goto next command
+var waiting = "no"; // Wait for the delay to goto next command
 var executed = "yes";
 var cycleJS = 0;
 var currentTimeOld = 0;
@@ -447,7 +500,22 @@ setInterval(function () {
         // Save data to logfile array every 5 seconds
         if (currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").val() != "") {
             // Unix -> Mac timestamp, TILDAS uses Mac timestamp
-            logData.push([parseInt(currentTime + 2082844800 + 3600), parseFloat($('#housingT').html()), parseFloat($('#housingTargetT').val()), parseFloat($('#roomRH').html()), $('#percentageXsteps').html(), $('#percentageYsteps').html(), $('#percentageZsteps').html(), $('#pressureX').html(), $('#pressureY').html(), $('#pressureA').html(), $('#edwards').html().trim(), parseFloat($('#fanSpeed').html()), parseFloat($('#roomTemperature').html()), parseFloat($('#roomHumidity').html())]);
+            logData.push([
+                parseInt(currentTime + 2082844800 + 3600),
+                parseFloat($("#housingT").html()),
+                parseFloat($("#housingTargetT").val()),
+                parseFloat($("#roomRH").html()),
+                $("#percentageXsteps").html(),
+                $("#percentageYsteps").html(),
+                $("#percentageZsteps").html(),
+                $("#pressureX").html(),
+                $("#pressureY").html(),
+                $("#pressureA").html(),
+                $("#edwards").html().trim(),
+                parseFloat($("#fanSpeed").html()),
+                parseFloat($("#roomTemperature").html()),
+                parseFloat($("#roomHumidity").html()),
+            ]);
 
             if (currentTime % 30 == 0) {
                 // Write data to logfile every 30 seconds
