@@ -16,18 +16,17 @@ The inlet system and the methods used to measure the triple oxygen isotope compo
 Copyright (C) 2023 <a href="https://davidbajnai.eu">David Bajnai</a>, <a href="https://www.uni-goettingen.de/en/78572.html">Andreas Pack</a>
 
 This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
+it under the terms of the [GNU General Public License version 3](LICENSE), or
 (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [LICENSE](LICENSE) for more details.
+this program is distributed in the hope that it will be useful,
+but without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
 
 <hr>
 <a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GZG_logo_text_white.png" align="left" height="90" width="319.1"/>
+    <img src="Images/GZG_logo_text_white.png" align="left" height="90"/>
 </a>
 <a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GOE_logo_white.png" align="right" height="80" width="448.6"/>
+    <img src="Images/GOE_logo_white.png" align="right" height="80"/>
 </a>
