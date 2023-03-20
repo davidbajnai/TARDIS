@@ -24,12 +24,10 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [LICENSE](LICENSE) for more details.
 
-The computer codes in this package were written and maintained by <a href="https://www.uni-goettingen.de/en/78572.html">Andreas Pack</a> and <a href="https://davidbajnai.eu">David Bajnai</a>.
-
 <hr>
 <a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GZG_logo_text_white.png" align="left" height="90"/>
+    <img src="Images/GZG_logo_text_white.png" align="left" height="90" width="319.1"/>
 </a>
 <a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GOE_logo_white.png" align="right" height="80"/>
+    <img src="Images/GOE_logo_white.png" align="right" height="80" width="448.6"/>
 </a>
