@@ -21,11 +21,11 @@ function sendCommand(cmd) {
 
             // Display some images based on moveStatus
             if (
-                statusArr[1] == "AX" &&
+                statusArr[1] == "IA" &&
                 $("#loadingA").attr("src") != "Images/loading.gif"
             ) {
                 $("#loadingA").attr("src", "Images/loading.gif");
-            } else if (statusArr[1] != "AX") {
+            } else if (statusArr[1] != "IA") {
                 $("#loadingA").attr("src", "");
             }
 
@@ -569,14 +569,14 @@ setInterval(function () {
             // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
         }
 
-        // This command waits until A target pressure is reached, than closes valves
-        else if (commandsArray[line][0] == "A" && commandsArray[line][1] == "X" && executed == "yes" && moving == "no" && waiting == "no") {
+        // This command opens V15, waits until A target pressure is reached, than closes V15
+        else if (commandsArray[line][0] == "I" && commandsArray[line][1] == "A" && executed == "yes" && moving == "no" && waiting == "no") {
             // Do this before every command in method
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
             $("#command" + line).prepend("&#9758; ");
-            cmd = "AX" + parameterArray[line];
+            cmd = "IA" + parameterArray[line];
 
-            // Do this after every command					
+            // Do this after every command
             $("#progressBar").css("width", "0px");
             $("#progress").html("0%");
             timeExecuted = new Date().getTime() / 1000;

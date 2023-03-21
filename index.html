@@ -94,7 +94,7 @@
 				<img id="V14" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" />
 				<span id="V14_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:720px;left:686px;">
+			<div style="top:695px;left:686px;">
 				<span class="valveNumberLabel">V15</span>
 				<img id="V15" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" />
 				<span id="V15_label" style="display:none;">undefined</span>
@@ -124,7 +124,7 @@
 				<img id="V20" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" />
 				<span id="V20_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:767px;left:843px;">
+			<div style="top:767px;left:905px;">
 				<span class="valveNumberLabel">V21</span>
 				<img id="V21" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" />
 				<span id="V21_label" style="display:none;">undefined</span>
@@ -175,14 +175,13 @@
 				<img id="V30" src="Images/vertical_closed.png" onclick="var status=$('#V29_label').html();toggleValve('V30',status);" />
 				<span id="V30_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:740px;left:1340px;">
+			-->
+			<div style="top:767px;left:725px;">
 				<span class="valveNumberLabel">V31</span>
-				<img id="V31" src="Images/vertical_closed.png" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" />
+				<img id="V31" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" />
 				<span id="V31_label" style="display:none;">undefined</span>
 			</div>
-			-->
-			<div style="top:767px;left:1100px;">
-				<span style="position:relative;top:-35px;left:27px;">pump</span>
+			<div style="top:767px;left:1145px;">
 				<span class="valveNumberLabel">V32</span>
 				<img id="V32" src="Images/vertical_closed.png" class="small" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" />
 				<span id="V32_label" style="display:none;">undefined</span>
@@ -377,7 +376,7 @@
 				<li>WR,0,12, &lt;--- Write current reference CO<sub>2</sub> pressure (gauge X) on the front panel. This value is reset after the method is finished.</li>
 				<li>WS,0,6, &lt;--- Write current sample CO<sub>2</sub> pressure (gauge Y) on the front panel. This value is reset after the method is finished.</li>
 				<li>CM,0,1, &lt;--- Write current <em>p</em>CO<sub>2</sub> on the front panel for mixing ratio adjustment. Parameter 0 is for reference gas and 1 for sample gas. This value is reset after the method is finished.</li>
-				<li>AX,363,7, &lt;--- Waits until the pressure on gauge A reaches the value set in the parameter, then closes valves V15 and V21. Used for the air measurements. </li>
+				<li>IA,363,7, &lt;--- <b>I</b>ntroduces <b>A</b>ir. Opens V15, waits until the pressure on gauge A reaches the value set in the parameter, then closes valves V15.</li>
 				<li>TWD,1,1, &lt;--- Starts the TILDAS writing data.</li>
 				<li>TWD,0,1, &lt;--- Stops the TILDAS writing data.</li>
 				<li>BX,45.3,12, &lt;--- Move bellows X to 45.3%.</li>

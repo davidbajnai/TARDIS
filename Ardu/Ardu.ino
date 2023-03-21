@@ -401,16 +401,22 @@ void refillSample(float tPress)
   }
 }
 
-void runAX(float pressureTarget)
+void runIA(float pressureTarget)
 {
+
+  sendStatus("IA");
+  switchValve("V31O");
+  delay(10);
+
   for (;;)
   {
-    sendStatus("AX");
+    sendStatus("IA");
     delay(10);
 
     if (Apressure >= pressureTarget)
     {
       switchValve("V15C");
+      switchValve("V31C");
       break;
     }
   }
@@ -789,10 +795,10 @@ void loop()
     sendStatus("-");
   }
 
-  else if (string.substring(0, 2) == "AX")
+  else if (string.substring(0, 2) == "IA")
   {
     // Wait until gauge A reaches the required pressure - for air refill
-    runAX(string.substring(2, 9).toFloat());
+    runIA(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
