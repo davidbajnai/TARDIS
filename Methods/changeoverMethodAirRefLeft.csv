@@ -103,7 +103,7 @@ V27,1,1
 V15,1,20, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,370,10
+IA,366,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -121,7 +121,7 @@ V07,1,10, <--- Insert analyte to cell
 V05,0,1
 QC,41.200,5, <--- Set the cell pressure
 QC,41.200,2, <--- Set the cell pressure
-V02,0,60
+V02,0,80
 CM,1,1, <--- log pCO2 of the sample gas
 TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
 V27,1,1, <--- Evacuate the remaining CO2-N2 mixture
@@ -194,7 +194,7 @@ V27,1,1
 V15,1,20, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,370,10
+IA,366,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -212,7 +212,7 @@ V07,1,10, <--- Insert analyte to cell
 V05,0,1
 QC,41.200,5, <--- Set the cell pressure
 QC,41.200,2, <--- Set the cell pressure
-V02,0,60
+V02,0,80
 CM,1,1, <--- log pCO2 of the sample gas
 TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
 V27,1,1, <--- Evacuate the remaining CO2-N2 mixture
@@ -285,7 +285,7 @@ V27,1,1
 V15,1,20, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,370,10
+IA,366,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -303,7 +303,7 @@ V07,1,10, <--- Insert analyte to cell
 V05,0,1
 QC,41.200,5, <--- Set the cell pressure
 QC,41.200,2, <--- Set the cell pressure
-V02,0,60
+V02,0,80
 CM,1,1, <--- log pCO2 of the sample gas
 TWD,1,1, <--- MEASUREMENT ON, changeover finished <<<
 V27,1,1, <--- Evacuate the remaining CO2-N2 mixture

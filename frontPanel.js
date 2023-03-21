@@ -871,11 +871,17 @@ setInterval(function () {
             console.log("Current pressure in the cell is: ", p.toFixed(3), "Torr");
 
             // Check if any pressure is given in the cellTargetPressure window
+            var pTarget;
             if (parseFloat($("#cellTargetPressure").html()) > 0) {
-                var pTarget = parseFloat($("#cellTargetPressure").html());
+                pTarget = parseFloat($("#cellTargetPressure").html());
             }
             else {
-                var pTarget = parseFloat(parameterArray[line]); // Normally about 40 Torr
+                pTarget = parseFloat(parameterArray[line]); // Normally about 40 Torr
+            }
+
+            // Adjust target pressure for air samples
+            if ($("#sampleName").html().includes("air")) {
+                pTarget += 0.037;
             }
             console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
 
