@@ -25,21 +25,9 @@ if ($userName == "") {
     $userName = "Dummy_Dummy";
 }
 
-// Decide which evaluation script to use. This is necessary because a change in the logfile structure
-$measurementDateTime = DateTimeImmutable::createFromFormat('ymd_His', substr( $sampleName, 0, 13));
-
-$changeDate = new DateTime('2023-03-06 13:00:00');
-if ($measurementDateTime < $changeDate) {
-    echo "Based on the measurement date (" . date_format($measurementDateTime, 'Y-m-d H:i:s') . " < " . date_format($changeDate, 'Y-m-d H:i:s') . ") we use the historic python script (processRawDataFiles1.py) <br>";
-    $cmd = "/usr/bin/python3 Python/processRawDataFiles1.py " . $sampleName . " " . $polynomial . " 2>&1";
-    $result = shell_exec($cmd); // isotope ratios from the evaluation script
-    echo $result . "<br>";
-} else {
-    echo "Based on the measurement date (" . date_format($measurementDateTime, 'Y-m-d H:i:s') . " > " . date_format($changeDate, 'Y-m-d H:i:s') . ") we use the newer python script (processRawDataFiles2.py) <br>";
-    $cmd = "/usr/bin/python3 Python/processRawDataFiles2.py " . $sampleName . " " . $polynomial . " 2>&1";
-    $result = shell_exec($cmd); // isotope ratios from the evaluation script
-    echo $result . "<br>";
-}
+$cmd = "/usr/bin/python3 Python/evaluateData.py " . $sampleName . " " . $polynomial . " 2>&1";
+$result = shell_exec($cmd); // isotope ratios from the evaluation script
+echo $result . "<br>";
 
 echo "The python program has evaluated the data<br />";
 
@@ -68,6 +56,7 @@ if (trim($resultArray[1]) != "(most") // Only upload if data make sense
         exec("cp Results/$sampleName/bracketingResults.xlsx /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
         exec("cp Results/$sampleName/*.png /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
         exec("cp Results/$sampleName/*.svg /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
+        exec("cp Results/$sampleName/logFile.csv /mnt/isolaborserver_web/isotope/MeasurementFiles/$sampleName");
         echo "Folder existed, files and data were updated on Isolaborserver<br />";
     }
 
