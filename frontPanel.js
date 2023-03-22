@@ -307,7 +307,7 @@ function loadMethod(methodFileName) {
                         (vertical + i * 1) +
                         "px;left:0px;'>" +
                         i +
-                        ": " +
+                        ":" +
                         commandsArray[i] +
                         " &rarr; " +
                         parameterArray[i] +
@@ -470,13 +470,16 @@ function startSequence() {
     createFolder();
     $("#methodStatus").html("Method running");
     $("#sample0").prepend("&#9758; ");
+    let timeButtonPressed = new Date(new Date().getTime()).toLocaleTimeString();
+    console.log("Sequence started at" + timeButtonPressed);
 }
 
 /* ############################################################################
 ######################## This is the main program loop ########################
 ############################################################################ */
 
-var timeExecuted = 0; // Time when cmd has been sent to Arduino
+var timeExecuted = 0; // Time when cmd was executed in seconds since epoch
+var timeExecutedStr = 0; // Time when cmd was executed in human-readable format
 var line = 0;
 var moving = "no";
 var waiting = "no"; // Wait for the delay to goto next command
@@ -550,7 +553,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
         }
 
         // Set housing temperature
@@ -567,7 +570,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
         }
 
         // This command opens V15, waits until A target pressure is reached, than closes V15
@@ -581,10 +584,11 @@ setInterval(function () {
             $("#progressBar").css("width", "0px");
             $("#progress").html("0%");
             timeExecuted = new Date().getTime() / 1000;
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
         }
 
         // Reset valves to starting position
@@ -601,7 +605,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],"executed");
         }
 
         // Write cell pressure for the first sample on the front panel: WC,0,10 !Parameter is ignored
@@ -619,7 +623,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],"executed");
         }
 
         // Write nitrogen pressure for the first sample on the frontpanel "WA <no parameter>"
@@ -636,7 +640,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],"executed");
         }
 
         // Write reference gas target pressure for the first sample on the frontpanel "WR <no parameter>"
@@ -659,7 +663,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],"executed");
         }
 
 
@@ -683,7 +687,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],"executed");
         }
 
         // Write gas mixing ratio to the frontpanel "CM, 0=Reference 1=Sample"
@@ -719,7 +723,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
         }
 
         // Execute command at laser spectrometer: Start writing data to disk "TWD 0"
@@ -735,6 +739,7 @@ setInterval(function () {
             else if (parameterArray[line] == 1) {
                 startWritingData();
                 $('#cycle').html(cycle);
+                console.log("This is cycle #", cycle);
                 cycle++;
             }
 
@@ -744,7 +749,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
         }
 
         // Move bellows (X,Y,Z) "BY 53" with the percentage as parameter BX 34.5
@@ -772,11 +777,12 @@ setInterval(function () {
             // Do this after each command
             $("#progressBar").css("width", "0px");
             $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000; // Start time of command
+            timeExecuted = new Date().getTime() / 1000;
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
         }
 
         // Set bellows to pressure target (X,Y) "PX 1.723"
@@ -789,7 +795,7 @@ setInterval(function () {
             if (commandsArray[line][1] == "X") {
                 console.log("Adjusting bellow X to target pressure");
                 if ($("#refgasTargetPressure").html() == "Reference target pressure") {
-                    console.log("Target pressure recived from parameter");
+                    console.log("Target pressure recieved from parameter");
                     pTarget = parseFloat(parameterArray[line]);
                 }
                 else {
@@ -800,7 +806,7 @@ setInterval(function () {
             else if (commandsArray[line][1] == "Y") {
                 console.log("Adjusting bellow Y to target pressure");
                 if ($("#samgasTargetPressure").html() == "Sample target pressure") {
-                    console.log("Target pressure recived from parameter");
+                    console.log("Target pressure recieved from parameter");
                     pTarget = parseFloat(parameterArray[line]);
                 }
                 else {
@@ -825,10 +831,11 @@ setInterval(function () {
             $("#progressBar").css("width", "0px");
             $("#progress").html("0%");
             timeExecuted = new Date().getTime() / 1000;
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started at ",timeExecuted);
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
         }
 
         // Set collision gas pressure to target: SN,366,10
@@ -840,13 +847,13 @@ setInterval(function () {
             let pTarget;
             if ((parseFloat($("#nitrogenTargetPressure").html()) > 0) && (parseFloat(parameterArray[line]) == 0)) {
                 // Pressure is given in the nitrogenTargetPressure window AND parameter is 0
-                console.log("Collison gas target pressure from front panel: ", pTarget, " Torr");
                 pTarget = parseFloat($("#nitrogenTargetPressure").html());
+                console.log("Collison gas target pressure from front panel: ", pTarget, " Torr");
             }
             else {
                 // Parameter is not 0, regardless that a pressure is given in the nitrogenTargetPressure
-                console.log("Collison gas target pressure from parameter: ", pTarget, " Torr");
                 pTarget = parseFloat(parameterArray[line]);
+                console.log("Collison gas target pressure from parameter: ", pTarget, " Torr");
             }
 
             sendCommand("SN" + pTarget.toFixed(1));
@@ -856,10 +863,11 @@ setInterval(function () {
             $("#progressBar").css("width", "0px");
             $("#progress").html("0%");
             timeExecuted = new Date().getTime() / 1000;
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
         }
 
         // Refill sample gas from the manifold headspace - can be used after first fill
@@ -875,10 +883,11 @@ setInterval(function () {
             $("#progressBar").css("width", "0px");
             $("#progress").html("0%");
             timeExecuted = new Date().getTime() / 1000;
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
 
         }
 
@@ -895,7 +904,6 @@ setInterval(function () {
             // Check if any pressure is given in the cellTargetPressure window
             let pTarget;
             let effCycle = parseInt($('#cycle').html()) + 1; // Effective cycle number (at this point the cycle number is not yet updated)
-            console.log("This is cycle #", effCycle);
             if (parseFloat($("#cellTargetPressure").html()) > 0) {
                 console.log("Target pressure on front panel: ", parseFloat($("#cellTargetPressure").html()).toFixed(3), "Torr");
                 if ($("#sampleName").html().includes("air") && effCycle > 0 && effCycle % 2 === 0) {
@@ -926,10 +934,11 @@ setInterval(function () {
             $("#progressBar").css("width", "0px");
             $("#progress").html("0%");
             timeExecuted = new Date().getTime() / 1000;
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
         }
 
         // ^^^ The command "if" series ends here ^^^
@@ -941,11 +950,12 @@ setInterval(function () {
         else if (moving == "yes" && executed == "no" && waiting == "no" && $('#moveStatus').html() == "-") {
             // Case 2: Bellows finished moving, command complete, start waiting
             timeExecuted = new Date().getTime() / 1000;
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
             moving = "no";
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"finished at ",timeExecuted);
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"finished at",timeExecutedStr);
 
         }
         else if (moving == "no" && executed == "yes" && waiting == "yes" && $('#moveStatus').html() == "-" && new Date().getTime() / 1000 - timeExecuted < timeArray[line]) {
@@ -995,16 +1005,9 @@ setInterval(function () {
                 }
                 else {
                     // No next sample, sequence finished
-                    console.log("Sequence finished");
-                    sample = 0;
-                    line = 0;
-                    cycle = 0;
+                    let timeSeqFinished = new Date(new Date().getTime()).toLocaleTimeString();
+                    console.log("Sequence finished at" + timeSeqFinished);
                     $('#cycle').html("9¾");
-
-                    $("#refgasTargetPressure").html("Reference target pressure");
-                    $("#sample_pCO2").html("Sample pCO<sub>2</sub>");
-                    $("#reference_pCO2").html("Reference pCO<sub>2</sub>");
-                    $("#correction_pCO2").html("1.000");
                 }
             }
         }
