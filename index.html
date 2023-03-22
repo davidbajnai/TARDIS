@@ -300,7 +300,8 @@
 
 			<!-- Script variables -->
 			<p class="label" style="top:335px;left:1700px;">Script variables <span class="decorative">_________</span></p>
-			<input type="text" id="sampleName" placeholder="Sample name" style="top:430px;left:1700px;">
+			<div id="sampleName" class="info" style="top:430px;left:1700px;">Sample name</div>
+			<!-- <input type="text" id="sampleName" placeholder="Sample name" style="top:430px;left:1700px;"> -->
 			<div id="timeMeasurementStarted" class="info" style="top:460px;left:1700px;">Time measurement started</div>
 			<div id="folderName" class="info" style="top:480px;left:1700px;">Folder name</div>
 			<div id="cellTargetPressure" class="info" style="top:500px;left:1700px;">Cell target pressure</div>
@@ -317,7 +318,7 @@
 			<button onclick="showResults();" class="button big" style="top:230px;left:1240px;">See results</button>
 
 			<!-- Zugzielanzeiger -->
-			<span id="cycleJS" class="Zugzielanzeiger" style="top:35px;left:150px;">NaN</span>
+			<span id="infoJS" class="Zugzielanzeiger" style="top:35px;left:150px;">NaN</span>
 			<div id="cycle" style="top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
 			<div id="digital" class="Zugzielanzeiger" style="top:85px;left:150px;">Time</div>
 			<canvas id="Bahnhofsuhr" class="clock"></canvas>

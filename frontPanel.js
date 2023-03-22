@@ -231,26 +231,25 @@ function toggleValve(valve, status) {
 // Start recording data on TILDAS
 function startWritingData() {
     cmd = 'TWD1';
-    console.log(cmd);
+    console.log("Starting data recording on TILDAS");
 }
 
 // Stop recording data on TILDAS
 function stopWritingData() {
     cmd = 'TWD0';
-    console.log(cmd);
+    console.log("Stopping data recording on TILDAS");
 }
 
 // Change the setpoint temperature for the PID
 function setHousingTCmd(setTemp) {
     var temp = parseFloat($(setTemp).val()).toFixed(3);
     cmd = 'FS' + temp;
-    console.log(cmd);
 }
 
 // Set valves to starting position
 function startingPosition() {
     cmd = 'KL';
-    console.log(cmd);
+    console.log("Resetting valves to starting position");
 }
 
 // Move bellows
@@ -266,7 +265,7 @@ function moveBellows(bellow) {
         $('#setPercentage' + bellow).val("100.0");
     }
     cmd = bellow + 'P' + percentage;
-    console.log(cmd);
+    console.log("Moving bellow " + bellow + " to: " + percentage + "%");
 }
 
 /* ############################################################################
@@ -365,7 +364,7 @@ $("body").on("change", "#uploadSequence", function () {
                 if (i == 0) {
                     // Loading the method of the first sample
                     loadMethod(methodFileArr[i]);
-                    $("#sampleName").val(sampleNameArr[i]);
+                    $("#sampleName").html(sampleNameArr[i]);
                 }
                 $("#sequence").append(
                     "<div id='sample" +
@@ -388,14 +387,14 @@ $("body").on("change", "#uploadSequence", function () {
 
 // Create a folder for the data
 function createFolder() {
-    console.log("Creating folder.");
+    console.log("Creating folder: ");
     $.ajax({
         type: "POST",
         url: "createFolder.php",
         async: false,
         data: {
             date: $("#timeMeasurementStarted").html(), // Date and time when measurement started in UNIX format & UTC timezone
-            sampleName: $("#sampleName").val(),
+            sampleName: $("#sampleName").html(),
         },
         success: function (response) {
             console.log(response);
@@ -405,17 +404,19 @@ function createFolder() {
 }
 
 // Write logfile.csv
-function writeLogfile(logData, folderName) {
+function writeLogfile(logData, folderName, sampleName) {
     $.ajax({
         type: "POST",
         url: "writeLogfile.php",
         data: {
-            sampleName: $("#sampleName").val(),
+            sampleName: sampleName,
             logData: logData,
             folderName: folderName,
         },
         success: function (response) {
-            console.log(response);
+            if (response != "") {
+                console.log(response);
+            }
         },
     });
 }
@@ -481,7 +482,9 @@ var line = 0;
 var moving = "no";
 var waiting = "no"; // Wait for the delay to goto next command
 var executed = "yes";
-var cycleJS = 0;
+let cycleJS = 0;
+let startTimeJS = new Date().getTime();
+let speedJS = 0;
 var currentTimeOld = 0;
 var logData = [];
 var sample = 0;
@@ -489,7 +492,7 @@ var cycle = 0;
 
 setInterval(function () {
     sendCommand(cmd);
-    console.log('Current cmd', cmd);
+    // console.log('Current cmd', cmd);
     cmd = "";
     getTime(); // Sets the clock
 
@@ -498,7 +501,7 @@ setInterval(function () {
         var currentTime = parseInt(new Date().getTime() / 1000);
 
         // Save data to logfile array every 5 seconds
-        if (currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").val() != "") {
+        if (currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").html() != "") {
             // Unix -> Mac timestamp, TILDAS uses Mac timestamp
             logData.push([
                 parseInt(currentTime + 2082844800 + 3600),
@@ -520,7 +523,7 @@ setInterval(function () {
             if (currentTime % 30 == 0) {
                 // Write data to logfile every 30 seconds
                 // console.log("Writing to logfile now.");
-                writeLogfile(logData, $('#folderName').html());
+                writeLogfile(logData, $('#folderName').html(), $('#sampleName').html());
                 // Reset logfile array
                 logData = [];
             }
@@ -549,7 +552,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
         }
 
         // Set housing temperature
@@ -566,7 +569,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
         }
 
         // This command opens V15, waits until A target pressure is reached, than closes V15
@@ -600,7 +603,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],"executed");
         }
 
         // Write cell pressure for the first sample on the front panel: WC,0,10 !Parameter is ignored
@@ -610,6 +613,7 @@ setInterval(function () {
             $("#command" + line).prepend("&#9758; ");
 
             $("#cellTargetPressure").html($("#baratron").html());
+            console.log("Cell target pressure: ", $("#cellTargetPressure").html());
 
             // Do this after every command
             timeExecuted = new Date().getTime() / 1000;
@@ -617,7 +621,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],"executed");
         }
 
         // Write nitrogen pressure for the first sample on the frontpanel "WA <no parameter>"
@@ -634,7 +638,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],"executed");
         }
 
         // Write reference gas target pressure for the first sample on the frontpanel "WR <no parameter>"
@@ -657,7 +661,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],"executed");
         }
 
 
@@ -681,7 +685,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],"executed");
         }
 
         // Write gas mixing ratio to the frontpanel "CM, 0=Reference 1=Sample"
@@ -692,18 +696,22 @@ setInterval(function () {
 
             if (parameterArray[line] == 0) {
                 $("#reference_pCO2").html($("#mr3").html());
+                console.log("Reference pCO2 is: ",$("#reference_pCO2").html());
 
                 if ($("#sample_pCO2").html() != "Sample pCO<sub>2</sub>") {
                     // Adjust the correction factor
                     $("#correction_pCO2").html(($("#sample_pCO2").html() / $("#reference_pCO2").html() * $("#correction_pCO2").html()).toFixed(3));
+                    console.log("Correction factor is: ",$("#correction_pCO2").html());
                 }
             }
             else if (parameterArray[line] == 1) {
                 $("#sample_pCO2").html($("#mr3").html());
+                console.log("Sample pCO2 is: ",$("#sample_pCO2").html());
 
                 if ($("#reference_pCO2").html() != "Reference pCO<sub>2</sub>") {
                     // Adjust the correction factor
                     $("#correction_pCO2").html(($("#sample_pCO2").html() / $("#reference_pCO2").html() * $("#correction_pCO2").html()).toFixed(3));
+                    console.log("Correction factor is: ",$("#correction_pCO2").html());
                 }
             }
 
@@ -713,7 +721,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
         }
 
         // Execute command at laser spectrometer: Start writing data to disk "TWD 0"
@@ -738,7 +746,7 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            // console.log('Command',commandsArray[line],timeExecuted,'started and finished.');
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
         }
 
         // Move bellows (X,Y,Z) "BY 53" with the percentage as parameter BX 34.5
@@ -761,7 +769,7 @@ setInterval(function () {
             }
 
             moveBellows(commandsArray[line][1]);
-            console.log("Just started to move bellows, move status:", $('#moveStatus').html());
+            // console.log("Just started to move bellows, move status:", $('#moveStatus').html());
 
             // Do this after each command
             $("#progressBar").css("width", "0px");
@@ -770,7 +778,7 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
-            // console.log('Command',commandsArray[line],timeExecuted,'started.');
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
         }
 
         // Set bellows to pressure target (X,Y) "PX 1.723"
@@ -778,6 +786,7 @@ setInterval(function () {
             // Do this before every command in method
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
             $("#command" + line).prepend("&#9758; ");
+
             if (commandsArray[line][1] == "X") {
                 if ($("#refgasTargetPressure").html() == "Reference target pressure") {
                     var pTarget = parseFloat(parameterArray[line]);
@@ -810,6 +819,7 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
         }
 
         // Set collision gas pressure to target: SN,366,10
@@ -840,6 +850,7 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
         }
 
         // Refill sample gas from the manifold headspace - can be used after first fill
@@ -858,6 +869,8 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
+
         }
 
         // Set bellows Z to cell pressure target (40.000 Torr) "QZ,40.1,10"
@@ -871,30 +884,33 @@ setInterval(function () {
             console.log("Current pressure in the cell is: ", p.toFixed(3), "Torr");
 
             // Check if any pressure is given in the cellTargetPressure window
-            var pTarget;
+            let pTarget;
+            let effCycle = parseInt($('#cycle').html()) + 1; // Effective cycle number (at this point the cycle number is not yet updated)
+            console.log("This is cycle #", effCycle);
             if (parseFloat($("#cellTargetPressure").html()) > 0) {
-                pTarget = parseFloat($("#cellTargetPressure").html());
+                console.log("Target pressure on front panel: ", parseFloat($("#cellTargetPressure").html()).toFixed(3), "Torr");
+                if ($("#sampleName").html().includes("air") && effCycle > 0 && effCycle % 2 === 0) {
+                    // Adjust target pressure for air samples
+                    console.log("This is an air cycle. Adjusting target pressure by +0.037 Torr.");
+                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.037;
+                } else {
+                    pTarget = parseFloat($("#cellTargetPressure").html());
+                }
             }
             else {
                 pTarget = parseFloat(parameterArray[line]); // Normally about 40 Torr
-            }
-
-            // Adjust target pressure for air samples
-            if ($("#sampleName").html().includes("air")) {
-                pTarget += 0.037;
             }
             console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
 
             let percent = parseFloat($("#percentageZsteps").text());
             console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
 
-            var percentTarget = percent + (pTarget - p) / -0.007030;
+            let percentTarget = percent + (pTarget - p) / -0.007030;
             percentTarget = parseFloat(percentTarget).toFixed(1);
             console.log("Target percentage is: ", percentTarget, "%");
 
             // Move bellows
             $("#setPercentageZ").val(percentTarget);
-            console.log("Sends the move Z bellows command.");
             moveBellows("Z");
 
             // Do this after every command
@@ -904,7 +920,7 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
-            // console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
         }
 
         // ^^^ The command "if" series ends here ^^^
@@ -915,6 +931,7 @@ setInterval(function () {
         }
         else if (moving == "yes" && executed == "no" && waiting == "no" && $('#moveStatus').html() == "-") {
             // Case 2: Bellows finished moving, command complete, start waiting
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
             timeExecuted = new Date().getTime() / 1000;
             moving = "no";
             executed = "yes";
@@ -931,10 +948,10 @@ setInterval(function () {
             // Case 4: Nothing moving and waiting is complete: jump to next sample if exists
             waiting = "no";
             line++;
-            console.log("Now goto next line", line);
+            // console.log("Next line in method: ", line);
 
             if (line == commandsArray.length) {
-                console.log("End of method.");
+                console.log("End of method");
                 $('#progressBar').css("width", "0px");
                 $("#methodStatus").html('Sample finished');
                 $("#sample" + sample).append(" &#10003;");
@@ -948,17 +965,16 @@ setInterval(function () {
                 sample++;
                 if ($('#sample' + sample).length) {
                     // Next sample exists, read out sample name & method file name now
-                    console.log("Moving on to next sample.");
+                    console.log("Moving on to next sample");
                     $("#sample" + sample).prepend("&#9758; ");
                     let sampleName = $('#sample' + sample).html().split(",")[1];
                     let methodFileName = $('#sample' + sample).html().split(",")[2];
-                    $('#sampleName').val(sampleName);
+                    $('#sampleName').html(sampleName);
                     loadMethod(methodFileName);
                     line = 0;
                     cycle = 0;
                     $("#timeMeasurementStarted").html(parseInt(new Date().getTime() / 1000));
                     createFolder();
-                    console.log("Folder for next sample created.");
                     $("#methodStatus").html('Method running');
                     $('#cycle').html("0");
 
@@ -984,6 +1000,9 @@ setInterval(function () {
         }
     }
 
-    $('#cycleJS').text('ICE ' + cycleJS);
+    speedJS = Math.round( (1/((new Date().getTime() - startTimeJS)/1000))/10 )*10;
+    $("#infoJS").html("ICE " + cycleJS + "<br>RE " + speedJS);
+    // $('#infoJS').text("ICE " + cycleJS);
     cycleJS++;
+    startTimeJS = new Date().getTime();
 }, 50);
