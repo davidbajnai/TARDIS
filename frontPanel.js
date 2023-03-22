@@ -285,7 +285,7 @@ function loadMethod(methodFileName) {
         data: { methodFileName: methodFileName },
         type: "POST",
         success: function (result) {
-            console.log("Method loaded successfully.");
+            console.log("Method loaded successfully");
 
             $("#method").empty();
             colArr = result.split("|");
@@ -332,7 +332,7 @@ $("body").on("change", "#uploadMethod", function () {
         processData: false,
         contentType: false,
         success: function () {
-            console.log("Method uploaded successfully.");
+            console.log("Method uploaded successfully");
         },
     });
 });
@@ -348,7 +348,7 @@ $("body").on("change", "#uploadSequence", function () {
         processData: false,
         contentType: false,
         success: function (result) {
-            console.log("Sequence uploaded sucessfully.");
+            console.log("Sequence uploaded sucessfully");
 
             // Delete all elements in div sequence
             $("#sequence").empty();
@@ -387,7 +387,7 @@ $("body").on("change", "#uploadSequence", function () {
 
 // Create a folder for the data
 function createFolder() {
-    console.log("Creating folder: ");
+    console.log("Calling createFolder.php");
     $.ajax({
         type: "POST",
         url: "createFolder.php",
@@ -423,7 +423,7 @@ function writeLogfile(logData, folderName, sampleName) {
 
 // Copy all files with a date younger than timeMeasurementStarted
 function copyFiles() {
-    console.log("Copy files.");
+    console.log("Calling copyFiles.php");
     $.ajax({
         type: "POST",
         url: "copyFiles.php",
@@ -440,7 +440,7 @@ function copyFiles() {
 
 // Evaluate data after the measurement is finished
 function evaluateData() {
-    console.log("Starting evaluateData.php");
+    console.log("Calling evaluateData.php");
     $.ajax({
         type: "POST",
         url: "evaluateData.php",
@@ -452,7 +452,6 @@ function evaluateData() {
         },
     }).done(function (result) {
         console.log(result);
-        console.log("Data gotten from evaluateData.php");
     });
 }
 
@@ -492,7 +491,6 @@ var cycle = 0;
 
 setInterval(function () {
     sendCommand(cmd);
-    // console.log('Current cmd', cmd);
     cmd = "";
     getTime(); // Sets the clock
 
@@ -522,7 +520,7 @@ setInterval(function () {
 
             if (currentTime % 30 == 0) {
                 // Write data to logfile every 30 seconds
-                // console.log("Writing to logfile now.");
+                // console.log("Writing to logfile now."); // Used for debugging
                 writeLogfile(logData, $('#folderName').html(), $('#sampleName').html());
                 // Reset logfile array
                 logData = [];
@@ -586,7 +584,7 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
-            // console.log( "moving:",moving,"executed:",executed,"waiting:",waiting )
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
         }
 
         // Reset valves to starting position
@@ -769,7 +767,7 @@ setInterval(function () {
             }
 
             moveBellows(commandsArray[line][1]);
-            // console.log("Just started to move bellows, move status:", $('#moveStatus').html());
+            // console.log("Move status:", $('#moveStatus').html()); // Used for debugging
 
             // Do this after each command
             $("#progressBar").css("width", "0px");
@@ -787,28 +785,39 @@ setInterval(function () {
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
             $("#command" + line).prepend("&#9758; ");
 
+            let pTarget;
             if (commandsArray[line][1] == "X") {
+                console.log("Adjusting bellow X to target pressure");
                 if ($("#refgasTargetPressure").html() == "Reference target pressure") {
-                    var pTarget = parseFloat(parameterArray[line]);
+                    console.log("Target pressure recived from parameter");
+                    pTarget = parseFloat(parameterArray[line]);
                 }
                 else {
-                    var pTarget = parseFloat($("#refgasTargetPressure").html()).toFixed(3);
+                    console.log("Target pressure recived from front panel");
+                    pTarget = parseFloat($("#refgasTargetPressure").html());
                 }
             }
             else if (commandsArray[line][1] == "Y") {
+                console.log("Adjusting bellow Y to target pressure");
                 if ($("#samgasTargetPressure").html() == "Sample target pressure") {
-                    var pTarget = parseFloat(parameterArray[line]);
+                    console.log("Target pressure recived from parameter");
+                    pTarget = parseFloat(parameterArray[line]);
                 }
                 else {
-                    var pTarget = parseFloat($("#samgasTargetPressure").html()).toFixed(3);
+                    console.log("Target pressure recived from front panel");
+                    pTarget = parseFloat($("#samgasTargetPressure").html());
                 }
             }
+            console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");
 
             // Here we correct pTarget by the correction_pCO2 factor
-            // The corrrection factor is 1.000 by default, but can be adjusted by the CM command
-            var pTarget = pTarget * parseFloat($("#correction_pCO2").html()).toFixed(3);
-
-            console.log("The target pressure is: ", pTarget.toFixed(3), "mbar");
+            // The corrrection factor is 1.000 by default, and can be adjusted by the CM command
+            let factor = parseFloat($("#correction_pCO2").html());
+            if (factor != 1.000) {
+                console.log("Correction factor is: ",factor);
+                pTarget = pTarget * factor;
+                console.log("Adjusted target pressure is: ", pTarget.toFixed(3), "mbar");
+            }
             sendCommand(commandsArray[line][1] + "S" + pTarget.toFixed(3));
             $('#moveStatus').html('M' + commandsArray[line][1]);
 
@@ -819,7 +828,7 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started");
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"started at ",timeExecuted);
         }
 
         // Set collision gas pressure to target: SN,366,10
@@ -828,17 +837,17 @@ setInterval(function () {
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
             $("#command" + line).prepend("&#9758; ");
 
-            // Decide what to do
+            let pTarget;
             if ((parseFloat($("#nitrogenTargetPressure").html()) > 0) && (parseFloat(parameterArray[line]) == 0)) {
                 // Pressure is given in the nitrogenTargetPressure window AND parameter is 0
-                var pTarget = parseFloat($("#nitrogenTargetPressure").html());
+                console.log("Collison gas target pressure from front panel: ", pTarget, " Torr");
+                pTarget = parseFloat($("#nitrogenTargetPressure").html());
             }
             else {
                 // Parameter is not 0, regardless that a pressure is given in the nitrogenTargetPressure
-                var pTarget = parseFloat(parameterArray[line]);
+                console.log("Collison gas target pressure from parameter: ", pTarget, " Torr");
+                pTarget = parseFloat(parameterArray[line]);
             }
-
-            // console.log("The target collison gas pressure (A) is: ", pTarget, " Torr");
 
             sendCommand("SN" + pTarget.toFixed(1));
             $('#moveStatus').html('SN');
@@ -931,12 +940,13 @@ setInterval(function () {
         }
         else if (moving == "yes" && executed == "no" && waiting == "no" && $('#moveStatus').html() == "-") {
             // Case 2: Bellows finished moving, command complete, start waiting
-            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"executed");
             timeExecuted = new Date().getTime() / 1000;
             moving = "no";
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
+            console.log("Command in line ",line,": ",commandsArray[line],parameterArray[line],"finished at ",timeExecuted);
+
         }
         else if (moving == "no" && executed == "yes" && waiting == "yes" && $('#moveStatus').html() == "-" && new Date().getTime() / 1000 - timeExecuted < timeArray[line]) {
             // Case 3: Move the progress bar
@@ -965,7 +975,7 @@ setInterval(function () {
                 sample++;
                 if ($('#sample' + sample).length) {
                     // Next sample exists, read out sample name & method file name now
-                    console.log("Moving on to next sample");
+                    console.log("Moving on to next sample in sequence");
                     $("#sample" + sample).prepend("&#9758; ");
                     let sampleName = $('#sample' + sample).html().split(",")[1];
                     let methodFileName = $('#sample' + sample).html().split(",")[2];
@@ -985,7 +995,7 @@ setInterval(function () {
                 }
                 else {
                     // No next sample, sequence finished
-                    console.log("No more sample to be run.");
+                    console.log("Sequence finished");
                     sample = 0;
                     line = 0;
                     cycle = 0;
