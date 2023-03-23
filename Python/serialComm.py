@@ -77,10 +77,10 @@ with alive_bar(i, bar=False, monitor=False, spinner=False) as bar:
 
             laserStatusArray = laserStatus.split(',')
 
-            mr1 = str(round(float(laserStatusArray[1]) / 1000,1)) # 627
-            mr2 = str(round(float(laserStatusArray[2]) / 1000,1)) # 628
-            mr3 = str(round(float(laserStatusArray[3]) / 1000,1)) # 626
-            mr4 = str(round(float(laserStatusArray[4]) / 1000,1)) # free-path CO2
+            mr1 = str(round(float(laserStatusArray[1]) / 1000,3)) # 627
+            mr2 = str(round(float(laserStatusArray[2]) / 1000,3)) # 628
+            mr3 = str(round(float(laserStatusArray[3]) / 1000,3)) # 626
+            mr4 = str(round(float(laserStatusArray[4]) / 1000,3)) # free-path CO2
             cellP = str(round(float(laserStatusArray[10]),3)) # cell pressure (Torr)
 
             laserStatus = cellP + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4

@@ -184,13 +184,13 @@ function sendCommand(cmd) {
 
             // CO2 mixing ratios from the TILDAS
             var mr1 = statusArr[17];
-            $("#mr1").html(parseFloat(mr1).toFixed(1));
+            $("#mr1").html(parseFloat(mr1).toFixed(3));
             var mr2 = statusArr[18];
-            $("#mr2").html(parseFloat(mr2).toFixed(1));
+            $("#mr2").html(parseFloat(mr2).toFixed(3));
             var mr3 = statusArr[19];
-            $("#mr3").html(parseFloat(mr3).toFixed(1));
+            $("#mr3").html(parseFloat(mr3).toFixed(3));
             var mr4 = statusArr[20];
-            $("#mr4").html(parseFloat(mr4).toFixed(1));
+            $("#mr4").html(parseFloat(mr4).toFixed(3));
 
             // Edwards vacuum gauge
             var edwards = statusArr[21];

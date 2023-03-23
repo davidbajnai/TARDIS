@@ -130,7 +130,7 @@ df = dfAll
 # Calculate the isotope ratios normalized to all data avarege
 df["d17O_raw"] = ((df['I627'] / df['I626']) / np.mean(df['I627'] / df['I626']) - 1) * 1000
 df["d18O_raw"] = ((df['I628'] / df['I626']) / np.mean(df['I628'] / df['I626']) - 1) * 1000
-df["Dp17O_raw"] =  Dp17O(df["d17O_raw"], df["d18O_raw"])
+df["Dp17O_raw"] = Dp17O(df["d17O_raw"], df["d18O_raw"])
 
 # Compensate for summer time / winter time, if necessary
 if (df["Time(rel)"].iat[0] > 3500):
@@ -384,8 +384,8 @@ plt.savefig(folder + "rawData.png", dpi = 300)
 #################################################################
 
 # Plot properties
-height = 11.69
 width = 6
+height = 2.5 * 3 + 1
 plt.rcParams["figure.figsize"] = (width, height)
 plt.rcParams["legend.loc"] = "upper left"
 plt.figure(0)
@@ -401,9 +401,10 @@ dfRef = df.loc[df['Type'] == "Ref"]
 dfSam = df.loc[df['Type'] == "Sam"]
 dfDummy = df.loc[df['Type'] == "Dummy"]
 
-########## Fit for d17O ##########
+######################### Plot A – d17O #########################
 ax1 = plt.subplot(3, 1, 1)
 plt.text(0.99, 0.99, 'A', size = 14, ha = 'right', va = 'top', transform = ax1.transAxes)
+plt.title(samID)
 
 xDummy = df.loc[df['Type'] == "Dummy"]["Time(rel)"]
 d17ODummyRaw = ((dfDummy['I627']/dfDummy['I626'])/np.mean(df['I627']/df['I626']) - 1) * 1000
@@ -524,7 +525,7 @@ plt.ylabel("$\delta^{17}$O (‰, raw)")
 plt.legend()
 ax1lim = ax1.get_xlim()
 
-########## Fit für d18O ##########
+######################### Plot B – d18O #########################
 ax2 = plt.subplot(3, 1, 2)
 plt.text(0.99, 0.99, 'B', size = 14, ha = 'right', va = 'top', transform = ax2.transAxes)
 
@@ -627,7 +628,7 @@ else:
 plt.ylabel("$\delta^{18}$O (‰, raw)")
 plt.legend()
 
-##### Fit für D'17O ####
+######################## Plot C – Dp17O #########################
 ax3 = plt.subplot(3, 1, 3)
 plt.text(0.99, 0.99, 'C', size = 14, ha = 'right', va = 'top', transform = ax3.transAxes)
 
@@ -789,13 +790,16 @@ else:
     D17Op_SRB_error = round(sem(dfBracketingResults['Dp17O']),1)
 
 # Write evaluated data into the figure title
-first_line = samID
+workingGasInfo = str("\n(Reference gas: " + "$\delta{}^{17}$O: " + str(d17OWorkingGas) + "‰, " + "$\delta{}^{18}$O: " +
+                     str(d18OWorkingGas) + "‰, " + "$\Delta{}^{\prime 17}$O: " + str(round(Dp17OWorkingGas*1000, 1)) + " ppm)")
 if polynomial == "100":
-    second_line = str("\n" + "Results from bracketing: " + "$\delta{}^{17}$O: "+ str(d17O_SRB) + "‰, $\delta{}^{18}$O: " + str(d18O_SRB) + "‰, $\Delta{}^{\prime 17}$O: " + str(D17Op_SRB) + " ± " + str(D17Op_SRB_error) + " ppm, " + OutLab)
+    evaluatedData = str("Results from bracketing: " + "$\delta{}^{17}$O: " + str(d17O_SRB) + "‰, $\delta{}^{18}$O: " +
+                        str(d18O_SRB) + "‰, $\Delta{}^{\prime 17}$O: " + str(D17Op_SRB) + " ± " + str(D17Op_SRB_error) + " ppm, " + OutLab)
 else:
-    second_line = str("\n" + "Results from " +polynomial+ "nd order polynomial fit: " + "$\delta{}^{17}$O: "+ str(d17OPolyFinal) + "‰, $\delta{}^{18}$O: " + str(d18OPolyFinal) + "‰, $\Delta{}^{\prime 17}$O: " + str(Dp17OPolyFinal) + " ± " + str(round(Dp17OPolyErr, 1)) +" ppm")
-third_line = str("\n(Reference gas: " +"$\delta{}^{17}$O: "+ str(d17OWorkingGas) + "‰, " + "$\delta{}^{18}$O: " + str(d18OWorkingGas) + "‰, " + "$\Delta{}^{\prime 17}$O: " + str(round(Dp17OWorkingGas*1000,1)) + " ppm)")
-plt.title(first_line + second_line + third_line)
+    evaluatedData = str("Results from " + polynomial + "$^{nd}$ order polynomial fit: " + "$\delta{}^{17}$O: " + str(d17OPolyFinal) + "‰, $\delta{}^{18}$O: " +
+                        str(d18OPolyFinal) + "‰, $\Delta{}^{\prime 17}$O: " + str(Dp17OPolyFinal) + " ± " + str(round(Dp17OPolyErr, 1)) + " ppm")
+plt.title(evaluatedData + workingGasInfo)
+
 plt.ylabel("$\Delta^{\prime 17}$O (ppm)")
 plt.xlabel("Relative time (s)")
 plt.legend()
