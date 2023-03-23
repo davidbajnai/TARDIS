@@ -19,7 +19,7 @@ This program is free software: you can redistribute it and/or modify
 it under the terms of the [GNU General Public License version 3](LICENSE), or
 (at your option) any later version.
 
-this program is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.
 
