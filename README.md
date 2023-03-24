@@ -22,14 +22,11 @@ it under the terms of the [GNU General Public License version 3](LICENSE), or
 but without any warranty.
 
 <hr>
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Images/GZG_logo_white.png">
   <img src="Images/GZG_logo_black.png" align="left" height="90">
 </picture>
-<a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GZG_logo_white.png" align="left" height="90"/>
-</a>
-<a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GOE_logo_white.png" align="right" height="80"/>
-</a>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Images/GZG_logo_white.png">
+  <img src="Images/GOE_logo_black.png" align="right" height="80"/>
+</picture>
