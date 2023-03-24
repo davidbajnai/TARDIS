@@ -1,5 +1,5 @@
-V15,0,1, <--- Necessary dummy command for the beginning #########################
-V07,0,1, <---------------------------------------------------------- START DUMMY
+V15,0,1, <--- Necessary dummy command for the beginning #######################
+V07,0,1, <---------------------------------------------------- DUMMY 00 STARTED
 V05,0,1
 V06,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
@@ -44,8 +44,8 @@ V19,1,1
 V13,1,1
 V27,1,20
 BX,-7.5,1, <--- Compress bellow to speed up PX
-V17,1,90, <------------------------------------------------------ DUMMY FINISHED
-V07,0,1, <--------------------------------------------------- START REFERENCE 01
+V17,1,90, <-------------------------------------------------- DUMMY 00 FINISHED
+V07,0,1, <------------------------------------------------ REFERENCE 01 STARTED
 V05,0,1
 V06,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
@@ -92,8 +92,8 @@ V19,1,1
 V13,1,1
 V27,1,20
 BX,-7.5,1, <--- Compress bellow to speed up PX
-V17,1,90, <----------------------------------------------- REFERENCE FINISHED 01
-V13,0,1, <------------------------------------------------------ START SAMPLE 01
+V17,1,90, <---------------------------------------------- REFERENCE 01 FINISHED
+V13,0,1, <--------------------------------------------------- SAMPLE 01 STARTED
 V11,0,1
 V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
@@ -1053,4 +1053,4 @@ V13,1,1
 V27,1,20
 V17,1,90, <----------------------------------------------- REFERENCE FINISHED 11
 V19,1,105, <----------------------------------------------------- START APPENDIX
-TWD,0,20, <--------------------------------------------------- APPENDIX FINISHED
+TWD,0,10, <--------------------------------------------------- APPENDIX FINISHED
