@@ -25,11 +25,18 @@ if ($userName == "") {
     $userName = "Dummy_Dummy";
 }
 
+// Start the timer
+$start_time = microtime(true);
+
 $cmd = "/usr/bin/python3 Python/evaluateData.py " . $sampleName . " " . $polynomial . " 2>&1";
 $result = shell_exec($cmd); // isotope ratios from the evaluation script
 echo $result . "<br>";
 
-echo "The python program has evaluated the data<br />";
+// Stop the timer
+$end_time = microtime(true);
+$duration = $end_time - $start_time;
+
+echo "The python program has evaluated the data in " . round($duration, 2) . " seconds<br/>";
 
 $resultArray = explode(" ", $result);
 

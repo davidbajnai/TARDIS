@@ -1017,14 +1017,14 @@ setInterval(function () {
                 console.log("Target pressure on front panel: ", parseFloat($("#cellTargetPressure").html()).toFixed(3), "Torr");
                 if ($("#sampleName").html().includes("air") && effCycle > 0 && effCycle % 2 === 0) {
                     // Adjust target pressure for air samples
-                    console.log("This is an air cycle. Adjusting target pressure by +0.037 Torr.");
-                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.037;
+                    console.log("This is an air cycle. Adjusting target pressure by +0.045 Torr.");
+                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.045;
                 } else {
                     pTarget = parseFloat($("#cellTargetPressure").html());
                 }
             }
             else {
-                pTarget = parseFloat(parameterArray[line]); // Normally about 40 Torr
+                pTarget = parseFloat(parameterArray[line]);
             }
             console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
 

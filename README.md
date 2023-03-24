@@ -23,8 +23,14 @@ but without any warranty.
 
 <hr>
 <a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GZG_logo_text_white.png" align="left" height="90"/>
+    <img src="Images/GZG_logo_white.png#gh-dark-mode-only" align="left" height="90"/>
 </a>
 <a href="https://www.uni-goettingen.de/de/125309.html">
-    <img src="Images/GOE_logo_white.png" align="right" height="80"/>
+    <img src="Images/GZG_logo_black.png#gh-light-mode-only" align="left" height="90"/>
+</a>
+<a href="https://www.uni-goettingen.de/de/125309.html">
+    <img src="Images/GOE_logo_white.png#gh-dark-mode-only" align="right" height="80"/>
+</a>
+<a href="https://www.uni-goettingen.de/de/125309.html">
+    <img src="Images/GOE_logo_black.png#gh-light-mode-only" align="right" height="80"/>
 </a>
