@@ -27,6 +27,6 @@ but without any warranty.
   <img src="Images/GZG_logo_black.png" align="left" height="90">
 </picture>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Images/GZG_logo_white.png">
+  <source media="(prefers-color-scheme: dark)" srcset="Images/GOE_logo_white.png">
   <img src="Images/GOE_logo_black.png" align="right" height="80"/>
 </picture>
