@@ -25,9 +25,8 @@ but without any warranty.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Images/GZG_logo_white.png">
-  <img src="Images/GZG_logo_black.png">
+  <img src="Images/GZG_logo_black.png" align="left" height="90">
 </picture>
-
 <a href="https://www.uni-goettingen.de/de/125309.html">
     <img src="Images/GZG_logo_white.png" align="left" height="90"/>
 </a>
