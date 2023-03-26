@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: 'TARDIS: TILDAS + Automated Remix & Dual Inlet System'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: David
+    family-names: Bajnai
+    orcid: 'https://orcid.org/0000-0002-4053-5056'
+    affiliation: Georg-August-Universität Göttingen
+  - given-names: Andreas
+    family-names: Pack
+    affiliation: Georg-August-Universität Göttingen
+    orcid: 'https://orcid.org/0000-0002-2618-2768'
+repository-code: 'https://github.com/davidbajnai/TARDIS'
+abstract: >-
+  An open-source repository to conduct dual inlet
+  measurements using an Aerodyne Research TILDAS laser
+  spectrometer
+keywords:
+  - triple
+  - oxygen isotope
+  - air
+  - carbon dioxide
+  - carbonate
+  - thermometry
+license: GPL-3.0-or-later
+version: '1.0'
+date-released: '2023-03-30'
