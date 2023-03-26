@@ -3,7 +3,7 @@
 // This script is used to:
 // start the data evaluation and clean up
 
-date_default_timezone_set('CET');
+date_default_timezone_set('Europe/Berlin');
 
 if (isset($_POST['sampleName'])) {
     if (str_contains($_POST['sampleName'], "folder") === true) {

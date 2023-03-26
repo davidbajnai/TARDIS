@@ -3,7 +3,9 @@
 // This script is used to:
 // log the status (temp, bellow compression, vacuum, etc.) of the inlet system
 
-date_default_timezone_set('CET');
+// Set CET or CEST timezone as appropriate (CET is used in winter, CEST in summer)
+date_default_timezone_set('Europe/Berlin');
+
 
 $sampleName = $_POST['sampleName'];
 $logData = $_POST['logData']; // Comma separated string

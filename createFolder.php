@@ -3,12 +3,13 @@
 // This script is used to:
 // create a folder on the RPi before each analysis to store the measurement files
 
-date_default_timezone_set('CET');
+date_default_timezone_set('Europe/Berlin');
 
 $sampleName = $_POST['sampleName'];
 $StartDate = $_POST['date']; // Date and time when measurement started in UNIX format & UTC timezone
 
-$StartDate = DateTime::createFromFormat('U', $StartDate)->setTimezone(new DateTimeZone('CET'));
+// Set Europe/Berlin timezone
+$StartDate = DateTime::createFromFormat('U', $StartDate)->setTimezone(new DateTimeZone('Europe/Berlin'));
 
 // Do not create a folder for bellow refill
 if ($sampleName != ""  and str_contains($sampleName, "refill") === false) {

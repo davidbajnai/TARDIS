@@ -11,7 +11,7 @@ function getFiles($dir)
     }));
 }
 
-date_default_timezone_set('CET');
+date_default_timezone_set('Europe/Berlin');
 
 $folderName = $_POST['folderName']; // Something like Results/230306_112345_sampleName
 $StartDate = $_POST['date']; // Date and time when measurement started in UNIX format & UTC timezone
