@@ -20,7 +20,7 @@ This program is free software: you can redistribute it and/or modify
 it under the terms of the [GNU General Public License version 3](LICENSE), or (at your option) any later version. This program is distributed in the hope that it will be useful,
 but without any warranty.
 
-Follow the citation format provided in [CITATION](CITATION.cff) when referencing this software.
+Please follow the [provided citation format](CITATION.cff) when referencing this software.
 
 <hr>
 <picture>
