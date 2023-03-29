@@ -1,9 +1,3 @@
-refill_air,refGasRefillBothForAir.csv
-air,changeoverMethodAirRefLeft.csv
-air,changeoverMethodAirRefRight.csv
-refill_air,refGasRefillBothForAir.csv
-air,changeoverMethodAirRefLeft.csv
-air,changeoverMethodAirRefRight.csv
-refill_air,refGasRefillBothForAir.csv
-air,changeoverMethodAirRefLeft.csv
-air,changeoverMethodAirRefRight.csv
+refill_ref,refGasRefillBothForAir.csv
+refill_air,refillAirTank.csv
+air,changeoverMethodAirRefLeftShort.csv

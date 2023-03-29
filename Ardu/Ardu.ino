@@ -309,6 +309,11 @@ void startingPosition()
   switchValve("V21C");
   switchValve("V22C");
   switchValve("V27C");
+  switchValve("V28C");
+  switchValve("V29C");
+  switchValve("V30C");
+  switchValve("V31C");
+  switchValve("V32C");
   delay(50);
 }
 
@@ -405,7 +410,7 @@ void runIA(float pressureTarget)
 {
 
   sendStatus("IA");
-  switchValve("V31O");
+  switchValve("V21O");
   delay(10);
 
   for (;;)
@@ -416,7 +421,7 @@ void runIA(float pressureTarget)
     if (Apressure >= pressureTarget)
     {
       switchValve("V15C");
-      switchValve("V31C");
+      switchValve("V21C");
       break;
     }
   }
