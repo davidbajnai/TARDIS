@@ -120,7 +120,7 @@ function sendCommand(cmd) {
                 "horizontal", // V12
                 "vertical", // V13
                 "vertical", // V14
-                "vertical", // V15
+                "horizontal", // V15
                 "vertical", // V16
                 "horizontal", // V17
                 "horizontal", // V18
@@ -133,7 +133,7 @@ function sendCommand(cmd) {
                 "vertical", // V25
                 "vertical", // V26
                 "horizontal", // V27
-                "horizontal", // V28
+                "vertical", // V28
                 "horizontal", // V29
                 "horizontal", // V30
                 "horizontal", // V31
@@ -216,6 +216,7 @@ function sendCommand(cmd) {
 
 // Switch valves
 function toggleValve(valve, status) {
+    // console.log("Recieved:" + valve + status);
     if (status == '0' || status == 'O') {
         cmd = valve + 'O';
     }
@@ -226,6 +227,7 @@ function toggleValve(valve, status) {
         cmd = '';
         alert('Invalid command, could not determine the current status of the valve.');
     }
+    // console.log("Sent" + cmd);
 }
 
 // Start recording data on TILDAS

@@ -1,7 +1,7 @@
 <!-- This is the README file for GitHub -->
 # TARDIS: <img src="Images/TARDIS_logo.png" align="right" width="105"/> <br/> TILDAS + Automated Remix & Dual Inlet System
 
-<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3784963.svg)](https://doi.org/10.5281/zenodo.3784963) -->
+[![DOI](https://zenodo.org/badge/605052580.svg)](https://zenodo.org/badge/latestdoi/605052580)
 [![CodeFactor](https://www.codefactor.io/repository/github/davidbajnai/tardis/badge?s=e60c8acc0095fc83f8522a69115b1e3ed10c7320)](https://www.codefactor.io/repository/github/davidbajnai/tardis)
 [![Python](https://img.shields.io/badge/Python-3.7-%233572A5)](https://www.python.org)
 [![PHP](https://img.shields.io/badge/PHP-8.2-%234f5b93)](https://www.php.net/releases/8.2/en.php)
