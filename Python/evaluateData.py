@@ -800,7 +800,7 @@ else:
                         str(d18OPolyFinal) + "‰, $\Delta{}^{\prime 17}$O: " + str(Dp17OPolyFinal) + " ± " + str(round(Dp17OPolyErr, 1)) + " ppm")
 plt.title(evaluatedData + workingGasInfo)
 
-plt.ylabel("$\Delta^{\prime 17}$O (ppm)")
+plt.ylabel("$\Delta^{\prime 17}$O (ppm, raw)")
 plt.xlabel("Relative time (s)")
 plt.legend()
 

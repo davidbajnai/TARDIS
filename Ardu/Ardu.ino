@@ -10,7 +10,7 @@ long steps = 0;
 
 char command;
 String string;
-String stat = "S";
+// String stat = "S";
 // String statusMessage = "";
 float Xpercentage = 0.00;
 float Ypercentage = 0.00;
@@ -26,6 +26,7 @@ float YpercentageArray[200];
 float boxTempArray[200];
 int fanSpeed = 0;
 float boxTemp = 0.000;
+float SPT = 32.5; // Set the housing temperature here
 float boxHum = 0.00;
 unsigned long now = 0;
 unsigned long lastTime = 0;
@@ -172,7 +173,7 @@ void controlT()
   timeChange = now - lastTime;
 
   // Compute all the working error variables after cycle 60
-  Terror = boxTemp - 32.000;
+  Terror = boxTemp - SPT;
 
   if (cycl > 60)
   {
@@ -204,7 +205,7 @@ void runXP(float percentage, String string)
 {
   digitalWrite(XYZsleepPin, HIGH);
   delay(100);
-  stat = "W";
+  // stat = "W";
   if (percentage > 100)
   {
     percentage = 100;
@@ -226,14 +227,14 @@ void runXP(float percentage, String string)
   }
   Xsteps = Xsteps + steps;
   digitalWrite(XYZsleepPin, LOW); // Back in sleeping mode
-  stat = "S";
+  // stat = "S";
 }
 
 void runYP(float percentage, String string)
 {
   digitalWrite(XYZsleepPin, HIGH);
   delay(100);
-  stat = "W";
+  // stat = "W";
   if (percentage > 100)
   {
     percentage = 100;
@@ -253,14 +254,14 @@ void runYP(float percentage, String string)
   }
   Ysteps = Ysteps + steps;
   digitalWrite(XYZsleepPin, LOW);
-  stat = "S";
+  // stat = "S";
 }
 
 void runZP(float percentage, String string)
 {
   digitalWrite(XYZsleepPin, HIGH);
   delay(100);
-  stat = "W";
+  // stat = "W";
   if (percentage > 100)
   {
     percentage = 100;
@@ -281,7 +282,7 @@ void runZP(float percentage, String string)
   }
   Zsteps = Zsteps + steps;
   digitalWrite(XYZsleepPin, LOW);
-  stat = "S";
+  // stat = "S";
 }
 
 void startingPosition()
@@ -413,12 +414,14 @@ void runIA(float pressureTarget)
   switchValve("V21O");
   delay(10);
 
+  unsigned long startTime = millis();
+
   for (;;)
   {
     sendStatus("IA");
     delay(10);
 
-    if (Apressure >= pressureTarget)
+    if (Apressure >= pressureTarget || millis() - startTime >= 120000)
     {
       switchValve("V15C");
       switchValve("V21C");
@@ -713,8 +716,8 @@ void sendStatus( String param )
   Serial.print(",");
   Serial.print(Apressure, 1);
   Serial.print(",");
-  Serial.print(stat);
-  Serial.print(",");
+  // Serial.print(stat);
+  // Serial.print(",");
   int pinNr = 22;
   while (pinNr <= 53)
   {
@@ -732,6 +735,8 @@ void sendStatus( String param )
   Serial.print(boxHum, 2);
   Serial.print(",");
   Serial.print(boxTemp, 3);
+  Serial.print(",");
+  Serial.print(SPT, 2);
   Serial.print(",");
   Serial.print(fanSpeed);
   Serial.println(""); // End of status string

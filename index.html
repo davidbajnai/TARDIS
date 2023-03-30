@@ -19,17 +19,18 @@
 			<!-- Some design elements and labels -->
 			<img src="Images/GZG_logo_color.png" class="logo" style="top:19px;" />
 			<img src="Images/GOE_logo_color.png" class="logo" style="top:790px;" />
-			<p class="label" style="top:39px;left:960px;">N<sub>2</sub> purging</p>
-			<p class="label" style="top:90px;left:960px;">Turbo</p>
-			<p class="label" style="top:250px;left:960px;">Scroll</p>	
+			<p class="label" style="top:39px;left:1030px;">N<sub>2</sub> purging</p>
+			<p class="label" style="top:155px;left:1030px;">Turbo</p>
+			<p class="label" style="top:230px;left:1030px;">Scroll</p>
+			<p class="label" style="top:700px;left:1030px;">Vent</p>	
 
 			<!-- Display the valves -->
-			<div style="top:131px;left:725px;">
+			<div style="top:125px;left:775px;">
 				<span class="valveNumberLabel">V01</span>
 				<img id="V01" src="" class="small" onclick="var status=$('#V01_label').html();toggleValve('V01',status);"/>
 				<span id="V01_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:178px;left:685px;">
+			<div style="top:125px;left:685px;">
 				<span class="valveNumberLabel">V02</span>
 				<img id="V02" src="" class="small" onclick="var status=$('#V02_label').html();toggleValve('V02',status);"/>
 				<span id="V02_label" style="display:none;">undefined</span>
@@ -44,7 +45,7 @@
 				<img id="V04" src="" class="small" onclick="var status=$('#V04_label').html();toggleValve('V04',status);" />
 				<span id="V04_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:340px;left:410px;">
+			<div style="top:340px;left:411px;">
 				<span class="valveNumberLabel">V05</span>
 				<img id="V05" src="" class="small" onclick="var status=$('#V05_label').html();toggleValve('V05',status);" />
 				<span id="V05_label" style="display:none;">undefined</span>
@@ -54,7 +55,7 @@
 				<img id="V06" src="" class="small" onclick="var status=$('#V06_label').html();toggleValve('V06',status);" />
 				<span id="V06_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:475px;left:410px;">
+			<div style="top:475px;left:411px;">
 				<span class="valveNumberLabel">V07</span>
 				<img id="V07" src="" class="small" onclick="var status=$('#V07_label').html();toggleValve('V07',status);" />
 				<span id="V07_label" style="display:none;">undefined</span>
@@ -74,7 +75,7 @@
 				<img id="V10" src="" class="small" onclick="var status=$('#V10_label').html();toggleValve('V10',status);" />
 				<span id="V10_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:345px;left:972px;">
+			<div style="top:345px;left:973px;">
 				<span class="valveNumberLabel">V11</span>
 				<img id="V11" src="" class="small" onclick="var status=$('#V11_label').html();toggleValve('V11',status);" />
 				<span id="V11_label" style="display:none;">undefined</span>
@@ -84,7 +85,7 @@
 				<img id="V12" src="" class="small" onclick="var status=$('#V12_label').html();toggleValve('V12',status);" />
 				<span id="V12_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:470px;left:972px;">
+			<div style="top:470px;left:973px;">
 				<span class="valveNumberLabel">V13</span>
 				<img id="V13" src="" class="small" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" />
 				<span id="V13_label" style="display:none;">undefined</span>
@@ -104,7 +105,7 @@
 				<img id="V16" src="" class="small" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" />
 				<span id="V16_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:131px;left:843px;">
+			<div style="top:158px;left:843px;">
 				<span class="valveNumberLabel">V17</span>
 				<img id="V17" src="" class="small" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" />
 				<span id="V17_label" style="display:none;">undefined</span>
@@ -154,7 +155,7 @@
 				<img id="V26" src="" class="small" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" />
 				<span id="V26_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:212px;left:843px;">
+			<div style="top:231px;left:843px;">
 				<span class="valveNumberLabel" >V27</span>
 				<img id="V27" src="" class="small" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" />
 				<span id="V27_label" style="display:none;">undefined</span>
@@ -190,10 +191,10 @@
 			</div>
 			
 			<!-- TILDAS control -->
-			<button onclick="startWritingData();" class="button medium" style="top:36px;left:585px;height:30px;">WD on</button>
-			<button onclick="stopWritingData();" class="button medium" style="top:66px;left:585px;height:30px;">WD off</button>
-			<div id="baratron" class="box medium" style="top:55px;left:660px;">CellP </div>
-			<p class="label" style="top:39px;left:730px;color:white;">Torr (cell)</p>
+			<button onclick="startWritingData();" class="button medium" style="top:36px;left:645px;height:30px;">WD on</button>
+			<button onclick="stopWritingData();" class="button medium" style="top:66px;left:645px;height:30px;">WD off</button>
+			<div id="baratron" class="box medium" style="top:55px;left:720px;">CellP </div>
+			<p class="label" style="top:39px;left:790px;color:white;">Torr (cell)</p>
 
 			<!-- Bellows control -->
 			<img id="bellowsX" src="Images/bellows.png" class="bellows" style="top:510px;left:295px;" />
@@ -280,12 +281,12 @@
 			
 			<!-- Environment -->
 			<p class="label" style="top:170px;left:30px;">Environment <span class="decorative">_________</span></p>
-			<input id='housingTargetT' value=32.000 type="number" class="medium" style="top:215px;left:30px;" />
-			<button onclick="setHousingTCmd(housingTargetT);" class="button small" style="top:215px;left:100px;">Set T</button>
-			<div id='fanSpeed' class="box medium" style="top:245px;left:30px;">99</div>
-			<p class="label" style="top:230px;left:100px;">fan speed</p>
-			<div id='housingT' class="box medium" style="top:275px;left:30px;">99</div>
-			<p class="label" style="top:260px;left:100px;">°C (box)</p>
+			<div id='housingT' class="box medium" style="top:215px;left:30px;">99</div>
+			<p class="label" style="top:200px;left:100px;">°C (box)</p>
+			<div id='setPointTemperature' class="box medium" style="top:245px;left:30px;">99</div>
+			<p class="label" style="top:230px;left:100px;">°C (SP)</p>
+			<div id='fanSpeed' class="box medium" style="top:275px;left:30px;">99</div>
+			<p class="label" style="top:260px;left:100px;">fan speed</p>
 			<div id='roomRH' class="box medium" style="top:305px;left:30px;">99</div>
 			<p class="label" style="top:290px;left:100px;">%rH (box)</p>
 			<div id='roomTemperature' class="box medium" style="top:335px;left:30px;">99</div>

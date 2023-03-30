@@ -104,9 +104,9 @@ function sendCommand(cmd) {
             $("#pressureA").html(pressureA.toFixed(1));
 
             // Valve status
-            var valveArray = statusArr[12];
+            var valveArray = statusArr[11];
             const positions = [
-                "horizontal", // V01
+                "vertical", // V01
                 "vertical", // V02
                 "horizontal", // V03
                 "horizontal", // V04
@@ -165,12 +165,16 @@ function sendCommand(cmd) {
             }
 
             // Box humidity
-            var roomRH = statusArr[13];
+            var roomRH = statusArr[12];
             $("#roomRH").html(roomRH);
 
             // Box temperature
-            var housingT = statusArr[14];
+            var housingT = statusArr[13];
             $("#housingT").html(housingT);
+
+            // Box setpoint temperature
+            var SPT = parseFloat(statusArr[14]);
+            $("#setPointTemperature").html(SPT.toFixed(1));
 
             // Fan speed
             var fanSpeed = statusArr[15];
@@ -240,12 +244,6 @@ function startWritingData() {
 function stopWritingData() {
     cmd = 'TWD0';
     console.log("Stopping data recording on TILDAS");
-}
-
-// Change the setpoint temperature for the PID
-function setHousingTCmd(setTemp) {
-    var temp = parseFloat($(setTemp).val()).toFixed(3);
-    cmd = 'FS' + temp;
 }
 
 // Set valves to starting position
@@ -618,7 +616,7 @@ setInterval(function () {
             logData.push([
                 parseInt(currentTime + 2082844800 + 3600),
                 parseFloat($("#housingT").html()),
-                parseFloat($("#housingTargetT").val()),
+                parseFloat($("#setPointTemperature").html()),
                 parseFloat($("#roomRH").html()),
                 $("#percentageXsteps").html(),
                 $("#percentageYsteps").html(),
@@ -657,23 +655,6 @@ setInterval(function () {
             else {
                 toggleValve(commandsArray[line], "0");
             }
-
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
-        }
-
-        // Set housing temperature
-        else if (commandsArray[line][0] == "F" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
-
-            cmd = "FS" + parameterArray[line];
 
             // Do this after every command
             timeExecuted = new Date().getTime() / 1000;

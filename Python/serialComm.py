@@ -98,7 +98,7 @@ with alive_bar(i, bar=False, monitor=False, spinner=False) as bar:
         # print(arduinoStatus) # Show the raw serial output of the Arduino in the Terminal - for debugging
 
         # Check if we have a complete string using a regular expression
-        pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,][SW][,]\d{32}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,](?:0|[1-9]\d?|100)$')
+        pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,]\d{32}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,]\d{2}\.\d{2}[,](?:0|[1-9]\d?|100)$')
         if re.match(pattern, arduinoStatusNew):
             arduinoStatus = arduinoStatusNew
         # print(arduinoStatus) # Show the modified status string in the Terminal - for debugging

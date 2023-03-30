@@ -99,10 +99,10 @@ V13,0,1, <------------------------------------------------------ AIR 02 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -190,10 +190,10 @@ V13,0,1, <------------------------------------------------------ AIR 04 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -280,10 +280,10 @@ V13,0,1, <------------------------------------------------------ AIR 06 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -370,10 +370,10 @@ V13,0,1, <------------------------------------------------------ AIR 08 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -460,10 +460,10 @@ V13,0,1, <------------------------------------------------------ AIR 10 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -550,10 +550,10 @@ V13,0,1, <------------------------------------------------------ AIR 12 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -640,10 +640,10 @@ V13,0,1, <------------------------------------------------------ AIR 14 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -730,10 +730,10 @@ V13,0,1, <------------------------------------------------------ AIR 16 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -820,10 +820,10 @@ V13,0,1, <------------------------------------------------------ AIR 18 STARTED
 V07,0,1
 V11,0,1
 V27,1,1
-V15,1,20, <--- Pump the piece below V15
+V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,366,10
+IA,358,10
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
