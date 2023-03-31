@@ -91,20 +91,24 @@ function sendCommand(cmd) {
                 $("#warningZ").attr("src", "");
             }
 
+            // statusArr[8] is a control string "A"
+
             // X baratron in mbar (max. 5 mbar)
-            var pressureX = parseFloat(statusArr[8]);
+            var pressureX = parseFloat(statusArr[9]);
             $("#pressureX").html(pressureX.toFixed(3));
 
             // Y baratron in mbar (max. 5 mbar)
-            var pressureY = parseFloat(statusArr[9]);
+            var pressureY = parseFloat(statusArr[10]);
             $("#pressureY").html(pressureY.toFixed(3));
 
             // A baratron in mbar (max. 500 mbar)
-            var pressureA = parseFloat(statusArr[10]);
+            var pressureA = parseFloat(statusArr[11]);
             $("#pressureA").html(pressureA.toFixed(1));
 
+            // statusArr[12] is a control string "B"
+
             // Valve status
-            var valveArray = statusArr[11];
+            var valveArray = statusArr[13];
             const positions = [
                 "vertical", // V01
                 "vertical", // V02
@@ -165,47 +169,47 @@ function sendCommand(cmd) {
             }
 
             // Box humidity
-            var roomRH = statusArr[12];
+            var roomRH = statusArr[14];
             $("#roomRH").html(roomRH);
 
             // Box temperature
-            var housingT = statusArr[13];
+            var housingT = statusArr[15];
             $("#housingT").html(housingT);
 
             // Box setpoint temperature
-            var SPT = parseFloat(statusArr[14]);
+            var SPT = parseFloat(statusArr[16]);
             $("#setPointTemperature").html(SPT.toFixed(1));
 
             // Fan speed
-            var fanSpeed = statusArr[15];
+            var fanSpeed = statusArr[17];
             $("#fanSpeed").html(fanSpeed);
 
             // Cell pressure from the TILDAS in Torr
             // The cell's baratron is zeroed here
             var baratronTorr =
-                parseFloat(statusArr[16]) * 1 + (0.406 + 0.223) / 1.33322;
+                parseFloat(statusArr[18]) * 1 + (0.406 + 0.223) / 1.33322;
             $("#baratron").html(baratronTorr.toFixed(3));
 
             // CO2 mixing ratios from the TILDAS
-            var mr1 = statusArr[17];
+            var mr1 = statusArr[19];
             $("#mr1").html(parseFloat(mr1).toFixed(3));
-            var mr2 = statusArr[18];
+            var mr2 = statusArr[20];
             $("#mr2").html(parseFloat(mr2).toFixed(3));
-            var mr3 = statusArr[19];
+            var mr3 = statusArr[21];
             $("#mr3").html(parseFloat(mr3).toFixed(3));
-            var mr4 = statusArr[20];
+            var mr4 = statusArr[22];
             $("#mr4").html(parseFloat(mr4).toFixed(3));
 
             // Edwards vacuum gauge
-            var edwards = statusArr[21];
+            var edwards = statusArr[23];
             $("#edwards").html(parseFloat(edwards).toFixed(4));
 
             // Room humidity
-            var roomHumidity = statusArr[22];
+            var roomHumidity = statusArr[24];
             $("#roomHumidity").html(roomHumidity);
 
             // Room temperature
-            var roomTemperature = statusArr[23];
+            var roomTemperature = statusArr[25];
             $("#roomTemperature").html(roomTemperature);
 
             // Reset the command string
@@ -1000,8 +1004,8 @@ setInterval(function () {
                 console.log("Target pressure on front panel: ", parseFloat($("#cellTargetPressure").html()).toFixed(3), "Torr");
                 if ($("#sampleName").html().includes("air") && effCycle > 0 && effCycle % 2 === 0) {
                     // Adjust target pressure for air samples
-                    console.log("This is an air cycle. Adjusting target pressure by +0.045 Torr.");
-                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.045;
+                    console.log("This is an air cycle. Adjusting target pressure by +0.028 Torr.");
+                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.028;
                 } else {
                     pTarget = parseFloat($("#cellTargetPressure").html());
                 }

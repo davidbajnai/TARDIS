@@ -1,17 +1,15 @@
 #include <AccelStepper.h>
 #include "Adafruit_SHTC3.h"
 
+// This is the temperature sensor
 Adafruit_SHTC3 shtc3 = Adafruit_SHTC3();
 
 long XstartPos = 0;
 long YstartPos = 0;
 long ZstartPos = 0;
 long steps = 0;
-
 char command;
 String string;
-// String stat = "S";
-// String statusMessage = "";
 float Xpercentage = 0.00;
 float Ypercentage = 0.00;
 float Zpercentage = 0.00;
@@ -36,16 +34,10 @@ float errSum = 0.000;
 float dErr = 0.000;
 float lastErr = 0.000;
 byte cycl = 0;
-float housingSetT = 32.000;
 float targetPercent = 0.000;
 long Xsteps = 0;
 long Ysteps = 0;
 long Zsteps = 0;
-// long XstepsIni = 0;
-// long YstepsIni = 0;
-// long ZstepsIni = 0;
-// int bellowsCalibratedX = 0;
-
 unsigned long startMillis = 0;
 
 AccelStepper Xaxis(1, 3, 2); // pin 3 = step, pin 2 = direction
@@ -54,10 +46,6 @@ AccelStepper Zaxis(1, 15, 14); // pin 15 = step, pin 14 = direction
 
 // Reset pin is set to +5V (HIGH)
 const byte XYZsleepPin = 16;
-
-// float relDiff = 0; // Relative pressure difference in %
-
-// 0-100 (x) are 62438 steps, at 1/8 microsteps
 
 void setup()
 {
@@ -123,6 +111,7 @@ void setup()
   Ypercentage = Ypercentage / 200.00;
 
   // Set the current steps
+  // 0-100 (x) are 62438 steps, at 1/8 microsteps
   // For 1/32 microsteps: max range = 245000 steps, for 1/8 these are 62438
   Xsteps = Xpercentage * 62438.00 / 100;
   Ysteps = Ypercentage * 62438.00 / 100;
@@ -454,13 +443,8 @@ void setPressureX(float targetPressure)
       // p = k / (V + V0)
       // Now calculate the k value for the current filling
       float k = Xpressure * ( Xaxis.currentPosition() * 100.0000 / 62438.00 + V0 );
-      // Serial.print("k: ");
-      // Serial.println( k );
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
-      // Serial.print("Target percent: ");
-      // Serial.println( targetPercent );
-      // targetPercent = Xaxis.currentPosition() * 100.0000 / 62438.00 + (targetPressure - Xpressure) / -0.0038;
       // Send the command to the bellows
       runXP( targetPercent, "MX" );
       sendStatus("PX");
@@ -516,7 +500,6 @@ void setPressureY(float targetPressure)
     // Now decide what to do
     if ( abs(Ypressure - targetPressure) <= 0.001 )
     {
-      // Serial.println( "Target pressure reached." );
       break;
     }
     else if ( Yaxis.currentPosition() * 100.0000 / 62438.00 != 100 || ( Yaxis.currentPosition() * 100.0000 / 62438.00 == 100 && (Ypressure - targetPressure) < -0.001 ) )
@@ -525,8 +508,6 @@ void setPressureY(float targetPressure)
       // p = k / (V + V0)
       // Now calculate the k value for the current filling
       float k = Ypressure * ( Yaxis.currentPosition() * 100.0000 / 62438.00 + V0 );
-      // Serial.print("k: ");
-      // Serial.println( k );
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
       // Send the command to the bellows
@@ -585,7 +566,6 @@ void setN2Pressure(float targetPressure)
       // Now decide what to do
       if (abs(Apressure - targetPressure) <= 0.1)
       {
-        // Serial.println( "Target pressure reached." );
         break;
       }
       else
@@ -635,9 +615,9 @@ void switchValve(String param)
 void sendStatus( String param )
 {
   // Get all the current settings
-  Xpressure = analogRead(A2) * 5.00 * 1.333224 / 1024.00;
-  Ypressure = analogRead(A3) * 5.00 * 1.333224 / 1024.00;
-  Apressure = analogRead(A4) * 500.00 / 1024;
+  Xpressure = analogRead(A2) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
+  Ypressure = analogRead(A3) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
+  Apressure = analogRead(A4) * 500.00 / 1024;             // 0-1000 mbar Baratron
   Xpercentage = -100.00 / 800 * analogRead(A0) + 100 + 10000 / 800;
   Ypercentage = -100.00 / 800 * analogRead(A1) + 100 + 10000 / 800;
 
@@ -710,14 +690,16 @@ void sendStatus( String param )
   Serial.print(",");
   Serial.print(Zaxis.currentPosition() * 100 / 15960.00, 2);
   Serial.print(",");
+  Serial.print("A");
+  Serial.print(",");
   Serial.print(Xpressure, 3);
   Serial.print(",");
   Serial.print(Ypressure, 3);
   Serial.print(",");
   Serial.print(Apressure, 1);
   Serial.print(",");
-  // Serial.print(stat);
-  // Serial.print(",");
+  Serial.print("B");
+  Serial.print(",");
   int pinNr = 22;
   while (pinNr <= 53)
   {
@@ -773,15 +755,6 @@ void loop()
   {
     // Set the pressure in bellows X to the given pressure
     setPressureX(string.substring(2, 9).toFloat());
-    string = "";
-    command = ' ';
-    sendStatus("-");
-  }
-
-  else if (string.substring(0, 2) == "FS")
-  {
-    // Sets the housing temperature
-    housingSetT = string.substring(2, 9).toFloat();
     string = "";
     command = ' ';
     sendStatus("-");

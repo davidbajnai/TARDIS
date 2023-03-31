@@ -72,19 +72,24 @@ with alive_bar(i, bar=False, monitor=False, spinner=False) as bar:
         #       The final measurement results are evaluated using the .str and .stc files
 
         if( laser.inWaiting() > 10 ):
-            laserStatus = laser.readline().decode('utf-8').strip()
-            # print(laserStatus) # Show the raw serial output of the TILDAS in the Terminal - for debugging
+            try:
+                laserStatus = laser.readline().decode('utf-8').strip()
+                # print(laserStatus) # Show the raw serial output of the TILDAS in the Terminal - for debugging
 
-            laserStatusArray = laserStatus.split(',')
+                laserStatusArray = laserStatus.split(',')
 
-            mr1 = str(round(float(laserStatusArray[1]) / 1000,3)) # 627
-            mr2 = str(round(float(laserStatusArray[2]) / 1000,3)) # 628
-            mr3 = str(round(float(laserStatusArray[3]) / 1000,3)) # 626
-            mr4 = str(round(float(laserStatusArray[4]) / 1000,3)) # free-path CO2
-            cellP = str(round(float(laserStatusArray[10]),3)) # cell pressure (Torr)
+                mr1 = str(round(float(laserStatusArray[1]) / 1000,3)) # 627
+                mr2 = str(round(float(laserStatusArray[2]) / 1000,3)) # 628
+                mr3 = str(round(float(laserStatusArray[3]) / 1000,3)) # 626
+                mr4 = str(round(float(laserStatusArray[4]) / 1000,3)) # free-path CO2
+                cellP = str(round(float(laserStatusArray[10]),3)) # cell pressure (Torr)
 
-            laserStatus = cellP + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4
-            # print(laserStatus) # Show laser status string in the Terminal - for debugging
+                laserStatus = cellP + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4
+                # print(laserStatus) # Show laser status string in the Terminal - for debugging
+            except (ValueError, UnicodeDecodeError, IndexError):
+                # If the string is broken, just ignore it
+                # This error could occur when starting the script
+                laserStatus = "0,0,0,0,0"
 
         # Read Arduino data
         try:
@@ -98,7 +103,7 @@ with alive_bar(i, bar=False, monitor=False, spinner=False) as bar:
         # print(arduinoStatus) # Show the raw serial output of the Arduino in the Terminal - for debugging
 
         # Check if we have a complete string using a regular expression
-        pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,]\d{32}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,]\d{2}\.\d{2}[,](?:0|[1-9]\d?|100)$')
+        pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][A][,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,][B][,]\d{32}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,]\d{2}\.\d{2}[,](?:0|[1-9]\d?|100)$')
         if re.match(pattern, arduinoStatusNew):
             arduinoStatus = arduinoStatusNew
         # print(arduinoStatus) # Show the modified status string in the Terminal - for debugging
