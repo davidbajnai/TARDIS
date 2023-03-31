@@ -1,4 +1,7 @@
 V15,0,1, <--- Necessary dummy command for the beginning #######################
+V19,0,1, <--- Put in some collsion gas for flushing
+V20,1,3
+V20,0,1
 V07,0,1
 V13,0,1
 V16,0,1
@@ -25,9 +28,10 @@ V32,0,1
 V15,0,1
 V16,0,1
 V27,1,1
-V28,1,15, <--- Pump up the jam. Pump it up while your feet are stompin
+V28,1,20, <--- Pump up the jam. Pump it up while your feet are stompin
 V28,0,1
-V17,1,25, <--- Pump it up a little more. Get the party going on the dance floor
 V16,1,1
 V07,1,1
-V13,1,145, <--- Get your booty on the floor tonight. Make my day
+V13,1,1
+V19,1,120
+V17,1,150, <--- Pump it up a little more. Get the party going on the dance floor

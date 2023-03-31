@@ -696,12 +696,14 @@ setInterval(function () {
             cmd = "KL" + parameterArray[line];
 
             // Do this after every command
+            $("#progressBar").css("width", "0px");
+            $("#progress").html("0%");
             timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],"executed");
+            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
+            moving = "yes";
+            executed = "no";
+            waiting = "no";
+            console.log("Starting position button pressed at",timeExecutedStr);
         }
 
         // Write cell pressure for the first sample on the front panel: WC,0,10 !Parameter is ignored

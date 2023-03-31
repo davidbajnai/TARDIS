@@ -5,7 +5,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set CO2 pressure
+PY,1.800,5, <--- Set CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -52,7 +52,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -144,7 +144,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -234,7 +234,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -324,7 +324,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -414,7 +414,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -504,7 +504,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -594,7 +594,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -684,7 +684,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -774,7 +774,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
@@ -864,7 +864,7 @@ V12,1,1
 V19,0,1, <--- Expand a portion of collision gas for later mixing
 V20,1,5
 V20,0,1
-PY,1.845,5, <--- Set sample CO2 pressure
+PY,1.800,5, <--- Set sample CO2 pressure
 V12,0,1
 V16,0,1
 V19,1,5, <--- Expand the collision gas aliquot
