@@ -730,7 +730,7 @@ setInterval(function () {
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
             $("#command" + line).prepend("&#9758; ");
 
-            $("#nitrogenTargetPressure").html((parseFloat($("#pressureA").html()) + 0.5).toFixed(1));
+            $("#nitrogenTargetPressure").html((parseFloat($("#pressureA").html())).toFixed(1));
 
             // Do this after every command
             timeExecuted = new Date().getTime() / 1000;
@@ -752,7 +752,7 @@ setInterval(function () {
                 $("#refgasTargetPressure").html("1.700");
             }
             else {
-                $("#refgasTargetPressure").html((parseFloat($("#refgasTargetPressure").html()) * 1.0026).toFixed(3));
+                $("#refgasTargetPressure").html((parseFloat($("#refgasTargetPressure").html())).toFixed(3));
             }
 
             // Do this after every command
@@ -776,7 +776,7 @@ setInterval(function () {
                 $("#samgasTargetPressure").html("1.700");
             }
             else {
-                $("#samgasTargetPressure").html((parseFloat($("#samgasTargetPressure").html()) * 1.0026).toFixed(3));
+                $("#samgasTargetPressure").html((parseFloat($("#samgasTargetPressure").html())).toFixed(3));
             }
 
             // Do this after every command
@@ -989,7 +989,7 @@ setInterval(function () {
 
         }
 
-        // Set bellows Z to cell pressure target (40.000 Torr) "QZ,40.1,10"
+        // Set bellows Z to cell pressure target (40.000 Torr) "QC,40.1,10"
         else if (commandsArray[line][0] == "Q" && executed == "yes" && moving == "no" && waiting == "no") {
             // Do this before every command in method
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
@@ -1006,8 +1006,8 @@ setInterval(function () {
                 console.log("Target pressure on front panel: ", parseFloat($("#cellTargetPressure").html()).toFixed(3), "Torr");
                 if ($("#sampleName").html().includes("air") && effCycle > 0 && effCycle % 2 === 0) {
                     // Adjust target pressure for air samples
-                    console.log("This is an air cycle. Adjusting target pressure by +0.028 Torr.");
-                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.028;
+                    console.log("This is an air cycle. Adjusting target pressure by -0.005 Torr.");
+                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.028 - 0.033;
                 } else {
                     pTarget = parseFloat($("#cellTargetPressure").html());
                 }
