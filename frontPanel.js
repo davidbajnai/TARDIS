@@ -703,7 +703,7 @@ setInterval(function () {
             moving = "yes";
             executed = "no";
             waiting = "no";
-            console.log("Starting position button pressed at",timeExecutedStr);
+            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
         }
 
         // Write cell pressure for the first sample on the front panel: WC,0,10 !Parameter is ignored
