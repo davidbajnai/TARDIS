@@ -102,7 +102,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -193,7 +193,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -283,7 +283,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -373,7 +373,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -463,7 +463,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -553,7 +553,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -643,7 +643,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -733,7 +733,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
@@ -823,7 +823,7 @@ V27,1,1
 V15,1,30, <--- Pump the piece below V15
 V17,1,20
 V16,0,1
-IA,361,10
+IA,360,1
 V19,0,1, <--- Expand a portion of collision gas for flushing
 V20,1,5
 V20,0,1
