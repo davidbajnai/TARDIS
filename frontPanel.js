@@ -676,6 +676,7 @@ setInterval(function () {
             // Do this before every command in method
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
             $("#command" + line).prepend("&#9758; ");
+            
             cmd = "IA" + parameterArray[line];
 
             // Do this after every command
