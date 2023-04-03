@@ -1,3 +1,5 @@
+/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "[iI]gnored" }]*/
+
 /* ############################################################################
 ############################## Command funtions ###############################
 ############################################################################ */
@@ -461,8 +463,7 @@ function evaluateData() {
 }
 
 // Show results button
-/* exported showResults */
-function showResults() {
+function showResultsButton() {
     window.open(
         "http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2",
         "_blank"
@@ -470,8 +471,7 @@ function showResults() {
 }
 
 // Start sequence button
-/* exported startSequence */
-function startSequence() {
+function startSequenceButton() {
     const timeMeasurementStarted = parseInt(new Date().getTime() / 1000);
     $("#timeMeasurementStarted").html(timeMeasurementStarted);
     createFolder();
