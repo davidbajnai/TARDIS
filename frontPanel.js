@@ -461,6 +461,7 @@ function evaluateData() {
 }
 
 // Show results button
+/* exported showResults */
 function showResults() {
     window.open(
         "http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2",
@@ -469,6 +470,7 @@ function showResults() {
 }
 
 // Start sequence button
+/* exported startSequence */
 function startSequence() {
     const timeMeasurementStarted = parseInt(new Date().getTime() / 1000);
     $("#timeMeasurementStarted").html(timeMeasurementStarted);
@@ -693,7 +695,7 @@ setInterval(function () {
             if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
             $("#command" + line).prepend("&#9758; ");
 
-            cmd = "KL" + parameterArray[line];
+            startingPosition();
 
             // Do this after every command
             $("#progressBar").css("width", "0px");
