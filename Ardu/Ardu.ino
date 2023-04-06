@@ -380,8 +380,7 @@ void expandY(int number)
 
 void refillSample(float tPress)
 {
-  // Get the pressure in bellows Y
-  int expN = 0;
+  byte expN = 0;
   sendStatus("RS");
   while (Ypressure < tPress && expN < 10)
   {
@@ -405,18 +404,14 @@ void runIA(float pressureTarget)
 
   unsigned long startTime = millis();
 
-  for (;;)
+  while (Apressure <= pressureTarget && millis() - startTime <= 120000)
   {
     sendStatus("IA");
     delay(10);
-
-    if (Apressure >= pressureTarget || millis() - startTime >= 120000)
-    {
-      switchValve("V15C");
-      switchValve("V21C");
-      break;
-    }
   }
+
+  switchValve("V15C");
+  switchValve("V21C");
 }
 
 void setPressureX(float targetPressure)
@@ -533,15 +528,15 @@ void setPressureY(float targetPressure)
         expandY( 2 );
         delay(100);
       }
-      else if ( (Ypressure - targetPressure) / Ypressure * 100 <= 33 )
+      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 33)
       {
         // Expand by ~5.3% steps
         sendStatus("PY");
-        expandY( 1 );
+        expandY(1);
         delay(100);
       }
     }
-    else if ( Yaxis.currentPosition() * 100.0000 / 62438.00 == 0 )
+    else if (Yaxis.currentPosition() * 100.0000 / 62438.00 == 0)
     {
       // Too little gas
       break;

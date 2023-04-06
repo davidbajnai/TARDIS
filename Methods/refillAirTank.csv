@@ -1,37 +1,37 @@
 V15,0,1, <--- Necessary dummy command for the beginning #######################
 V19,0,1, <--- Put in some collsion gas for flushing
-V20,1,3
-V20,0,1
-V07,0,1
-V13,0,1
-V16,0,1
-V27,1,1
-V28,1,1
-V30,1,1
+V20,1,3,
+V20,0,1,
+V07,0,1,
+V13,0,1,
+V16,0,1,
+V27,1,1,
+V28,1,1,
+V30,1,1,
 V21,1,90, <--- Yo pump up the jam pump it up. AOWAAA
 V17,1,90, <--- Pump it pump it pump it yeah
-V21,0,1
-V30,0,1
-V28,0,1
-V32,1,1
-V31,1,1
-V29,1,1
-V27,1,1
-V16,1,1
-V15,1,60
+V21,0,1,
+V30,0,1,
+V28,0,1,
+V32,1,1,
+V31,1,1,
+V29,1,1,
+V27,1,1,
+V16,1,1,
+V15,1,60,
 V17,1,240, <--- Flush the line with fresh air for 5 minutes
-V29,0,1
+V29,0,1,
 V30,1,300, <--- Fill up the tank with fresh air for 2 minutes
-V30,0,1
-V31,0,1
-V32,0,1
-V15,0,1
-V16,0,1
-V27,1,1
+V30,0,1,
+V31,0,1,
+V32,0,1,
+V15,0,1,
+V16,0,1,
+V27,1,1,
 V28,1,20, <--- Pump up the jam. Pump it up while your feet are stompin
-V28,0,1
-V16,1,1
-V07,1,1
-V13,1,1
-V19,1,120
+V28,0,1,
+V16,1,1,
+V07,1,1,
+V13,1,1,
+V19,1,120,
 V17,1,150, <--- Pump it up a little more. Get the party going on the dance floor
