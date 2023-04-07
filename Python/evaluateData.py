@@ -91,11 +91,11 @@ strFiles.sort()
 
 # Pattern for the measurements
 if "air" in samID.lower():
-    # Air measurements start with a single dummy
+    # Air measurements start with two Ref dummy (cy 0 and 1) and a sample dummy (cy 2)
     pattern = ["Dummy", "Dummy", "Dummy",
                "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref","Sam", "Ref"]
 else:
-    # Regular measurements start with three dummies
+    # Regular measurements start with a single Ref dummy (cy 0)
     pattern = ["Dummy",
                "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref", "Sam", "Ref"]
 
@@ -245,10 +245,16 @@ ax3 = plt.subplot(pltsize, 1, 3, sharex=ax1)
 x = df['Time(rel)']
 y = df['I626'] / 1000
 plt.scatter(x, y, marker=".", color = df['Type'].map(data_colors))
-pCO2Sam = df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 == 0) ,['I626']].mean()/1000
+if "air" in samID.lower():
+    # Air measurements start with two Ref dummy (cy 0 and 1) and a sample dummy (cy 2)
+    pCO2Sam = df.loc[(df["Cycle"] > 2) & (df["Cycle"] % 2 == 0) ,['I626']].mean()/1000
+    pCO2Ref = df.loc[(df["Cycle"] > 1) & (df["Cycle"] % 2 != 0) ,['I626']].mean()/1000
+else:
+    # Regular measurements start with a single Ref dummy (cy 0)
+    pCO2Sam = df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 == 0) ,['I626']].mean()/1000
+    pCO2Ref = df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 != 0) ,['I626']].mean()/1000
 pCO2Sam = float(np.round(pCO2Sam, 1))
 smpLab = str(pCO2Sam) + " ppmv"
-pCO2Ref = df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 != 0) ,['I626']].mean()/1000
 pCO2Ref = float(np.round(pCO2Ref, 1))
 refLab = str(pCO2Ref) + " ppmv"
 plt.text(0.01, 0.02, smpLab, size = 8, color = colSample, ha = 'left', va = 'bottom', transform = ax3.transAxes, bbox = dict(fc = 'white', ec = "none", pad = 1, alpha = 0.5))
