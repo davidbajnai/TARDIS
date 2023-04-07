@@ -43,7 +43,7 @@ $resultArray = explode(" ", $result);
 // Now upload the data to the Isolabor server
 if (trim($resultArray[1]) != "(most") // Only upload if data make sense
 {
-    $url = "http://192.168.1.1/isotope/addTildasData.php?sampleName=" . $sampleName . "&d17O=" . trim($resultArray[1]) . "&d18O=" . trim($resultArray[2]) . "&CapD17O=" . trim($resultArray[3]) . "&CapD17OError=" . trim($resultArray[4]) . "&d17Oreference=" . trim($resultArray[5]) . "&d18Oreference=" . trim($resultArray[6]) . "&pCO2Ref=" . trim($resultArray[8]) . "&pCO2Sam=" . trim($resultArray[9]) . "&PCellRef=" . trim($resultArray[10]) . "&PCellSam=" . trim($resultArray[11]) . "&userName=" . trim($userName);
+    $url = "http://192.168.1.1/isotope/addTildasData.php?sampleName=" . $sampleName . "&d17O=" . trim($resultArray[1]) . "&d18O=" . trim($resultArray[2]) . "&d18OError=" . trim($resultArray[3]) . "&CapD17O=" . trim($resultArray[4]) . "&CapD17OError=" . trim($resultArray[5]) . "&d17Oreference=" . trim($resultArray[6]) . "&d18Oreference=" . trim($resultArray[7]) . "&pCO2Ref=" . trim($resultArray[8]) . "&pCO2Sam=" . trim($resultArray[9]) . "&PCellRef=" . trim($resultArray[10]) . "&PCellSam=" . trim($resultArray[11]) . "&userName=" . trim($userName);
     echo "$url<br>";
     $page = file_get_contents($url);
     echo $page;

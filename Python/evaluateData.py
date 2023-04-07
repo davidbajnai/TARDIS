@@ -446,7 +446,7 @@ if polynomial != "100":
         raise(Exception('Unequal x2 and y2 data length'))
 
     # Fit the combined data to the combined function
-    initialParameters = np.array([1, 0, 0, 0, 0])
+    initialParameters = np.array([1, 1, 1, 1, 1])
     fittedParameters, pcov = curve_fit(combinedFunction, comboX, comboY, initialParameters)
     r0, s0, a1, a2, a3 = fittedParameters
 
@@ -565,18 +565,29 @@ if polynomial != "100":
     if len(y2) != len(x2):
         raise(Exception('Unequal x2 and y2 data length'))
 
-    # Some initial parameter values
-    # initialParameters = np.array([1.0, 1.0, 1.0, 1.0, 1.0])
-
     # Fit the combined data to the combined function
-    initialParameters = np.array([1, 0, 0, 0, 0])
     fittedParameters, pcov = curve_fit(combinedFunction, comboX, comboY, initialParameters)
 
     # values for display of fitted function
     r0, s0, a1, a2, a3 = fittedParameters
 
-    yFit1 = function1(xFit, r0, s0, a1, a2, a3)  # first data set, first equation
-    yFit2 = function2(xFit, r0, s0, a1, a2, a3)  # second data set, second equation
+    # first data set, first equation
+    yFit1 = function1(xFit, r0, s0, a1, a2, a3)
+    # second data set, second equation
+    yFit2 = function2(xFit, r0, s0, a1, a2, a3)
+
+    # Calculate the errors for the reference
+    fit1 = function1(x1, r0, s0, a1, a2, a3)
+    diff1 = y1-fit1
+    sd1 = np.std(diff1) / np.sqrt(len(diff1))
+
+    # Calculate the errors for the sample
+    fit2 = function2(x2, r0, s0, a1, a2, a3)
+    diff2 = y2-fit2
+    sd2 = np.std(diff2) / np.sqrt(len(diff2))
+
+    # Calculate propagated errors
+    d18OPolyErr = np.round(np.sqrt(sd1**2 + sd2**2), 3)
 
     # Calculate the alpha (Sam / Ref) value
     a18Poly = (yFit2[0] + 1000) / (yFit1[0] + 1000)
@@ -671,9 +682,6 @@ if polynomial != "100":
         raise(Exception('Unequal x1 and y1 data length'))
     if len(y2) != len(x2):
         raise(Exception('Unequal x2 and y2 data length'))
-
-    # some initial parameter values
-    initialParameters = np.array([1.0, 1.0, 1.0, 1.0, 0.0])
 
     # curve fit the combined data to the combined function
     fittedParameters, pcov = curve_fit(combinedFunction, comboX, comboY, initialParameters)
@@ -791,7 +799,9 @@ else:
     # Final bracketing results, excluding outliers
     dfBracketingResults = dfBracketingResults.loc[dfBracketingResults['IH_score'].abs() < 5]
     d18O_SRB = round(np.mean(dfBracketingResults['d18O']),3)
+    d18O_SRB_error = round(sem(dfBracketingResults['d18O']),3)
     d17O_SRB = round(np.mean(dfBracketingResults['d17O']),3)
+    d17O_SRB_error = round(sem(dfBracketingResults['d17O']),3)
     D17Op_SRB = round(np.mean(dfBracketingResults['Dp17O']),1)
     D17Op_SRB_error = round(sem(dfBracketingResults['Dp17O']),1)
 
@@ -838,6 +848,6 @@ if (polynomial == "100"):
 
 # Print out the values. This is what the evaluateData.php reads out
 if polynomial != '100':
-    print(sys.argv[1], d17OPolyFinal, d18OPolyFinal, Dp17OPolyFinal, Dp17OPolyErr, d17OWorkingGas, d18OWorkingGas, polynomial, pCO2Ref, pCO2Sam, PCellRef, PCellSam)
+    print(sys.argv[1], d17OPolyFinal, d18OPolyFinal, d18OPolyErr, Dp17OPolyFinal, Dp17OPolyErr, d17OWorkingGas, d18OWorkingGas, pCO2Ref, pCO2Sam, PCellRef, PCellSam)
 else:
-    print(sys.argv[1], d17O_SRB, d18O_SRB, D17Op_SRB, D17Op_SRB_error, d17OWorkingGas, d18OWorkingGas, polynomial, pCO2Ref, pCO2Sam, PCellRef, PCellSam)
+    print(sys.argv[1], d17O_SRB, d18O_SRB, d18O_SRB_error, D17Op_SRB, D17Op_SRB_error, d17OWorkingGas, d18OWorkingGas, pCO2Ref, pCO2Sam, PCellRef, PCellSam)
