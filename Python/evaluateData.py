@@ -809,8 +809,11 @@ else:
 workingGasInfo = str("\n(Reference gas: " + "$\delta{}^{17}$O: " + str(d17OWorkingGas) + "‰, " + "$\delta{}^{18}$O: " +
                      str(d18OWorkingGas) + "‰, " + "$\Delta{}^{\prime 17}$O: " + str(round(Dp17OWorkingGas*1000, 1)) + " ppm)")
 if polynomial == "100":
-    evaluatedData = str("Results from bracketing: " + "$\delta{}^{17}$O: " + str(d17O_SRB) + "‰, $\delta{}^{18}$O: " +
-                        str(d18O_SRB) + "‰, $\Delta{}^{\prime 17}$O: " + str(D17Op_SRB) + " ± " + str(D17Op_SRB_error) + " ppm, " + OutLab)
+    evaluatedData = str("Results from bracketing: " +
+                        "$\delta{}^{17}$O: " + str(d17O_SRB) +
+                        "‰, $\delta{}^{18}$O: " + str(d18O_SRB) + " ± " + str(d18O_SRB_error) +
+                        "‰, $\Delta{}^{\prime 17}$O: " + str(D17Op_SRB) + " ± " + str(D17Op_SRB_error) + " ppm, " +
+                        OutLab)
 else:
     evaluatedData = str("Results from " + polynomial + "$^{nd}$ order polynomial fit: " + "$\delta{}^{17}$O: " + str(d17OPolyFinal) + "‰, $\delta{}^{18}$O: " +
                         str(d18OPolyFinal) + "‰, $\Delta{}^{\prime 17}$O: " + str(Dp17OPolyFinal) + " ± " + str(round(Dp17OPolyErr, 1)) + " ppm")
