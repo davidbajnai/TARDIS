@@ -390,7 +390,7 @@ void refillSample(float tPress)
     switchValve("V10O");
     wait(20, "RS");
     switchValve("V10C");
-    wait(20, "RS");
+    wait(5, "RS");
     expN = expN + 1;
   }
 }

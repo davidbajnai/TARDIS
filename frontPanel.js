@@ -227,15 +227,15 @@ function sendCommand(cmd) {
 // Switch valves
 function toggleValve(valve, status) {
     // console.log("Recieved:" + valve + status);
-    if (status == '0' || status == 'O') {
-        cmd = valve + 'O';
-    }
-    else if (status == '1' || status == 'C') {
-        cmd = valve + 'C';
-    }
-    else {
-        cmd = '';
-        alert('Invalid command, could not determine the current status of the valve.');
+    if (status == "0" || status == "O") {
+        cmd = valve + "O";
+    } else if (status == "1" || status == "C") {
+        cmd = valve + "C";
+    } else {
+        cmd = "";
+        alert(
+            "Invalid command, could not determine the current status of the valve."
+        );
     }
     // console.log("Sent" + cmd);
 }
@@ -478,9 +478,59 @@ function startSequenceButton() {
     $("#methodStatus").html("Method running");
     $("#sample0").prepend("&#9758; ");
     let timeButtonPressed = new Date(new Date().getTime()).toLocaleTimeString();
-    console.log("Sequence started at" + timeButtonPressed);
+    console.log("Sequence started at " + timeButtonPressed);
 }
 
+// Do this before every command in method
+function doThisBeforeEveryCommand() {
+    if ($("#command" + (line + 2)).length) {
+        $("#command" + (line + 2))[0].scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "start",
+        });
+    }
+    $("#command" + line).prepend("&#9758; ");
+}
+
+// Do this after every command in method
+function doThisAfterEveryCommand(condition) {
+    if (condition == "started") {
+        // This is when the command is started but not yet finished
+        // For example: when the command is a wait command or the Arduino is busy
+        $("#progressBar").css("width", "0px");
+        $("#progress").html("0%");
+        timeExecuted = new Date().getTime() / 1000;
+        timeExecutedStr = new Date(timeExecuted * 1000).toLocaleTimeString();
+        moving = "yes";
+        executed = "no";
+        waiting = "no";
+        console.log(
+            "Command in line",
+            line,
+            ":",
+            commandsArray[line],
+            parameterArray[line],
+            "started at",
+            timeExecutedStr
+        );
+    } else if (condition == "executed") {
+        // This is when the command is executed straight away
+        timeExecuted = new Date().getTime() / 1000;
+        moving = "no";
+        executed = "yes";
+        waiting = "yes";
+        $("#command" + line).append(" &#10003;");
+        console.log(
+            "Command in line",
+            line,
+            ":",
+            commandsArray[line],
+            parameterArray[line],
+            "executed"
+        );
+    }
+}
 
 /* ############################################################################
 ########################## The awesome station clock ##########################
@@ -650,105 +700,57 @@ setInterval(function () {
 
         // Open or close valves
         if (commandsArray[line][0] == "V" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
-            // Valve that needs to be switched
             if (parameterArray[line] == 0) {
                 toggleValve(commandsArray[line], "1");
-            }
-            else {
+            } else if (parameterArray[line] == 1) {
                 toggleValve(commandsArray[line], "0");
             }
 
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
+            doThisAfterEveryCommand("executed");
         }
 
         // This command opens V15, waits until A target pressure is reached, than closes V15
         else if (commandsArray[line][0] == "I" && commandsArray[line][1] == "A" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
-            
+            doThisBeforeEveryCommand();
+
             cmd = "IA" + parameterArray[line];
 
-            // Do this after every command
-            $("#progressBar").css("width", "0px");
-            $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000;
-            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
-            moving = "yes";
-            executed = "no";
-            waiting = "no";
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
+            doThisAfterEveryCommand("started");
         }
 
         // Reset valves to starting position
         else if (commandsArray[line][0] == "K" && commandsArray[line][1] == "L" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             startingPosition();
 
-            // Do this after every command
-            $("#progressBar").css("width", "0px");
-            $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000;
-            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
-            moving = "yes";
-            executed = "no";
-            waiting = "no";
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
+            doThisAfterEveryCommand("started");
         }
 
         // Write cell pressure for the first sample on the front panel: WC,0,10 !Parameter is ignored
         else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "C" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             $("#cellTargetPressure").html($("#baratron").html());
             console.log("Cell target pressure: ", $("#cellTargetPressure").html());
 
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],"executed");
+            doThisAfterEveryCommand("executed");
         }
 
         // Write nitrogen pressure for the first sample on the frontpanel "WA <no parameter>"
         else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "A" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             $("#nitrogenTargetPressure").html((parseFloat($("#pressureA").html())).toFixed(1));
 
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],"executed");
+            doThisAfterEveryCommand("executed");
         }
 
         // Write reference gas target pressure for the first sample on the frontpanel "WR <no parameter>"
         else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "R" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             // Keep the target pressure (ref) for all samples in sequence
             if ($("#refgasTargetPressure").html() == "Reference target pressure") {
@@ -758,21 +760,13 @@ setInterval(function () {
                 $("#refgasTargetPressure").html((parseFloat($("#refgasTargetPressure").html())).toFixed(3));
             }
 
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],"executed");
+            doThisAfterEveryCommand("executed");
         }
 
 
         // Write sample gas target pressure for the first sample on the frontpanel "WS <no parameter>"
         else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             // Keep the target pressure (sam) for all samples in sequence
             if ($("#samgasTargetPressure").html() == "Sample target pressure") {
@@ -782,20 +776,12 @@ setInterval(function () {
                 $("#samgasTargetPressure").html((parseFloat($("#samgasTargetPressure").html())).toFixed(3));
             }
 
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],"executed");
+            doThisAfterEveryCommand("executed");
         }
 
         // Write gas mixing ratio to the frontpanel "CM, 0=Reference 1=Sample"
         else if (commandsArray[line][0] == "C" && commandsArray[line][1] == "M" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             if (parameterArray[line] == 0) {
                 $("#reference_pCO2").html($("#mr3").html());
@@ -818,46 +804,29 @@ setInterval(function () {
                 }
             }
 
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
+            doThisAfterEveryCommand("executed");
         }
 
         // Execute command at laser spectrometer: Start writing data to disk "TWD 0"
         else if (commandsArray[line][0] == "T" && commandsArray[line][1] == "W" && commandsArray[line][2] == "D" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             // Execute command at laser spectrometer: Stop writing data to disk
             if (parameterArray[line] == 0) {
                 stopWritingData();
-            }
-            else if (parameterArray[line] == 1) {
+            } else if (parameterArray[line] == 1) {
                 startWritingData();
-                $('#cycle').html(cycle);
+                $("#cycle").html(cycle);
                 console.log("This is cycle #", cycle);
                 cycle++;
             }
 
-            // Do this after every command
-            timeExecuted = new Date().getTime() / 1000;
-            moving = "no";
-            executed = "yes";
-            waiting = "yes";
-            $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"executed");
+            doThisAfterEveryCommand("executed");
         }
 
         // Move bellows (X,Y,Z) "BY 53" with the percentage as parameter BX 34.5
         else if (commandsArray[line][0] == "B" && moving == "no" && executed == "yes" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             if (parameterArray[line].substr(0, 1) == "+" || parameterArray[line].substr(0, 1) == "-") {
                 // Move increment
@@ -875,22 +844,12 @@ setInterval(function () {
             moveBellows(commandsArray[line][1]);
             // console.log("Move status:", $('#moveStatus').html()); // Used for debugging
 
-            // Do this after each command
-            $("#progressBar").css("width", "0px");
-            $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000;
-            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
-            moving = "yes";
-            executed = "no";
-            waiting = "no";
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
+            doThisAfterEveryCommand("started");
         }
 
         // Set bellows to pressure target (X,Y) "PX 1.723"
         else if (commandsArray[line][0] == "P" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             let pTarget;
             if (commandsArray[line][1] == "X") {
@@ -928,22 +887,12 @@ setInterval(function () {
             sendCommand(commandsArray[line][1] + "S" + pTarget.toFixed(3));
             $('#moveStatus').html('M' + commandsArray[line][1]);
 
-            // Do this after every command
-            $("#progressBar").css("width", "0px");
-            $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000;
-            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
-            moving = "yes";
-            executed = "no";
-            waiting = "no";
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
+            doThisAfterEveryCommand("started");
         }
 
         // Set collision gas pressure to target: SN,366,10
         else if (commandsArray[line][0] == "S" && commandsArray[line][1] == "N" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             let pTarget;
             if ((parseFloat($("#nitrogenTargetPressure").html()) > 0) && (parseFloat(parameterArray[line]) == 0)) {
@@ -960,43 +909,22 @@ setInterval(function () {
             sendCommand("SN" + pTarget.toFixed(1));
             $('#moveStatus').html('SN');
 
-            // Do this after every command					
-            $("#progressBar").css("width", "0px");
-            $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000;
-            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
-            moving = "yes";
-            executed = "no";
-            waiting = "no";
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
+            doThisAfterEveryCommand("started");
         }
 
-        // Refill sample gas from the manifold headspace - can be used after first fill
+        // Refill sample gas from the volume left of V22 "RS,1.700,1"
         else if (commandsArray[line][0] == "R" && commandsArray[line][1] == "S" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             sendCommand("RS" + parseFloat(parameterArray[line]).toFixed(3));
-            $('#moveStatus').html('RS');
+            $("#moveStatus").html("RS");
 
-            // Do this after every command				
-            $("#progressBar").css("width", "0px");
-            $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000;
-            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
-            moving = "yes";
-            executed = "no";
-            waiting = "no";
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
-
+            doThisAfterEveryCommand("started");
         }
 
         // Set bellows Z to cell pressure target (40.000 Torr) "QC,40.1,10"
         else if (commandsArray[line][0] == "Q" && executed == "yes" && moving == "no" && waiting == "no") {
-            // Do this before every command in method
-            if ($("#command" + (line + 2)).length) { $("#command" + (line + 2))[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' }); }
-            $("#command" + line).prepend("&#9758; ");
+            doThisBeforeEveryCommand();
 
             // Measure the current pressure (in Torr) in the cell
             let p = parseFloat($("#baratron").text());
@@ -1031,15 +959,7 @@ setInterval(function () {
             $("#setPercentageZ").val(percentTarget);
             moveBellows("Z");
 
-            // Do this after every command
-            $("#progressBar").css("width", "0px");
-            $("#progress").html("0%");
-            timeExecuted = new Date().getTime() / 1000;
-            timeExecutedStr = new Date(timeExecuted*1000).toLocaleTimeString();
-            moving = "yes";
-            executed = "no";
-            waiting = "no";
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"started at",timeExecutedStr);
+            doThisAfterEveryCommand("started");
         }
 
         // ^^^ The command "if" series ends here ^^^
