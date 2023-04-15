@@ -663,7 +663,7 @@ void sendStatus( String param )
   // Preferably adjust the reference bellow
   // Divide Xpressure by pCO2Sam/pCO2Ref
   // If divided <1, then the reference pCO2 decreases
-  Xpressure = (Xpressure / n - 0.325) / 0.933007 / 1.09901 / 1.003107 / 0.997623 / 0.9973697; // Reference gas bellow
+  Xpressure = (Xpressure / n - 0.325) / 0.933007 / 1.09901 / 1.003107 / 0.997623 / 0.9973697 / 1.001437; // Reference gas bellow
   Ypressure = (Ypressure / n - 0.297);  // Gauge Y, sample bellow
   Apressure = Apressure / n - 4.2;      // Gauge A
 
