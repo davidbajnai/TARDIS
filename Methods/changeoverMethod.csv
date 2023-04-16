@@ -115,7 +115,7 @@ V13,1,1, <--- Start gas mixing
 BZ,52,1,
 BZ,50,1,
 TWD,0,3, <--- MEASUREMENT OFF changeover starts >>>
-V17,0,1
+V17,0,1,
 V01,1,1, <--- Evacuate the cell
 V27,1,10,
 V01,0,1, <--- Flush the cell with nitrogen and pump
