@@ -29,20 +29,24 @@ PX,2.100,1, <--- Adjust the pressure in the reference bellow
 V06,0,1,
 V05,1,1,
 V07,1,60,
-V11,0,1, <--- The heavy gas refill starts here ################################
+V05,0,1, <--- The heavy gas refill starts here ################################
+V07,0,1,
+V03,1,10, <--- Fill the X-piece (right of X bellow) with CO2
+V16,0,1,
+V11,0,1,
+V03,0,1,
+V07,1,10,
 V12,0,1,
-V13,0,1,
-V09,1,10, <--- Fill the X-piece left of Y bellow with CO2
-V09,0,1,
-V12,1,10,
-V12,0,1,
-V27,1,2, <--- Evacuate the line 
+V17,0,1,
+V16,1,1,
+V27,1,5,
 V13,1,1,
-V11,1,20,
+V11,1,1,
+V05,1,10,
 V17,1,40,
-V11,0,1, <--- Close up the X-piece left of Y bellow 
+V11,0,1,
 V13,0,1,
-V12,1,5,
+V12,1,1,
 PY,2.100,1, <--- Adjust the pressure in the sample bellow
 V12,0,1,
 V13,1,1,
