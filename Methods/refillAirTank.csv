@@ -19,7 +19,7 @@ V29,1,1,
 V27,1,1,
 V16,1,1,
 V15,1,60,
-V17,1,240, <--- Flush the line with fresh air for 5 minutes
+V17,1,540, <--- Flush the line with fresh air for 10 minutes
 V29,0,1,
 V30,1,300, <--- Fill up the tank with fresh air for 2 minutes
 V30,0,1,
