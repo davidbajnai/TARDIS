@@ -1,9 +1,3 @@
-refill_refgas,refGasRefillLeft.csv
-refill_samgas,samGas_FirstFill_V25.csv
-MLV-GL-105,changeoverMethod.csv
-refill_refgas,refGasRefillLeft.csv
-refill_samgas,samGasRefillRight.csv
-MLV-GL-105,changeoverMethod.csv
 refill_air,refillAirTank.csv
 refill_ref,refGasRefillBoth.csv
 air,changeoverMethodAirRefRight.csv
