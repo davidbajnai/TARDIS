@@ -938,7 +938,7 @@ setInterval(function () {
                 if ($("#sampleName").html().includes("air") && effCycle > 0 && effCycle % 2 === 0) {
                     // Adjust target pressure for air samples
                     console.log("This is an air cycle. Adjusting target pressure by -0.005 Torr.");
-                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.028 - 0.033;
+                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.028;
                 } else {
                     pTarget = parseFloat($("#cellTargetPressure").html());
                 }

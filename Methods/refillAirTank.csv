@@ -13,7 +13,7 @@ V28,0,1,
 V16,1,1,
 V15,1,30,
 V28,1,1,
-V17,1,100, <--- Tank is evacuated using the turbo pump
+V17,1,120, <--- Tank is evacuated using the turbo pump
 V16,0,1, <--- Close everything down again
 V15,0,1,
 V21,0,1,
@@ -26,7 +26,7 @@ V29,1,20, <--- Open the vent
 V17,1,1,
 V16,1,270, <--- Flush the line with fresh air for 5 minutes
 V29,0,1, <--- Close the vent
-V30,1,270, <--- Fill up the tank with fresh air
+V30,1,300, <--- Fill up the tank with fresh air
 V30,0,1,
 V31,0,1,
 V32,0,1,
