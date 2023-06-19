@@ -937,8 +937,9 @@ setInterval(function () {
                 console.log("Target pressure on front panel: ", parseFloat($("#cellTargetPressure").html()).toFixed(3), "Torr");
                 if ($("#sampleName").html().includes("air") && effCycle > 0 && effCycle % 2 === 0) {
                     // Adjust target pressure for air samples
-                    console.log("This is an air cycle. Adjusting target pressure by -0.005 Torr.");
-                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.028;
+                    // This is necessary beacuse air samples contain some water vapor
+                    console.log("This is an air cycle. Adjusting target pressure by +0.020 Torr.");
+                    pTarget = parseFloat($("#cellTargetPressure").html()) + 0.020;
                 } else {
                     pTarget = parseFloat($("#cellTargetPressure").html());
                 }
