@@ -765,45 +765,24 @@ else:
 
     dfBracketingResults['Dp17O'] = bracketingResults
 
-    # Outlier test based on pCO2 mismatch and modified z-score
-
-    # Calculate modified z-score based on Iglewicz and Hoaglin 1993...
-    # ...for cycles where the pCO2 mismatch is smaller than
-
-    median = np.median(dfBracketingResults['Dp17O'])
-    diff = (dfBracketingResults['Dp17O'] - median)
-    mad = np.median(np.absolute(diff))
-    modified_z_score = 0.6745 * diff / mad
+    # Calculate modified z-score based on Iglewicz and Hoaglin 1993
+    # median = np.median(dfBracketingResults['Dp17O'])
+    # diff = (dfBracketingResults['Dp17O'] - median)
+    # mad = np.median(np.absolute(diff))
+    # modified_z_score = 0.6745 * diff / mad
     # dfBracketingResults['z_score'] = stats.zscore(dfBracketingResults['Dp17O'])
-    dfBracketingResults['IH_score'] = modified_z_score
-
-    # Mark outlier cycles on the plot
-    outlierPlot = pd.DataFrame(bracketingTime, columns = ["Time"])
-    outlierPlot['D17O'] = bracketingYs
-    outlierPlot['IH_score'] = modified_z_score
-    nIHOutliers = outlierPlot.loc[outlierPlot['IH_score'].abs() >= 5].shape[0]
-    outlierPlot = outlierPlot.loc[outlierPlot['IH_score'].abs() >= 5]
-
-    OutLab = "No outliers"
-    if nIHOutliers > 0:
-        OutLab = "Outlier (N: " + str(nIHOutliers) +")"
-        plt.scatter(outlierPlot['Time'], outlierPlot['D17O'], marker = "*", s = 20, c = "C4", label = OutLab, zorder = 6)
-        if nIHOutliers == 1 :
-            OutLab = str(nIHOutliers) + " outlier cycle"
-        else:
-            OutLab = str(nIHOutliers) + " outlier cycles"
+    # dfBracketingResults['IH_score'] = modified_z_score
 
     # Export bracketing data to a file, including outliers
     dfBracketingResults.to_excel(excel_writer=folder + "bracketingResults.xlsx", header = True, index = False)
 
-    # Final bracketing results, excluding outliers
-    dfBracketingResults = dfBracketingResults.loc[dfBracketingResults['IH_score'].abs() < 5]
-    d18O_SRB = round(np.mean(dfBracketingResults['d18O']),3)
-    d18O_SRB_error = round(sem(dfBracketingResults['d18O']),3)
-    d17O_SRB = round(np.mean(dfBracketingResults['d17O']),3)
-    d17O_SRB_error = round(sem(dfBracketingResults['d17O']),3)
-    D17Op_SRB = round(np.mean(dfBracketingResults['Dp17O']),1)
-    D17Op_SRB_error = round(sem(dfBracketingResults['Dp17O']),1)
+    # Final bracketing results
+    d18O_SRB = round(np.mean(dfBracketingResults['d18O']), 3)
+    d18O_SRB_error = round(sem(dfBracketingResults['d18O']), 3)
+    d17O_SRB = round(np.mean(dfBracketingResults['d17O']), 3)
+    d17O_SRB_error = round(sem(dfBracketingResults['d17O']), 3)
+    D17Op_SRB = round(np.mean(dfBracketingResults['Dp17O']), 1)
+    D17Op_SRB_error = round(sem(dfBracketingResults['Dp17O']), 1)
 
 # Write evaluated data into the figure title
 workingGasInfo = str("\n(Reference gas: " + "$\delta{}^{17}$O: " + str(d17OWorkingGas) + "‰, " + "$\delta{}^{18}$O: " +
@@ -812,8 +791,7 @@ if polynomial == "100":
     evaluatedData = str("Results from bracketing: " +
                         "$\delta{}^{17}$O: " + str(d17O_SRB) +
                         "‰, $\delta{}^{18}$O: " + str(d18O_SRB) + " ± " + str(d18O_SRB_error) +
-                        "‰, $\Delta{}^{\prime 17}$O: " + str(D17Op_SRB) + " ± " + str(D17Op_SRB_error) + " ppm, " +
-                        OutLab)
+                        "‰, $\Delta{}^{\prime 17}$O: " + str(D17Op_SRB) + " ± " + str(D17Op_SRB_error) + " ppm")
 else:
     evaluatedData = str("Results from " + polynomial + "$^{nd}$ order polynomial fit: " + "$\delta{}^{17}$O: " + str(d17OPolyFinal) + "‰, $\delta{}^{18}$O: " +
                         str(d18OPolyFinal) + "‰, $\Delta{}^{\prime 17}$O: " + str(Dp17OPolyFinal) + " ± " + str(round(Dp17OPolyErr, 1)) + " ppm")
@@ -824,7 +802,6 @@ plt.xlabel("Relative time (s)")
 plt.legend()
 
 plt.tight_layout()
-# plt.savefig(str(folder + "FitPlot.svg"))
 plt.savefig(str(folder + "FitPlot.png"), dpi = 300)
 
 ##### Plot backeting results ####
@@ -845,7 +822,6 @@ if (polynomial == "100"):
     plt.xlim(ax1lim)
     plt.legend()
     plt.tight_layout()
-    # plt.savefig(str(folder + "bracketingResults.svg"))
     plt.savefig(str(folder + "bracketingResults.png"), dpi=300)
 
 

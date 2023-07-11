@@ -70,10 +70,6 @@ void setup()
     pinNr = pinNr + 1;
   }
 
-  digitalWrite(21 + 17, HIGH);
-  digitalWrite(21 + 27, HIGH);
-  digitalWrite(21 + 16, HIGH);
-
   pinMode(A0, INPUT); // Potentiometer X
   pinMode(A1, INPUT); // Potentiometer Y
 
