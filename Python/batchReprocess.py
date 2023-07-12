@@ -15,8 +15,8 @@ driver.set_window_size(1700, 400)
 
 ############ EDIT HERE ############
 # Filter samples based on measurement date
-afterDate = datetime(2022,11,28)
-beforeDate = datetime(2022,12,6)
+afterDate = datetime(2023, 1, 16)
+beforeDate = datetime(2023, 3, 6, 16)
 
 
 # Create a dataframe from the subfolder names in the Results folder
@@ -36,7 +36,7 @@ resultsFiltered = resultsFiltered.sort_values(by=["RealDate"])
 
 ############ EDIT HERE ############
 # Filter sample names according to measurement date
-resultsFiltered = resultsFiltered[resultsFiltered["SampleName"].str.contains("SK-")] # includes
+resultsFiltered = resultsFiltered[resultsFiltered["SampleName"].str.contains("DH11")] # includes
 resultsFiltered = resultsFiltered[~resultsFiltered["SampleName"].str.contains("refill")] # doesn't include
 
 

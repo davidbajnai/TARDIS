@@ -793,8 +793,10 @@ if polynomial == "100":
                         "‰, $\delta{}^{18}$O: " + str(d18O_SRB) + " ± " + str(d18O_SRB_error) +
                         "‰, $\Delta{}^{\prime 17}$O: " + str(D17Op_SRB) + " ± " + str(D17Op_SRB_error) + " ppm")
 else:
-    evaluatedData = str("Results from " + polynomial + "$^{nd}$ order polynomial fit: " + "$\delta{}^{17}$O: " + str(d17OPolyFinal) + "‰, $\delta{}^{18}$O: " +
-                        str(d18OPolyFinal) + "‰, $\Delta{}^{\prime 17}$O: " + str(Dp17OPolyFinal) + " ± " + str(round(Dp17OPolyErr, 1)) + " ppm")
+    evaluatedData = str("Results from " + polynomial + "$^{nd}$ order polynomial fit: " +
+                        "$\delta{}^{17}$O: " + str(d17OPolyFinal) +
+                        "‰, $\delta{}^{18}$O: " + str(d18OPolyFinal) + " ± " + str(d18OPolyErr) + 
+                        "‰, $\Delta{}^{\prime 17}$O: " + str(Dp17OPolyFinal) + " ± " + str(round(Dp17OPolyErr, 1)) + " ppm")
 plt.title(evaluatedData + workingGasInfo)
 
 plt.ylabel("$\Delta^{\prime 17}$O (ppm, raw)")
