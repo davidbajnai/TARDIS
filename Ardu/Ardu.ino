@@ -59,9 +59,9 @@ void setup()
   // Start temperature sensor
   shtc3.begin();
 
-  // Configure pins
+  // DIGITAL PINS
 
-  // Pins 22-53 are used for the valve control
+  // Pinout for valve control
   int pinNr = 22;
   while ( pinNr <= 53 )
   {
@@ -70,30 +70,36 @@ void setup()
     pinNr = pinNr + 1;
   }
 
-  pinMode(A0, INPUT); // Potentiometer X
-  pinMode(A1, INPUT); // Potentiometer Y
-
-  pinMode(A2, INPUT); // Bellows pressure X (0-10 Torr)
-  pinMode(A3, INPUT); // Bellows pressure Y (0-10 Torr)
-  pinMode(A4, INPUT); // Baratron (A, 0-1000 mbar)
-
-  pinMode(6, OUTPUT); // Power supply analog in (I)
-  pinMode(8, OUTPUT); // Power supply analog in (U)
-  analogWrite(6, 45); // Set the maximum voltage to little less than 12 V (maximum is 60 V)
-  analogWrite(8, 0);  // Set the maximum current to about 2 A (maximum is 8 A) valid range 4-40 (10-100%)
-
+  // Pinout for stepper motors
   pinMode(XYZsleepPin, OUTPUT);
   digitalWrite(XYZsleepPin, LOW); // Drivers for X and Y sleeping
 
-  // This is the pinout for motors X, Y, and Z (microstepping)
+  // Set microstepping
   pinMode(9, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(11, OUTPUT);
-
-  // Set the microstepping 1/32: 1 1 1, 1/8: 1 1 0, motors X, Y, and Z
   digitalWrite(9, HIGH);
   digitalWrite(10, HIGH);
   digitalWrite(11, LOW);
+
+  // Fan control
+  pinMode(6, OUTPUT); // Power supply analog in (I)
+  pinMode(8, OUTPUT); // Power supply analog in (U)
+  analogWrite(6, 45); // Set the maximum voltage to little less than 12 V (maximum is 60 V)
+  analogWrite(8, 0);  // Set the current
+
+  // ANALOG PINS
+
+  // Potentiometers
+  pinMode(A0, INPUT); // Poti X
+  pinMode(A1, INPUT); // Poti Y
+
+  // Baratron pressure gauges
+  pinMode(A2, INPUT); // Baratron X (0-10 Torr)
+  pinMode(A3, INPUT); // Baratron Y (0-10 Torr)
+  pinMode(A4, INPUT); // Baratron A (0-1000 mbar)
+
+  // Get status and set some parameters
 
   // Calculate X and Y bellow percentages based on the potentiometer
   int i = 0;
@@ -133,7 +139,7 @@ void setup()
   delay(100);
 
   // Pressure readings from the three Baratrons
-  // Read all values as mbar
+  // Read all values as mbar!
   Xpressure = analogRead(A2) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
   Ypressure = analogRead(A3) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
   Apressure = analogRead(A4) * 500.00 / 1024.00;       // 0-1000 mbar Baratron
@@ -183,6 +189,8 @@ void controlT()
     fanSpeed = 9;
   }
 
+  // Set the current of the adjustable power supply
+  // Maximum is 8 A, valid range 4-40 (10-100%)
   analogWrite(8, fanSpeed * 40 / 100);
 }
 

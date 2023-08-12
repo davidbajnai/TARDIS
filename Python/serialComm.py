@@ -4,7 +4,6 @@ import serial
 import bme680
 import datetime
 import re
-import time
 
 # Arduino serial communication
 try:
@@ -20,6 +19,9 @@ try:
     laser = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=1)
     print(" ✓ Connection to TILDAS established over /dev/ttyUSB0")
     time.sleep(2)
+except FileNotFoundError:
+    print(" x The TILDAS's USB cable is not plugged in. Stopping the script.")
+    quit()
 except serial.SerialException:
     laser = serial.Serial('/dev/ttyUSB1', baudrate=57600, timeout=1)
     print(" ✓ Connection to TILDAS established over /dev/ttyUSB1")
@@ -34,6 +36,9 @@ try:
     edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
     print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB1")
     time.sleep(2)
+except FileNotFoundError:
+    print(" x The Edwards gauge's USB cable is not plugged in. Stopping the script.")
+    quit()
 except serial.SerialException:
     edwards = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
     print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB0")
@@ -115,7 +120,10 @@ try:
         if(i % 10 == 0):
 
             edwards.write( bytes('?GA1\r','utf-8') )
-            edwardsGauge = edwards.readline().decode('utf-8')
+            try:
+                edwardsGauge = edwards.readline().decode('utf-8')
+            except UnicodeDecodeError:
+                edwardsGauge = "1.00E-04 "
             # A little formatting is necessary because the string is sometimes broken
             if len(edwardsGauge) == 9:
                 vacuum = str(round(float(edwardsGauge), 4))
@@ -146,7 +154,7 @@ try:
 
             time.sleep(0.05)
 
-        # Receive commands for Arduino from PHP via shared variable 'key2'
+        # Receive commands for Arduino from PHP via shared variable 'key2' set in sendCommand.php
         value = m.get('key2').decode('UTF-8')
         if( value != "" ):
             arduino.write( bytes(value, 'utf-8') )
