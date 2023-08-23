@@ -9,7 +9,7 @@ import re
 try:
     arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
     print(" ✓ Connection to Arduino established")
-    time.sleep(2)
+    time.sleep(1)
 except serial.SerialException:
     print(" x Connection to Arduino could not be established. Stopping the script.")
     quit()
@@ -18,14 +18,10 @@ except serial.SerialException:
 try:
     laser = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=1)
     print(" ✓ Connection to TILDAS established over /dev/ttyUSB0")
-    time.sleep(2)
+    time.sleep(1)
 except FileNotFoundError:
     print(" x The TILDAS's USB cable is not plugged in. Stopping the script.")
     quit()
-except serial.SerialException:
-    laser = serial.Serial('/dev/ttyUSB1', baudrate=57600, timeout=1)
-    print(" ✓ Connection to TILDAS established over /dev/ttyUSB1")
-    time.sleep(2)
 if laser is None:
     print(" x Failed to establish connection to TILDAS. Stopping the script.")
     quit()
@@ -35,14 +31,10 @@ if laser is None:
 try:
     edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
     print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB1")
-    time.sleep(2)
+    time.sleep(1)
 except FileNotFoundError:
     print(" x The Edwards gauge's USB cable is not plugged in. Stopping the script.")
     quit()
-except serial.SerialException:
-    edwards = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
-    print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB0")
-    time.sleep(2)
 if edwards is None:
     print(" x Failed to establish connection to Edwards gauge. Stopping the script.")
     quit()
@@ -110,7 +102,7 @@ try:
         # print(arduinoStatus) # Show the raw serial output of the Arduino in the Terminal - for debugging
 
         # Check if we have a complete string using a regular expression
-        pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][A][,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,][B][,]\d{32}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,]\d{2}\.\d{2}[,](?:0|[1-9]\d?|100)$')
+        pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][A][,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,][B][,]\d{32}[,]\d{2}[,]\d{2,3}\.\d{2}[,]\d{2,3}\.\d{3}[,]\d{2}\.\d{2}[,](?:0|[1-9]\d?|100)$')
         if re.match(pattern, arduinoStatusNew):
             arduinoStatus = arduinoStatusNew
         else:

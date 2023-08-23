@@ -22,7 +22,7 @@ float ApressureArray[200];
 float XpercentageArray[200];
 float YpercentageArray[200];
 float boxTempArray[200];
-int fanSpeed = 0;
+byte fanSpeed = 0;
 float boxTemp = 0.000;
 float SPT = 32.5; // Set the housing temperature here
 float boxHum = 0.00;
@@ -39,13 +39,14 @@ long Xsteps = 0;
 long Ysteps = 0;
 long Zsteps = 0;
 unsigned long startMillis = 0;
+const byte relayPins[] = {18, 19};
 
-AccelStepper Xaxis(1, 3, 2); // pin 3 = step, pin 2 = direction
-AccelStepper Yaxis(1, 5, 4); // pin 5 = step, pin 4 = direction
-AccelStepper Zaxis(1, 15, 14); // pin 15 = step, pin 14 = direction
-
-// Reset pin is set to +5V (HIGH)
-const byte XYZsleepPin = 16;
+AccelStepper Xaxis(1, 3, 2); // mode, step, direction
+const byte Xenable = 4;
+AccelStepper Yaxis(1, 6, 5);
+const byte Yenable = 7;
+AccelStepper Zaxis(1, 9, 8);
+const byte Zenable = 10;
 
 void setup()
 {
@@ -62,31 +63,30 @@ void setup()
   // DIGITAL PINS
 
   // Pinout for valve control
-  int pinNr = 22;
-  while ( pinNr <= 53 )
-  {
+  for (int pinNr = 22; pinNr <= 53; pinNr++) {
     pinMode(pinNr, OUTPUT);
-    digitalWrite(pinNr, HIGH);
-    pinNr = pinNr + 1;
   }
 
-  // Pinout for stepper motors
-  pinMode(XYZsleepPin, OUTPUT);
-  digitalWrite(XYZsleepPin, LOW); // Drivers for X and Y sleeping
+  // Pinout for relay control
+  // relayPins[] = {18, 19}, as defined above
+  pinMode(relayPins[0], OUTPUT);
+  digitalWrite(relayPins[0], HIGH); // Relay off
+  pinMode(relayPins[1], OUTPUT);
+  digitalWrite(relayPins[1], HIGH); // Relay off
 
-  // Set microstepping
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(11, OUTPUT);
-  digitalWrite(9, HIGH);
-  digitalWrite(10, HIGH);
-  digitalWrite(11, LOW);
+  // Motor enable pins
+  pinMode(Xenable, OUTPUT);
+  pinMode(Yenable, OUTPUT);
+  pinMode(Zenable, OUTPUT);
+  digitalWrite(Xenable, HIGH); // Disable motor
+  digitalWrite(Yenable, HIGH); // Disable motor
+  digitalWrite(Zenable, HIGH); // Disable motor
 
   // Fan control
-  pinMode(6, OUTPUT); // Power supply analog in (I)
-  pinMode(8, OUTPUT); // Power supply analog in (U)
-  analogWrite(6, 45); // Set the maximum voltage to little less than 12 V (maximum is 60 V)
-  analogWrite(8, 0);  // Set the current
+  pinMode(11, OUTPUT); // Power supply analog in (I)
+  pinMode(12, OUTPUT); // Power supply analog in (U)
+  analogWrite(12, 45); // Set the maximum voltage to little less than 12 V (maximum is 60 V)
+  analogWrite(11, 0);  // Set the current
 
   // ANALOG PINS
 
@@ -196,7 +196,7 @@ void controlT()
 
 void runXP(float percentage, String string)
 {
-  digitalWrite(XYZsleepPin, HIGH);
+  digitalWrite(Xenable, LOW); // Wake up the motor
   delay(100);
   // stat = "W";
   if (percentage > 100)
@@ -219,13 +219,12 @@ void runXP(float percentage, String string)
     Xaxis.run();
   }
   Xsteps = Xsteps + steps;
-  digitalWrite(XYZsleepPin, LOW); // Back in sleeping mode
-  // stat = "S";
+  digitalWrite(Xenable, HIGH); // Disable motor
 }
 
 void runYP(float percentage, String string)
 {
-  digitalWrite(XYZsleepPin, HIGH);
+  digitalWrite(Yenable, LOW); // Wake up the motor
   delay(100);
   // stat = "W";
   if (percentage > 100)
@@ -246,13 +245,12 @@ void runYP(float percentage, String string)
     Yaxis.run();
   }
   Ysteps = Ysteps + steps;
-  digitalWrite(XYZsleepPin, LOW);
-  // stat = "S";
+  digitalWrite(Yenable, HIGH); // Disable motor
 }
 
 void runZP(float percentage, String string)
 {
-  digitalWrite(XYZsleepPin, HIGH);
+  digitalWrite(Zenable, LOW); // Wake up the motor
   delay(100);
   // stat = "W";
   if (percentage > 100)
@@ -274,8 +272,7 @@ void runZP(float percentage, String string)
     Zaxis.run();
   }
   Zsteps = Zsteps + steps;
-  digitalWrite(XYZsleepPin, LOW);
-  // stat = "S";
+  digitalWrite(Zenable, HIGH); // Disable motor
 }
 
 void startingPosition()
@@ -586,28 +583,53 @@ void setN2Pressure(float targetPressure)
 void switchValve(String param)
 {
   // param is a string like V03C or V12O
-  // Extract an integer out of the valve number
-  int v = param.substring(1, 3).toInt();
+  int v = param.substring(1, 3).toInt(); // Get the valve number
   if (param.substring(3, 4) == "O")
   {
     // Check the case for valve 17 (turbo) and 27 (fore vacuum)
     if (v == 17)
     {
-      digitalWrite(21 + 27, HIGH);
-      delay(2000);
+      digitalWrite(21 + 27, LOW); // Close valve 27
+      delay(250);
     }
     else if (v == 27)
     {
-      digitalWrite(21 + 17, HIGH);
+      digitalWrite(21 + 17, LOW); // Close valve 17
       delay(250);
     }
-    digitalWrite(21 + v, LOW); // Open valve
+    if (v == 19)
+    {
+      digitalWrite(21 + 20, LOW); // Close valve 20
+      delay(250);
+    }
+    else if (v == 20)
+    {
+      digitalWrite(21 + 19, LOW); // Close valve 19
+      delay(250);
+    }
+    digitalWrite(21 + v, HIGH); // Open valve
   }
   else if (param.substring(3, 4) == "C")
   {
-    digitalWrite(21 + v, HIGH); // Close valve
+    digitalWrite(21 + v, LOW); // Close valve
   }
   sendStatus("SV");
+  delay(50);
+}
+
+void switchRelay(String param)
+{
+  // param is a string like U01C or U02O
+  int v = param.substring(1, 3).toInt();
+  if (param.substring(3, 4) == "O")
+  {
+    digitalWrite(relayPins[v-1], LOW); // Open relay
+  }
+  else if (param.substring(3, 4) == "C")
+  {
+    digitalWrite(relayPins[v-1], HIGH); // Close relay
+  }
+  sendStatus("SU");
   delay(50);
 }
 
@@ -700,18 +722,14 @@ void sendStatus( String param )
   Serial.print(",");
   Serial.print("B");
   Serial.print(",");
-  int pinNr = 22;
-  while (pinNr <= 53)
-  {
-    if (digitalRead(pinNr) == LOW)
-    {
-      Serial.print("1");
-    }
-    else
-    {
-      Serial.print("0");
-    }
-    pinNr = pinNr + 1;
+  // Print out the status of the valves
+  for (byte pinNr = 22; pinNr <= 53; pinNr++) {
+    Serial.print(digitalRead(pinNr) == LOW ? "0" : "1");
+  }
+  Serial.print(",");
+  // Print out the status of the relays
+  for (byte relayPinNr = 0; relayPinNr <= 1; relayPinNr++) {
+    Serial.print(digitalRead(relayPins[relayPinNr]) == LOW ? "1" : "0");
   }
   Serial.print(",");
   Serial.print(boxHum, 2);
@@ -825,50 +843,22 @@ void loop()
     sendStatus("-");
   }
 
-  else if (string.substring(0, 1) == "V")
+  else if (string.substring(0, 1) == "U")
   {
-    // Set the valve positions
-    // Extract an integer out of the valve number
-    int v = string.substring(1, 3).toInt();
-    if (string.substring(3, 4) == "O")
-    {
-      if (v == 17)
-      {
-        digitalWrite(21 + 27, HIGH); // Close valve 27
-        delay(250);
-      }
-      else if (v == 27)
-      {
-        digitalWrite(21 + 17, HIGH); // Close valve 17
-        delay(250);
-      }
-      if (v == 19)
-      {
-        digitalWrite(21 + 20, HIGH); // Close valve 20
-        delay(250);
-      }
-      else if (v == 20)
-      {
-        digitalWrite(21 + 19, HIGH); // Close valve 19
-        delay(250);
-      }
-      digitalWrite(21 + v, LOW); // Open valve
-    }
-    else if (string.substring(3, 4) == "C")
-    {
-      digitalWrite(21 + v, HIGH); // Close valve
-    }
+    // Switch the relays
+    switchRelay(string);
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if (string.substring(0, 1) == "?")
+  else if (string.substring(0, 1) == "V")
   {
-    // Just send the status
-    sendStatus("-");
+    // Set the valve positions
+    switchValve(string);
     string = "";
     command = ' ';
+    sendStatus("-");
   }
 
   // Print out the current settings

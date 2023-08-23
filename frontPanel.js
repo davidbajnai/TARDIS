@@ -170,48 +170,62 @@ function sendCommand(cmd) {
                 i = i + 1;
             }
 
+
+            // Relay status
+            var relayArray = statusArr[14];
+            var i = 1;
+            while (i <= 2) {
+                $("#U" + "0" +  i.toString() + "_label").html(relayArray[i - 1]);
+                if (relayArray[i - 1] == 0) {
+                    $("#U" + "0" + i.toString()).attr("src", "Images/relay_off.png");
+                } else {
+                    $("#U" + "0" + i.toString()).attr("src", "Images/relay_on.png");
+                }
+                i = i + 1;
+            }
+
             // Box humidity
-            var roomRH = statusArr[14];
+            var roomRH = statusArr[15];
             $("#roomRH").html(roomRH);
 
             // Box temperature
-            var housingT = statusArr[15];
+            var housingT = statusArr[16];
             $("#housingT").html(housingT);
 
             // Box setpoint temperature
-            var SPT = parseFloat(statusArr[16]);
+            var SPT = parseFloat(statusArr[17]);
             $("#setPointTemperature").html(SPT.toFixed(1));
 
             // Fan speed
-            var fanSpeed = statusArr[17];
+            var fanSpeed = statusArr[18];
             $("#fanSpeed").html(fanSpeed);
 
             // Cell pressure from the TILDAS in Torr
             // The cell's baratron is zeroed here
             var baratronTorr =
-                parseFloat(statusArr[18]) * 1 + (0.406 + 0.223) / 1.33322;
+                parseFloat(statusArr[19]) * 1 + (0.406 + 0.223) / 1.33322;
             $("#baratron").html(baratronTorr.toFixed(3));
 
             // CO2 mixing ratios from the TILDAS
-            var mr1 = statusArr[19];
+            var mr1 = statusArr[20];
             $("#mr1").html(parseFloat(mr1).toFixed(3));
-            var mr2 = statusArr[20];
+            var mr2 = statusArr[21];
             $("#mr2").html(parseFloat(mr2).toFixed(3));
-            var mr3 = statusArr[21];
+            var mr3 = statusArr[22];
             $("#mr3").html(parseFloat(mr3).toFixed(3));
-            var mr4 = statusArr[22];
+            var mr4 = statusArr[23];
             $("#mr4").html(parseFloat(mr4).toFixed(3));
 
             // Edwards vacuum gauge
-            var edwards = statusArr[23];
+            var edwards = statusArr[24];
             $("#edwards").html(parseFloat(edwards).toFixed(4));
 
             // Room humidity
-            var roomHumidity = statusArr[24];
+            var roomHumidity = statusArr[25];
             $("#roomHumidity").html(roomHumidity);
 
             // Room temperature
-            var roomTemperature = statusArr[25];
+            var roomTemperature = statusArr[26];
             $("#roomTemperature").html(roomTemperature);
 
             // Reset the command string
@@ -227,9 +241,9 @@ function sendCommand(cmd) {
 // Switch valves
 function toggleValve(valve, status) {
     // console.log("Recieved:" + valve + status);
-    if (status == "0" || status == "O") {
+    if (status == "0") {
         cmd = valve + "O";
-    } else if (status == "1" || status == "C") {
+    } else if (status == "1") {
         cmd = valve + "C";
     } else {
         cmd = "";
@@ -237,7 +251,23 @@ function toggleValve(valve, status) {
             "Invalid command, could not determine the current status of the valve."
         );
     }
-    // console.log("Sent" + cmd);
+    // console.log("Sent: " + cmd);
+}
+
+// Switch relay
+function toggleRelay(relay, status) {
+    // console.log("Recieved:" + relay + status);
+    if (status == "0") {
+        cmd = relay + "O";
+    } else if (status == "1") {
+        cmd = relay + "C";
+    } else {
+        cmd = "";
+        alert(
+            "Invalid command, could not determine the current status of the relay."
+        );
+    }
+    // console.log("Sent: " + cmd);
 }
 
 // Start recording data on TILDAS
@@ -706,6 +736,19 @@ setInterval(function () {
                 toggleValve(commandsArray[line], "1");
             } else if (parameterArray[line] == 1) {
                 toggleValve(commandsArray[line], "0");
+            }
+
+            doThisAfterEveryCommand("executed");
+        }
+
+        // Open or close relay
+        if (commandsArray[line][0] == "U" && executed == "yes" && moving == "no" && waiting == "no") {
+            doThisBeforeEveryCommand();
+
+            if (parameterArray[line] == 0) {
+                toggleRelay(commandsArray[line], "1");
+            } else if (parameterArray[line] == 1) {
+                toggleRelay(commandsArray[line], "0");
             }
 
             doThisAfterEveryCommand("executed");
