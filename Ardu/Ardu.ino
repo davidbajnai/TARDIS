@@ -48,6 +48,9 @@ const byte Yenable = 7;
 AccelStepper Zaxis(1, 9, 8);
 const byte Zenable = 10;
 
+const byte CurrentPin = 11;
+const byte VoltagePin = 12;
+
 void setup()
 {
   Serial.begin(115200);
@@ -83,10 +86,11 @@ void setup()
   digitalWrite(Zenable, HIGH); // Disable motor
 
   // Fan control
-  pinMode(11, OUTPUT); // Power supply analog in (I)
-  pinMode(12, OUTPUT); // Power supply analog in (U)
-  analogWrite(12, 45); // Set the maximum voltage to little less than 12 V (maximum is 60 V)
-  analogWrite(11, 0);  // Set the current
+  pinMode(CurrentPin, OUTPUT); // Power supply analog in (I)
+  pinMode(VoltagePin, OUTPUT); // Power supply analog in (U)
+  analogWrite(CurrentPin, 0);  // Set the current - this is changed by the PID controller
+  analogWrite(VoltagePin, 50); // Set the maximum voltage (255 –> 5V analog out -> 60V)
+
 
   // ANALOG PINS
 
@@ -190,8 +194,10 @@ void controlT()
   }
 
   // Set the current of the adjustable power supply
-  // Maximum is 8 A, valid range 4-40 (10-100%)
-  analogWrite(8, fanSpeed * 40 / 100);
+  // The fans can take max 1.86A
+  // 5V (255 pin value) analog out means 8A, 1.86A limit is at 59 pin value
+  // Two fans are connected in parallel, thus the limit should be doubled
+  analogWrite(CurrentPin, fanSpeed / 100 * 118);
 }
 
 void runXP(float percentage, String string)
