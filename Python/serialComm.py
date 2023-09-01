@@ -16,7 +16,7 @@ except serial.SerialException:
 
 # Laser spectrometer serial communication
 try:
-    laser = serial.Serial('/dev/ttyUSB0', baudrate=57600, timeout=1)
+    laser = serial.Serial('/dev/ttyUSB1', baudrate=57600, timeout=1)
     print(" ✓ Connection to TILDAS established over /dev/ttyUSB0")
     time.sleep(1)
 except FileNotFoundError:
@@ -29,7 +29,7 @@ if laser is None:
 
 # Edwards pressure gauge serial communication (can also be ttyUSB0)
 try:
-    edwards = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
+    edwards = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
     print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB1")
     time.sleep(1)
 except FileNotFoundError:
@@ -51,6 +51,7 @@ except IOError:
 # Set initial values, that are obviously fake
 vacuum = '9.999'
 arduinoStatus = ""
+laserStatus = "0,0,0,0,0"
 roomT = 1
 roomH = 1
 error = 0 # Error counter

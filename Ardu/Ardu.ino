@@ -108,20 +108,21 @@ void setup()
   // Calculate X and Y bellow percentages based on the potentiometer
   int i = 0;
   while (i < 200)
+  // Integrate 200 values for better accuracy
   {
-    Xpercentage = Xpercentage + -100.00 / 800.00 * analogRead(A0) + 100 + 10000 / 800;
-    Ypercentage = Ypercentage + -100.00 / 800.00 * analogRead(A1) + 100 + 10000 / 800;
+    Xpercentage = Xpercentage + -0.12446 * analogRead(A0) + 112.02032;
+    Ypercentage = Ypercentage + -0.14655 * analogRead(A1) + 138.12253;
     i = i + 1;
   }
   Xpercentage = Xpercentage / 200.00;
   Ypercentage = Ypercentage / 200.00;
 
   // Set the current steps
-  // 0-100 (x) are 62438 steps, at 1/8 microsteps
-  // For 1/32 microsteps: max range = 245000 steps, for 1/8 these are 62438
+  // For X and Y bellows, 0-100% are 62438 steps, at 1/8 microsteps
   Xsteps = Xpercentage * 62438.00 / 100;
   Ysteps = Ypercentage * 62438.00 / 100;
-  Zsteps = 15960 / 2; // Start position is at 50 percent
+  // For Z bellow, we use 1/8 microsteps but at half the range
+  Zsteps = 15960 / 2; // Start position is at 50%
   Xaxis.setCurrentPosition(Xsteps);
   Yaxis.setCurrentPosition(Ysteps);
   Zaxis.setCurrentPosition(Zsteps);
@@ -182,15 +183,15 @@ void controlT()
 
   // Compute PID Output
   // The structure of the PID control string: fanSpeed = kp * Terror + ki * errSum + kd * dErr;
-  fanSpeed = 395 * Terror + 0.33 * errSum + 0.033 * dErr;
+  fanSpeed = 395 * Terror + 0.4 * errSum + 0.033 * dErr;
 
   if (fanSpeed > 100)
   {
     fanSpeed = 100;
   }
-  else if (fanSpeed < 9)
+  else if (fanSpeed < 0)
   {
-    fanSpeed = 9;
+    fanSpeed = 0;
   }
 
   // Set the current of the adjustable power supply
@@ -204,7 +205,6 @@ void runXP(float percentage, String string)
 {
   digitalWrite(Xenable, LOW); // Wake up the motor
   delay(100);
-  // stat = "W";
   if (percentage > 100)
   {
     percentage = 100;
@@ -215,9 +215,6 @@ void runXP(float percentage, String string)
   }
   XstartPos = Xaxis.currentPosition();
   long steps = (percentage * 62438.00 / 100) - Xsteps;
-  // Check if bellows opens or compresses
-  // If it opens, then open a bit more and then move back
-  // If it closes, simply close
   sendStatus("MX");
   Xaxis.move(steps);
   while (Xaxis.currentPosition() != XstartPos + steps)
@@ -232,7 +229,6 @@ void runYP(float percentage, String string)
 {
   digitalWrite(Yenable, LOW); // Wake up the motor
   delay(100);
-  // stat = "W";
   if (percentage > 100)
   {
     percentage = 100;
@@ -245,7 +241,6 @@ void runYP(float percentage, String string)
   long steps = percentage * 62438.00 / 100 - Ysteps;
   sendStatus("MY");
   Yaxis.move(steps);
-  long i = 0;
   while (Yaxis.currentPosition() != YstartPos + steps)
   {
     Yaxis.run();
@@ -258,7 +253,6 @@ void runZP(float percentage, String string)
 {
   digitalWrite(Zenable, LOW); // Wake up the motor
   delay(100);
-  // stat = "W";
   if (percentage > 100)
   {
     percentage = 100;
@@ -272,7 +266,6 @@ void runZP(float percentage, String string)
   long steps = percentage * 15960 / 100 - Zsteps;
   sendStatus("MZ");
   Zaxis.move(steps);
-  long i = 0;
   while (Zaxis.currentPosition() != ZstartPos + steps)
   {
     Zaxis.run();
@@ -339,7 +332,6 @@ void expandX(int number)
   else if (number == 3) // 32% reduction
   {
     switchValve("V16C");
-    switchValve("V06O"); // this line is redundant
     switchValve("V05O");
     switchValve("V07O");
     wait(15, "EX");
@@ -619,7 +611,6 @@ void switchValve(String param)
   {
     digitalWrite(21 + v, LOW); // Close valve
   }
-  sendStatus("SV");
   delay(50);
 }
 
@@ -635,7 +626,6 @@ void switchRelay(String param)
   {
     digitalWrite(relayPins[v-1], HIGH); // Close relay
   }
-  sendStatus("SU");
   delay(50);
 }
 
@@ -645,8 +635,8 @@ void sendStatus( String param )
   Xpressure = analogRead(A2) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
   Ypressure = analogRead(A3) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
   Apressure = analogRead(A4) * 500.00 / 1024;             // 0-1000 mbar Baratron
-  Xpercentage = -100.00 / 800 * analogRead(A0) + 100 + 10000 / 800;
-  Ypercentage = -100.00 / 800 * analogRead(A1) + 100 + 10000 / 800;
+  Xpercentage = -0.12446 * analogRead(A0) + 111.8855;
+  Ypercentage = -0.11765 * analogRead(A1) + 111.29412;
 
   // Get box temperature and humidity from the sensor
   sensors_event_t humidity, temp;
@@ -703,7 +693,7 @@ void sendStatus( String param )
   Ypercentage = Ypercentage / n;
   boxTemp = boxTemp / n;
 
-  // Print out the current settings
+  // Send the status string via serial
   Serial.print(param);
   Serial.print(",");
   Serial.print(Xaxis.currentPosition() * 100.0000 / 62438.00, 2);
@@ -766,7 +756,17 @@ void loop()
 
   // Perform a function based on on the command sent by the index.html
 
-  if (string.substring(0, 2) == "XP")
+
+  if (string.substring(0, 1) == "V")
+  {
+    // Set the valve positions
+    switchValve(string);
+    string = "";
+    command = ' ';
+    sendStatus("-");
+  }
+
+  else if (string.substring(0, 2) == "XP")
   {
     // Set the stepper motor positions
     runXP(string.substring(2, 9).toFloat(), "MX");
@@ -853,15 +853,6 @@ void loop()
   {
     // Switch the relays
     switchRelay(string);
-    string = "";
-    command = ' ';
-    sendStatus("-");
-  }
-
-  else if (string.substring(0, 1) == "V")
-  {
-    // Set the valve positions
-    switchValve(string);
     string = "";
     command = ' ';
     sendStatus("-");

@@ -547,6 +547,7 @@ function doThisAfterEveryCommand(condition) {
     } else if (condition == "executed") {
         // This is when the command is executed straight away
         timeExecuted = new Date().getTime() / 1000;
+        timeExecutedStr = new Date(timeExecuted * 1000).toLocaleTimeString();
         moving = "no";
         executed = "yes";
         waiting = "yes";
@@ -557,7 +558,11 @@ function doThisAfterEveryCommand(condition) {
             ":",
             commandsArray[line],
             parameterArray[line],
-            "executed"
+            "executed at",
+            timeExecutedStr,
+            "\nNow wait for",
+            timeArray[line],
+            "seconds."
         );
     }
 }
@@ -1020,7 +1025,18 @@ setInterval(function () {
             executed = "yes";
             waiting = "yes";
             $("#command" + line).append(" &#10003;");
-            console.log("Command in line",line,":",commandsArray[line],parameterArray[line],"finished at",timeExecutedStr);
+            console.log(
+                "Command in line",
+                line,
+                ":",
+                commandsArray[line],
+                parameterArray[line],
+                "finished at",
+                timeExecutedStr,
+                "\nNow wait for",
+                timeArray[line],
+                "seconds."
+            );
 
         }
         else if (moving == "no" && executed == "yes" && waiting == "yes" && $('#moveStatus').html() == "-" && new Date().getTime() / 1000 - timeExecuted < timeArray[line]) {
@@ -1033,7 +1049,6 @@ setInterval(function () {
             // Case 4: Nothing moving and waiting is complete: jump to next sample if exists
             waiting = "no";
             line++;
-            // console.log("Next line in method: ", line);
 
             if (line == commandsArray.length) {
                 console.log("End of method");
@@ -1071,7 +1086,7 @@ setInterval(function () {
                 else {
                     // No next sample, sequence finished
                     let timeSeqFinished = new Date(new Date().getTime()).toLocaleTimeString();
-                    console.log("Sequence finished at" + timeSeqFinished);
+                    console.log("Sequence finished at " + timeSeqFinished);
                     $('#cycle').html("9¾");
                 }
             }
