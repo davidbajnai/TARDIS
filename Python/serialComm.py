@@ -7,43 +7,84 @@ import re
 
 # Arduino serial communication
 try:
-    arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=1)
+    arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0.5)
     print(" ✓ Connection to Arduino established")
     time.sleep(1)
 except serial.SerialException:
     print(" x Connection to Arduino could not be established. Stopping the script.")
     quit()
 
-# Laser spectrometer serial communication
+# Edwards pressure gauge serial communication
+# NOTE: There are two USB serial ports conneted to the rPi: USB1 and USB0
+#       Here we test which is the Edwards. The other one has to be the TILDAS.
+MAX_ATTEMPTS = 3
+EXPECTED_MESSAGE_LENGTH = 9
 try:
-    laser = serial.Serial('/dev/ttyUSB1', baudrate=57600, timeout=1)
-    print(" ✓ Connection to TILDAS established over /dev/ttyUSB0")
-    time.sleep(1)
-except FileNotFoundError:
-    print(" x The TILDAS's USB cable is not plugged in. Stopping the script.")
-    quit()
-if laser is None:
-    print(" x Failed to establish connection to TILDAS. Stopping the script.")
-    quit()
-
-
-# Edwards pressure gauge serial communication (can also be ttyUSB0)
-try:
-    edwards = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05) # a longer timeout stalls the script
-    print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB1")
-    time.sleep(1)
+    # Connect to 'something' over USB1
+    edwards_gauge = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05)
+    time.sleep(2)
+    attempts = 0
+    success = False
+    while attempts < MAX_ATTEMPTS and success is False:
+        # Send a query and listen for a response
+        edwards_gauge.write(bytes('?GA1\r', 'utf-8'))
+        try:
+            test_message = edwards_gauge.readline().decode('utf-8')
+        except UnicodeDecodeError:
+            test_message = ""
+        if len(test_message) == EXPECTED_MESSAGE_LENGTH:
+            # The response was the expected length, so this is the Edwards gauge
+            print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB0")
+            TILDAS_PORT = '/dev/ttyUSB1'
+            success = True
+        else:
+            time.sleep(1) 
+            attempts += 1
+    if success is False:
+        edwards_gauge.close() # close previous connection
+        # Connect to 'something' over USB0
+        edwards_gauge = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05)
+        time.sleep(1)
+        attempts = 0
+        while attempts < MAX_ATTEMPTS and success is False:
+            # Send a query and listen for a response
+            edwards_gauge.write(bytes('?GA1\r', 'utf-8'))
+            try:
+                test_message = edwards_gauge.readline().decode('utf-8')
+            except UnicodeDecodeError:
+                test_message = ""
+            if len(test_message) == EXPECTED_MESSAGE_LENGTH:
+                print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB1")
+                time.sleep(1)
+                success = True
+                TILDAS_PORT = '/dev/ttyUSB0'
+            else:
+                time.sleep(1)
+                attempts += 1
+        if success is False:
+            print(" x Connection to Edwards gauge could not be established. Stopping the script.")
+            arduino.close() # close open connections
+            quit()
 except FileNotFoundError:
     print(" x The Edwards gauge's USB cable is not plugged in. Stopping the script.")
     quit()
-if edwards is None:
-    print(" x Failed to establish connection to Edwards gauge. Stopping the script.")
+
+# Laser spectrometer serial communication
+try:
+    laser = serial.Serial(TILDAS_PORT, baudrate=57600, timeout=1)
+    print(" ✓ Connection to TILDAS established over " + TILDAS_PORT)
+    time.sleep(1)
+except FileNotFoundError:
+    print(" x The TILDAS's USB cable is not plugged in. Stopping the script.")
+    arduino.close() # close open connections
+    edwards_gauge.close() # close open connections
     quit()
 
 # Initialize the breakout sensors
 try:
     sensor = bme680.BME680(bme680.I2C_ADDR_PRIMARY)
     print(" ✓ Connection to room temperature sensor established over I2C")
-    time.sleep(2)
+    time.sleep(1)
 except IOError:
     print(" x Connection to room temperature sensor failed. Stopping the script.")
     quit()
@@ -54,7 +95,7 @@ arduinoStatus = ""
 laserStatus = "0,0,0,0,0"
 roomT = 1
 roomH = 1
-error = 0 # Error counter
+ArduinoError = 0
 
 # Connect to the shared variable
 m = base.Client(('127.0.0.1', 11211))
@@ -62,9 +103,9 @@ m.set('key2', "")
 
 print("Transmitting to and recieving data from sendCommand.php...")
 
-i = 1
 try:
     start_time = time.time()
+    loops = 1
     while True:
 
         # Read the data stream from the laser spectrometer
@@ -72,6 +113,7 @@ try:
         #       The final measurement results are evaluated using the .str and .stc files
 
         if( laser.inWaiting() > 10 ):
+            # Read the serial output of the TILDAS if there is something to read (at least 11 bytes)
             try:
                 laserStatus = laser.readline().decode('utf-8').strip()
                 # print(laserStatus) # Show the raw serial output of the TILDAS in the Terminal - for debugging
@@ -96,8 +138,7 @@ try:
             arduinoStatusNew = arduino.readline().decode('utf-8').strip()
         except UnicodeDecodeError:
             # Try to read the status string again if it failed the first time
-            # This error could occur when starting the script
-            time.sleep(1)
+            time.sleep(0.05)
             arduinoStatusNew = arduino.readline().decode('utf-8').strip()
         
         # print(arduinoStatus) # Show the raw serial output of the Arduino in the Terminal - for debugging
@@ -107,19 +148,19 @@ try:
         if re.match(pattern, arduinoStatusNew):
             arduinoStatus = arduinoStatusNew
         else:
-            error = error + 1
+            ArduinoError += 1
             
         # Read Edwards pressure gauge and temperature sensor every 10 cycles
-        if(i % 10 == 0):
+        if(loops % 10 == 0):
 
-            edwards.write( bytes('?GA1\r','utf-8') )
+            edwards_gauge.write( bytes('?GA1\r','utf-8') )
             try:
-                edwardsGauge = edwards.readline().decode('utf-8')
+                edwards_response = edwards_gauge.readline().decode('utf-8')
             except UnicodeDecodeError:
-                edwardsGauge = "1.00E-04 "
+                edwards_response = "1.00E-04 "
             # A little formatting is necessary because the string is sometimes broken
-            if len(edwardsGauge) == 9:
-                vacuum = str(round(float(edwardsGauge), 4))
+            if len(edwards_response) == EXPECTED_MESSAGE_LENGTH:
+                vacuum = str(round(float(edwards_response), 4))
             
             # room temperature from sensor
             try:
@@ -140,14 +181,14 @@ try:
             timeNow = datetime.datetime.now().strftime("%H:%M:%S")
             status = timeNow + ',' + arduinoStatus + ',' + laserStatus + ',' + vacuum + ',' + str(roomH)+ ',' + str(roomT)
 
-            # Set shared variable: this is what the sendCommand.php files recieves
+            # Set shared variable #1: this is what the sendCommand.php files recieves
             m.set('key', status)
 
             # print(status) # Show the status string in the Terminal - for debugging
 
             time.sleep(0.05)
 
-        # Receive commands for Arduino from PHP via shared variable 'key2' set in sendCommand.php
+        # Receive commands for Arduino from PHP via shared variable #2, defined in sendCommand.php
         value = m.get('key2').decode('UTF-8')
         if( value != "" ):
             arduino.write( bytes(value, 'utf-8') )
@@ -164,9 +205,12 @@ try:
         hours, remainder = divmod(remainder, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        print("  Elapsed: {} d, {} h, {} m, {} s".format(int(days), int(hours), int(minutes), int(seconds)) + " | Speed: " + str(round(i/elapsed_time,1)) + " Hz | Errors: " + str(error) + "   ", end="\r")
-        i = i + 1
+        print("  Elapsed: {} d, {} h, {} m, {} s".format(int(days), int(hours), int(minutes), int(seconds)) + " | Speed: " + str(round(loops/elapsed_time,1)) + " Hz | Arduino errors: " + str(ArduinoError) + "   ", end="\r")
+        loops += 1
 
 except KeyboardInterrupt:
     m.close()
+    edwards_gauge.close()
+    arduino.close()
+    # laser.close() # if you close the TILDAS's serial port you have to re-open it on the TILDAS's PC
     print("\nLoop stopped by user")

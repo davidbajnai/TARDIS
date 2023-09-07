@@ -225,24 +225,24 @@
 			<img id="loadingA" src="" class="icon" style="top:585px;left:650px;" />
 
 			<img id="motorX" src="Images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
-			<span id="percentageXsteps" class="box small" style="top:625px;left:315px;">NaN</span>
+			<span id="percentageX_Steps" class="box small" style="top:625px;left:315px;">NaN</span>
 			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
 			<button onclick="moveBellows('X');" class="button small" style="top:655px;left:365px;">Set X</button>
 
 			<img id="motorY" src="Images/standing_motor.gif" class="icon" style="top:625px;left:1184px;" />
-			<span id="percentageYsteps" class="box small" style="top:625px;left:1120px;">NaN</span>
+			<span id="percentageY_Steps" class="box small" style="top:625px;left:1120px;">NaN</span>
 			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
 			<button onclick="moveBellows('Y');" class="button small" style="top:655px;left:1169px;">Set Y</button>
 			
 			<img id="motorZ" src="Images/standing_motor.gif" class="icon" style="top:450px;left:755px;" />
-			<span id="percentageZsteps" class="box small" style="top:450px;left:690px;">NaN</span>
+			<span id="percentageZ_Steps" class="box small" style="top:450px;left:690px;">NaN</span>
 			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
 			<button onclick="moveBellows('Z');" class="button small" style="top:480px;left:740px;">Set Z</button>
 			<img id="warningZ" src="" class="icon" style="top:450px;left:650px;" />
 
 			<!-- Bellow parameters only necessary for the script to work -->
-			<span id="percentageX" class="box unimportant" style="top:653px;left:1700px;">NaN</span>
-			<span id="percentageY" class="box unimportant" style="top:653px;left:1750px;">NaN</span>
+			<span id="percentageX_Poti" class="box unimportant" style="top:653px;left:1700px;">NaN</span>
+			<span id="percentageY_Poti" class="box unimportant" style="top:653px;left:1750px;">NaN</span>
 			<span id="stepsZ" class="box unimportant" style="top:653px;left:1800px;">NaN</span>
 			
 			<!-- Mixing ratio indicators -->
@@ -373,9 +373,8 @@
 			<h3>Startup</h3>
 			<ul>
 				<li>To turn the TILDAS on: (1) plug it in, (2) toggle the power switch in the back, (3) turn on the main swith on the front.</li>
-				<li>The rPi has to be turned on after the TILDAS, otherwise reboot it: sudo shutdown -r now.</li>
 				<li>To allow streaming data from the TILDAS to the rPi, click the "RS" on (TDLWintel bottom left) and set the mode to "Stream Data" (TDLWintel top left).</li>
-				<li>Make sure that "RS" is active at TILDAS and that mode is in "Stream Data", otherwise Python does not get data.</li>
+				<li>If Python does not get data from the TILDAS (all mixing ratios are zero) toggle the "RS" button in TDLWintel.</li>
 				<li>Start the communication script: /usr/bin/python /var/www/html/Python/serialComm.py</li>
 			</ul>
 

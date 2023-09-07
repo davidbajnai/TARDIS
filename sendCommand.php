@@ -37,10 +37,12 @@ if( $_POST['cmd'] != "" )
         $newFileTime = exec( "date -r /mnt/TILDAS-CS-132/Commands/comlog.dat" );
 
         // Compare the file timestamps to check if the TILDAS recieved the command
-        if( $newFileTime == $oldFileTime )
-        // If the timestamp did not change, the command was not recieved: repeat the command
-        {
-            sendCommandViaTCP("amass1\r\namwd1\r\n");
+        for ($i = 0; $i < 3; $i++) {
+            // If the timestamp did not change, the command was not received: repeat the command
+            if ($newFileTime == $oldFileTime) {
+                usleep(500000);
+                sendCommandViaTCP("amass1\r\namwd1\r\n");
+            }
         }
     }
     else if( $_POST['cmd'] == "TWD0" )
@@ -55,10 +57,13 @@ if( $_POST['cmd'] != "" )
         $newFileTime = exec( "date -r /mnt/TILDAS-CS-132/Commands/comlog.dat" );
 
         // Compare the file timestamps to check if the TILDAS recieved the command
-        if( $newFileTime == $oldFileTime )
-        // If the timestamp did not change, the command was not recieved: repeat the command
-        {
-            sendCommandViaTCP("amass1\r\namwd1\r\n");
+        for ($i = 0; $i < 3; $i++) {
+            // If the timestamp did not change, the command was not recieved: repeat the command
+            if( $newFileTime == $oldFileTime )
+            {
+                usleep(500000);
+                sendCommandViaTCP("amass1\r\namwd1\r\n");
+            }
         }
     }
     else

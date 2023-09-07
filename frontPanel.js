@@ -58,30 +58,26 @@ function sendCommand(cmd) {
             }
 
             // X bellows
-            var percentageX = statusArr[3];
+            $("#percentageX_Steps").html(parseFloat(statusArr[2]).toFixed(2)); // bellow expansion based on motor steps
+            $("#percentageX_Poti").html(parseFloat(statusArr[3]).toFixed(1)); // bellow expansion based on potentiometer
             $("#bellowsX").css(
                 "height",
-                parseInt(10 + 0.9 * percentageX) + "px"
+                parseInt(10 + 0.9 * statusArr[2]) + "px"
             );
-            $("#percentageX").html(parseFloat(percentageX).toFixed(1));
-            $("#percentageX").css("color", "gray");
-            $("#percentageXsteps").html(parseFloat(statusArr[2]).toFixed(2));
-            $("#stepsX").html(statusArr[2] + " steps");
 
             // Y bellows
-            var percentageY = statusArr[5];
-            $("#bellowsY").css("height", 10 + 0.9 * percentageY + "px");
-            $("#percentageY").html(parseFloat(percentageY).toFixed(1));
-            $("#percentageY").css("color", "gray");
-            $("#percentageYsteps").html(parseFloat(statusArr[4]).toFixed(2));
-            $("#stepsY").html(statusArr[4] + " steps");
+            $("#percentageY_Steps").html(parseFloat(statusArr[4]).toFixed(2)); // bellow expansion based on motor steps
+            $("#percentageY_Poti").html(parseFloat(statusArr[5]).toFixed(1)); // bellow expansion based on potentiometer
+            $("#bellowsY").css(
+                "height",
+                parseInt(10 + 0.9 * statusArr[4]) + "px");
 
             // Z bellows
-            $("#percentageZsteps").html(parseFloat(statusArr[7]).toFixed(1));
-            $("#stepsZ").html(statusArr[6]); //Steps
+            $("#stepsZ").html(parseInt(statusArr[6]));
+            $("#percentageZ_Steps").html(parseFloat(statusArr[7]).toFixed(1));
             $("#bellowsZ").css(
                 "height",
-                parseFloat(10 + 0.9 * statusArr[7]).toFixed(1) + "px"
+                parseInt(10 + 0.9 * statusArr[7]) + "px"
             );
 
             if (
@@ -709,9 +705,9 @@ setInterval(function () {
                 parseFloat($("#housingT").html()),
                 parseFloat($("#setPointTemperature").html()),
                 parseFloat($("#roomRH").html()),
-                $("#percentageXsteps").html(),
-                $("#percentageYsteps").html(),
-                $("#percentageZsteps").html(),
+                $("#percentageX_Steps").html(),
+                $("#percentageY_Steps").html(),
+                $("#percentageZ_Steps").html(),
                 $("#pressureX").html(),
                 $("#pressureY").html(),
                 $("#pressureA").html(),

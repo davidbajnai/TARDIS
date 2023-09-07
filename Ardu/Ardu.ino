@@ -22,7 +22,7 @@ float ApressureArray[200];
 float XpercentageArray[200];
 float YpercentageArray[200];
 float boxTempArray[200];
-byte fanSpeed = 0;
+int fanSpeed = 0;
 float boxTemp = 0.000;
 float SPT = 32.5; // Set the housing temperature here
 float boxHum = 0.00;
@@ -89,7 +89,7 @@ void setup()
   pinMode(CurrentPin, OUTPUT); // Power supply analog in (I)
   pinMode(VoltagePin, OUTPUT); // Power supply analog in (U)
   analogWrite(CurrentPin, 0);  // Set the current - this is changed by the PID controller
-  analogWrite(VoltagePin, 50); // Set the maximum voltage (255 –> 5V analog out -> 60V)
+  analogWrite(VoltagePin, 45); // Set the maximum voltage (255 = 5V analog out = 60V)
 
 
   // ANALOG PINS
@@ -110,12 +110,12 @@ void setup()
   while (i < 200)
   // Integrate 200 values for better accuracy
   {
-    Xpercentage = Xpercentage + -0.12446 * analogRead(A0) + 112.02032;
-    Ypercentage = Ypercentage + -0.14655 * analogRead(A1) + 138.12253;
-    i = i + 1;
+    Xpercentage += -0.12446 * analogRead(A0) + 112.02032;
+    Ypercentage += -0.14655 * analogRead(A1) + 138.12253;
+    i++;
   }
-  Xpercentage = Xpercentage / 200.00;
-  Ypercentage = Ypercentage / 200.00;
+  Xpercentage /= 200.00;
+  Ypercentage /= 200.00;
 
   // Set the current steps
   // For X and Y bellows, 0-100% are 62438 steps, at 1/8 microsteps
@@ -183,7 +183,7 @@ void controlT()
 
   // Compute PID Output
   // The structure of the PID control string: fanSpeed = kp * Terror + ki * errSum + kd * dErr;
-  fanSpeed = 395 * Terror + 0.4 * errSum + 0.033 * dErr;
+  fanSpeed = 395 * Terror + 0.33 * errSum + 0.033 * dErr;
 
   if (fanSpeed > 100)
   {
@@ -195,10 +195,9 @@ void controlT()
   }
 
   // Set the current of the adjustable power supply
-  // The fans can take max 1.86A
-  // 5V (255 pin value) analog out means 8A, 1.86A limit is at 59 pin value
-  // Two fans are connected in parallel, thus the limit should be doubled
-  analogWrite(CurrentPin, fanSpeed / 100 * 118);
+  // Each of the two fans can take max 1.86A, and they are connected in parallel
+  // 255 = 5V analog out = 8A
+  analogWrite(CurrentPin, fanSpeed / 100 * 40);
 }
 
 void runXP(float percentage, String string)
