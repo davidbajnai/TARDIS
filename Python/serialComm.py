@@ -17,13 +17,13 @@ except serial.SerialException:
 # Edwards pressure gauge serial communication
 # NOTE: There are two USB serial ports conneted to the rPi: USB1 and USB0
 #       Here we test which is the Edwards. The other one has to be the TILDAS.
-MAX_ATTEMPTS = 3
+MAX_ATTEMPTS = 5
 EXPECTED_MESSAGE_LENGTH = 9
 try:
     # Connect to 'something' over USB1
     edwards_gauge = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05)
     time.sleep(2)
-    attempts = 0
+    attempts = 1
     success = False
     while attempts < MAX_ATTEMPTS and success is False:
         # Send a query and listen for a response
@@ -38,7 +38,8 @@ try:
             TILDAS_PORT = '/dev/ttyUSB1'
             success = True
         else:
-            time.sleep(1) 
+            time.sleep(1)
+            print("    Trying to connect to the Edwards gauge. Attempt #" + str(attempts), end="\r")
             attempts += 1
     if success is False:
         edwards_gauge.close() # close previous connection

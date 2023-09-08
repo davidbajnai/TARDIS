@@ -41,11 +41,11 @@ long Zsteps = 0;
 unsigned long startMillis = 0;
 const byte relayPins[] = {18, 19};
 
-AccelStepper Xaxis(1, 3, 2); // mode, step, direction
+AccelStepper Xaxis(AccelStepper::DRIVER, 3, 2); // mode, step, direction
 const byte Xenable = 4;
-AccelStepper Yaxis(1, 6, 5);
+AccelStepper Yaxis(AccelStepper::DRIVER, 6, 5);
 const byte Yenable = 7;
-AccelStepper Zaxis(1, 9, 8);
+AccelStepper Zaxis(AccelStepper::DRIVER, 9, 8);
 const byte Zenable = 10;
 
 const byte CurrentPin = 11;
@@ -63,11 +63,14 @@ void setup()
   // Start temperature sensor
   shtc3.begin();
 
+  delay(4000);
+
   // DIGITAL PINS
 
   // Pinout for valve control
   for (int pinNr = 22; pinNr <= 53; pinNr++) {
     pinMode(pinNr, OUTPUT);
+    delay(10);
   }
 
   // Pinout for relay control
@@ -85,12 +88,15 @@ void setup()
   digitalWrite(Yenable, HIGH); // Disable motor
   digitalWrite(Zenable, HIGH); // Disable motor
 
+  delay(100);
+
   // Fan control
   pinMode(CurrentPin, OUTPUT); // Power supply analog in (I)
   pinMode(VoltagePin, OUTPUT); // Power supply analog in (U)
   analogWrite(CurrentPin, 0);  // Set the current - this is changed by the PID controller
   analogWrite(VoltagePin, 45); // Set the maximum voltage (255 = 5V analog out = 60V)
 
+  delay(100);
 
   // ANALOG PINS
 
@@ -106,12 +112,12 @@ void setup()
   // Get status and set some parameters
 
   // Calculate X and Y bellow percentages based on the potentiometer
-  int i = 0;
+  byte i = 0;
   while (i < 200)
   // Integrate 200 values for better accuracy
   {
-    Xpercentage += -0.12446 * analogRead(A0) + 112.02032;
-    Ypercentage += -0.14655 * analogRead(A1) + 138.12253;
+    Xpercentage += -0.12453 * analogRead(A0) + 104.83600;
+    Ypercentage += -0.12438 * analogRead(A1) + 112.72790;
     i++;
   }
   Xpercentage /= 200.00;
@@ -141,15 +147,13 @@ void setup()
   Zaxis.setMaxSpeed(50 * 16);
   Zaxis.setAcceleration(20 * 16);
 
-  delay(100);
-
   // Pressure readings from the three Baratrons
   // Read all values as mbar!
   Xpressure = analogRead(A2) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
   Ypressure = analogRead(A3) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
   Apressure = analogRead(A4) * 500.00 / 1024.00;       // 0-1000 mbar Baratron
 
-  delay(100);
+  delay(1000);
 }
 
 void wait(int seconds, String message)
@@ -200,7 +204,7 @@ void controlT()
   analogWrite(CurrentPin, fanSpeed / 100 * 40);
 }
 
-void runXP(float percentage, String string)
+void runXP(float percentage)
 {
   digitalWrite(Xenable, LOW); // Wake up the motor
   delay(100);
@@ -224,7 +228,7 @@ void runXP(float percentage, String string)
   digitalWrite(Xenable, HIGH); // Disable motor
 }
 
-void runYP(float percentage, String string)
+void runYP(float percentage)
 {
   digitalWrite(Yenable, LOW); // Wake up the motor
   delay(100);
@@ -248,7 +252,7 @@ void runYP(float percentage, String string)
   digitalWrite(Yenable, HIGH); // Disable motor
 }
 
-void runZP(float percentage, String string)
+void runZP(float percentage)
 {
   digitalWrite(Zenable, LOW); // Wake up the motor
   delay(100);
@@ -439,7 +443,7 @@ void setPressureX(float targetPressure)
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
       // Send the command to the bellows
-      runXP( targetPercent, "MX" );
+      runXP(targetPercent);
       sendStatus("PX");
       delay(100);
     }
@@ -504,7 +508,7 @@ void setPressureY(float targetPressure)
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
       // Send the command to the bellows
-      runYP( targetPercent, "MY" );
+      runYP(targetPercent);
       sendStatus("PY");
       delay(100);
     }
@@ -566,7 +570,7 @@ void setN2Pressure(float targetPressure)
         // Compress/open bellows
         targetPercent = Zaxis.currentPosition() * 100.0000 / 15960.00 + (Apressure - targetPressure) / 0.1044;
         // Send the command to the bellows
-        runZP(targetPercent, "MZ");
+        runZP(targetPercent);
         delay(100);
       }
     }
@@ -634,8 +638,8 @@ void sendStatus( String param )
   Xpressure = analogRead(A2) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
   Ypressure = analogRead(A3) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
   Apressure = analogRead(A4) * 500.00 / 1024;             // 0-1000 mbar Baratron
-  Xpercentage = -0.12446 * analogRead(A0) + 111.8855;
-  Ypercentage = -0.11765 * analogRead(A1) + 111.29412;
+  Xpercentage = -0.12453 * analogRead(A0) + 104.83600;
+  Ypercentage = -0.12438 * analogRead(A1) + 112.72790;
 
   // Get box temperature and humidity from the sensor
   sensors_event_t humidity, temp;
@@ -768,7 +772,7 @@ void loop()
   else if (string.substring(0, 2) == "XP")
   {
     // Set the stepper motor positions
-    runXP(string.substring(2, 9).toFloat(), "MX");
+    runXP(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
@@ -795,7 +799,7 @@ void loop()
   else if (string.substring(0, 2) == "YP")
   {
     // Move bellow Y (sample side)
-    runYP(string.substring(2, 9).toFloat(), "MY");
+    runYP(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
@@ -822,7 +826,7 @@ void loop()
   else if (string.substring(0, 2) == "ZP")
   {
     // Move bellow Z
-    runZP(string.substring(2, 9).toFloat(), "MZ");
+    runZP(string.substring(2, 9).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
