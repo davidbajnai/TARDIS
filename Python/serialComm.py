@@ -17,7 +17,7 @@ except serial.SerialException:
 # Edwards pressure gauge serial communication
 # NOTE: There are two USB serial ports conneted to the rPi: USB1 and USB0
 #       Here we test which is the Edwards. The other one has to be the TILDAS.
-MAX_ATTEMPTS = 5
+MAX_ATTEMPTS = 10
 EXPECTED_MESSAGE_LENGTH = 9
 try:
     # Connect to 'something' over USB1

@@ -33,7 +33,7 @@ float Terror = 0.000;
 float errSum = 0.000;
 float dErr = 0.000;
 float lastErr = 0.000;
-byte cycl = 0;
+unsigned long cycl = 0;
 float targetPercent = 0.000;
 long Xsteps = 0;
 long Ysteps = 0;
@@ -109,7 +109,7 @@ void setup()
   pinMode(A3, INPUT); // Baratron Y (0-10 Torr)
   pinMode(A4, INPUT); // Baratron A (0-1000 mbar)
 
-  // Get status and set some parameters
+  // CALIBRATE STEPPER MOTORS
 
   // Calculate X and Y bellow percentages based on the potentiometer
   byte i = 0;
@@ -123,7 +123,7 @@ void setup()
   Xpercentage /= 200.00;
   Ypercentage /= 200.00;
 
-  // Set the current steps
+  // Set the position of the motors
   // For X and Y bellows, 0-100% are 62438 steps, at 1/8 microsteps
   Xsteps = Xpercentage * 62438.00 / 100;
   Ysteps = Ypercentage * 62438.00 / 100;
@@ -136,8 +136,8 @@ void setup()
   XstartPos = Xsteps;
   YstartPos = Ysteps;
   ZstartPos = Zsteps;
-  steps = 0;
 
+  // Set the maximum speed and acceleration
   Xaxis.setMaxSpeed(50 * 32);
   Xaxis.setAcceleration(20 * 32);
 
@@ -146,12 +146,6 @@ void setup()
 
   Zaxis.setMaxSpeed(50 * 16);
   Zaxis.setAcceleration(20 * 16);
-
-  // Pressure readings from the three Baratrons
-  // Read all values as mbar!
-  Xpressure = analogRead(A2) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
-  Ypressure = analogRead(A3) * 5.00 * 1.333 / 1024.00; // 0-10 Torr Baratron
-  Apressure = analogRead(A4) * 500.00 / 1024.00;       // 0-1000 mbar Baratron
 
   delay(1000);
 }
@@ -688,9 +682,9 @@ void sendStatus( String param )
   // Preferably adjust the reference bellow
   // Divide Xpressure by pCO2Sam/pCO2Ref
   // If divided <1, then the reference pCO2 decreases
-  Xpressure = (Xpressure / n - 0.325) / 0.933007 / 1.09901 / 1.003107 / 0.997623 / 0.9973697 / 1.001437 / 0.998507 / 0.99785 / 1.001517; // Reference gas bellow
-  Ypressure = (Ypressure / n - 0.297);  // Gauge Y, sample bellow
-  Apressure = Apressure / n - 4.2 - 0.4;      // Gauge A
+  Xpressure = (Xpressure / n - 0.300) / 0.970942; // Reference gas bellow
+  Ypressure = (Ypressure / n - 0.265);  // Gauge Y, sample bellow
+  Apressure = Apressure / n - 5.0;      // Gauge A
 
   Xpercentage = Xpercentage / n;
   Ypercentage = Ypercentage / n;
