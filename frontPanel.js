@@ -875,9 +875,11 @@ setInterval(function () {
             if (parameterArray[line].substr(0, 1) == "+" || parameterArray[line].substr(0, 1) == "-") {
                 // Move increment
                 // Get current bellows position
-                let currentPercent = parseFloat($("#percentage" + commandsArray[line][1] + "steps").text());
+                let currentPercent = parseFloat($("#percentage" + commandsArray[line][1] + "_Steps").text());
+                // console.log("Current bellows position is: ", currentPercent, "%"); // Used for debugging
                 // Calculate the new bellows position
                 let newPercent = currentPercent + parseFloat(parameterArray[line]);
+                // console.log("New bellows position is: ", newPercent, "%"); // Used for debugging
                 $("#setPercentage" + commandsArray[line][1]).val(newPercent.toFixed(1));
             }
             else {
@@ -993,7 +995,7 @@ setInterval(function () {
             }
             console.log("Target pressure is: ", pTarget.toFixed(3), "Torr");
 
-            let percent = parseFloat($("#percentageZsteps").text());
+            let percent = parseFloat($("#percentageZ_Steps").text());
             console.log("Current percentage (Z) is: ", percent.toFixed(1), "%");
 
             let percentTarget = percent + (pTarget - p) / -0.007030;
