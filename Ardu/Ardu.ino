@@ -181,7 +181,7 @@ void controlT()
 
   // Compute PID Output
   // The structure of the PID control string: fanSpeed = kp * Terror + ki * errSum + kd * dErr;
-  fanSpeed = 395 * Terror + 0.33 * errSum + 0.033 * dErr;
+  fanSpeed = 390 * Terror + 0.30 * errSum + 0.030 * dErr;
 
   if (fanSpeed > 100)
   {
@@ -682,7 +682,7 @@ void sendStatus( String param )
   // Preferably adjust the reference bellow
   // Divide Xpressure by pCO2Sam/pCO2Ref
   // If divided <1, then the reference pCO2 decreases
-  Xpressure = (Xpressure / n - 0.300) / 0.970942; // Reference gas bellow
+  Xpressure = (Xpressure / n - 0.300) / 0.970942 * 0.952011; // Reference gas bellow
   Ypressure = (Ypressure / n - 0.265);  // Gauge Y, sample bellow
   Apressure = Apressure / n - 5.0;      // Gauge A
 

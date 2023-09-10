@@ -5,13 +5,16 @@
 // and send commands to the TILDAS and the Arduino
 
 // Define functions to send command to TILDAS
+
+// Variable number of attempts integer
+$MAX_ATTEMPTS = 5;
+$attempts = 0;
+
 function sendCommandViaTCP($command) {
-    $socket = fsockopen('192.168.1.240', 12345, $errno, $errstr, 1);
-    usleep(250000);
-    if ($socket) {
-        fwrite($socket, $command);
-    }
-    usleep(250000);
+    $socket = @fsockopen('192.168.1.240', 12345, $errno, $errstr, 1);
+    sleep(1);
+    fwrite($socket, $command);
+    sleep(2);
     fclose($socket);
 }
 
@@ -37,10 +40,10 @@ if( $_POST['cmd'] != "" )
         $newFileTime = exec( "date -r /mnt/TILDAS-CS-132/Commands/comlog.dat" );
 
         // Compare the file timestamps to check if the TILDAS recieved the command
-        for ($i = 0; $i < 3; $i++) {
+        for ($attempts = 0; $attempts < $MAX_ATTEMPTS; $attempts++) {
             // If the timestamp did not change, the command was not received: repeat the command
             if ($newFileTime == $oldFileTime) {
-                usleep(500000);
+                sleep(1);
                 sendCommandViaTCP("amass1\r\namwd1\r\n");
             }
         }
@@ -57,11 +60,11 @@ if( $_POST['cmd'] != "" )
         $newFileTime = exec( "date -r /mnt/TILDAS-CS-132/Commands/comlog.dat" );
 
         // Compare the file timestamps to check if the TILDAS recieved the command
-        for ($i = 0; $i < 3; $i++) {
+        for ($attempts = 0; $attempts < $MAX_ATTEMPTS; $attempts++) {
             // If the timestamp did not change, the command was not recieved: repeat the command
             if( $newFileTime == $oldFileTime )
             {
-                usleep(500000);
+                sleep(1);
                 sendCommandViaTCP("amass1\r\namwd1\r\n");
             }
         }
