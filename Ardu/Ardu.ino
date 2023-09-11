@@ -426,7 +426,6 @@ void setPressureX(float targetPressure)
     // Now see what to do
     if ( abs(Xpressure - targetPressure) <= 0.001 )
     {
-      // Serial.println( "Target pressure reached." );
       break;
     }
     else if ( (Xaxis.currentPosition() * 100.0000 / 62438.00 != 100  && Xaxis.currentPosition() * 100.0000 / 62438.00 > 0) || ( (Xpressure - targetPressure) < -0.001 && Xaxis.currentPosition() * 100.0000 / 62438.00 == 100) )
@@ -628,18 +627,20 @@ void switchRelay(String param)
 
 void sendStatus( String param )
 {
+
+  // Control the housing temperature
+  sensors_event_t humidity, temp;
+  shtc3.getEvent(&humidity, &temp);
+  boxTemp = temp.temperature;
+  boxHum = humidity.relative_humidity;
+  controlT();
+
   // Get all the current settings
   Xpressure = analogRead(A2) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
   Ypressure = analogRead(A3) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
   Apressure = analogRead(A4) * 500.00 / 1024;             // 0-1000 mbar Baratron
   Xpercentage = -0.12453 * analogRead(A0) + 104.83600;
   Ypercentage = -0.12438 * analogRead(A1) + 112.72790;
-
-  // Get box temperature and humidity from the sensor
-  sensors_event_t humidity, temp;
-  shtc3.getEvent(&humidity, &temp);
-  boxTemp = temp.temperature;
-  boxHum = humidity.relative_humidity;
 
   // Integrate temperatures and pressures
   int n = 50; // Integration cycles
@@ -682,7 +683,7 @@ void sendStatus( String param )
   // Preferably adjust the reference bellow
   // Divide Xpressure by pCO2Sam/pCO2Ref
   // If divided <1, then the reference pCO2 decreases
-  Xpressure = (Xpressure / n - 0.300) / 0.970942 * 0.952011; // Reference gas bellow
+  Xpressure = (Xpressure / n - 0.300) / 0.970942 * 0.952011 / 1.001206; // Reference gas bellow
   Ypressure = (Ypressure / n - 0.265);  // Gauge Y, sample bellow
   Apressure = Apressure / n - 5.0;      // Gauge A
 
@@ -749,10 +750,7 @@ void loop()
     string += command;
   }
 
-  controlT();
-
   // Perform a function based on on the command sent by the index.html
-
 
   if (string.substring(0, 1) == "V")
   {
