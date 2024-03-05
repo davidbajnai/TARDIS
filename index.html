@@ -1,0 +1,421 @@
+<!-- This is the script for the front panel: the graphical user interface to control the inlet system and the TILDAS -->
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="UTF-8">
+		<link rel = "stylesheet" type = "text/css" href = "controller/css/stylesheet.css">
+	</head>
+
+	<body style="background-color:#38342F;">
+	
+		<div id="wrap" style="position:relative;border:1.5px solid #F5F4F1;width:2010px;height:860px;border-radius:4px;">
+			
+			<!-- This is the schematic of the inlet system -->
+			<img src="controller/images/schaltbild.png" class="schaltbild" />
+
+			<!-- Some design elements and labels -->
+			<img src="controller/images/GZG_logo_color.png" class="logo" style="top:19px;" />
+			<img src="controller/images/GOE_logo_color.png" class="logo" style="top:790px;" />
+			<p class="label" style="top:39px;left:1030px;">N<sub>2</sub> purging</p>
+			<p class="label" style="top:155px;left:1030px;">Turbo</p>
+			<p class="label" style="top:230px;left:1030px;">Scroll</p>
+			<p class="label" style="top:700px;left:1030px;">Vent</p>	
+
+			<!-- Display the valves -->
+			<div style="top:125px;left:775px;">
+				<span class="valveNumberLabel">V01</span>
+				<img id="V01" src="" class="small" onclick="var status=$('#V01_label').html();toggleValve('V01',status);"/>
+				<span id="V01_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:125px;left:685px;">
+				<span class="valveNumberLabel">V02</span>
+				<img id="V02" src="" class="small" onclick="var status=$('#V02_label').html();toggleValve('V02',status);"/>
+				<span id="V02_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:470px;">
+				<span class="valveNumberLabel">V03</span>
+				<img id="V03" src="" class="small" onclick="var status=$('#V03_label').html();toggleValve('V03',status);"/>
+				<span id="V03_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:240px;">
+				<span class="valveNumberLabel">V04</span>
+				<img id="V04" src="" class="small" onclick="var status=$('#V04_label').html();toggleValve('V04',status);" />
+				<span id="V04_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:340px;left:411px;">
+				<span class="valveNumberLabel">V05</span>
+				<img id="V05" src="" class="small" onclick="var status=$('#V05_label').html();toggleValve('V05',status);" />
+				<span id="V05_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:345px;">
+				<span class="valveNumberLabel">V06</span>
+				<img id="V06" src="" class="small" onclick="var status=$('#V06_label').html();toggleValve('V06',status);" />
+				<span id="V06_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:475px;left:411px;">
+				<span class="valveNumberLabel">V07</span>
+				<img id="V07" src="" class="small" onclick="var status=$('#V07_label').html();toggleValve('V07',status);" />
+				<span id="V07_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:475px;left:190px;">
+				<span class="valveNumberLabel">V08</span>
+				<img id="V08" src="" class="small" onclick="var status=$('#V08_label').html();toggleValve('V08',status);" />
+				<span id="V08_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:905px;">
+				<span class="valveNumberLabel">V09</span>
+				<img id="V09" src="" class="small" onclick="var status=$('#V09_label').html();toggleValve('V09',status);" />
+				<span id="V09_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:1145px;">
+				<span class="valveNumberLabel">V10</span>
+				<img id="V10" src="" class="small" onclick="var status=$('#V10_label').html();toggleValve('V10',status);" />
+				<span id="V10_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:345px;left:973px;">
+				<span class="valveNumberLabel">V11</span>
+				<img id="V11" src="" class="small" onclick="var status=$('#V11_label').html();toggleValve('V11',status);" />
+				<span id="V11_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:1040px;">
+				<span class="valveNumberLabel">V12</span>
+				<img id="V12" src="" class="small" onclick="var status=$('#V12_label').html();toggleValve('V12',status);" />
+				<span id="V12_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:470px;left:973px;">
+				<span class="valveNumberLabel">V13</span>
+				<img id="V13" src="" class="small" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" />
+				<span id="V13_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:472px;left:1190px;">
+				<span class="valveNumberLabel">V14</span>
+				<img id="V14" src="" class="small" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" />
+				<span id="V14_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:703px;left:622px;">
+				<span class="valveNumberLabel">V15</span>
+				<img id="V15" src="" class="small" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" />
+				<span id="V15_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:595px;left:686px;">
+				<span class="valveNumberLabel">V16</span>
+				<img id="V16" src="" class="small" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" />
+				<span id="V16_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:158px;left:843px;">
+				<span class="valveNumberLabel">V17</span>
+				<img id="V17" src="" class="small" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" />
+				<span id="V17_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:145px;">
+				<span class="valveNumberLabel">V18</span>
+				<img id="V18" src="" class="small" onclick="var status=$('#V18_label').html();toggleValve('V18',status);" />
+				<span id="V18_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:231px;left:620px;">
+				<span class="valveNumberLabel">V19</span>
+				<img id="V19" src="" class="small" onclick="var status=$('#V19_label').html();toggleValve('V19',status);" />
+				<span id="V19_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:231px;left:540px;">
+				<span class="valveNumberLabel">V20</span>
+				<img id="V20" src="" class="small" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" />
+				<span id="V20_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:794px;left:622px;">
+				<span class="valveNumberLabel">V21</span>
+				<img id="V21" src="" class="small" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" />
+				<span id="V21_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:410px;left:1235px;">
+				<span class="valveNumberLabel">V22</span>
+				<img id="V22" src="" class="small" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" />
+				<span id="V22_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:703px;left:1319px;">
+				<span class="valveNumberLabel">V23</span>
+				<img id="V23" src="" class="small" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" />
+				<span id="V23_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:703px;left:1409px;">
+				<span class="valveNumberLabel">V24</span>
+				<img id="V24" src="" class="small" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" />
+				<span id="V24_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:703px;left:1499px;">
+				<span class="valveNumberLabel">V25</span>
+				<img id="V25" src="" class="small" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" />
+				<span id="V25_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:703px;left:1589px;">
+				<span class="valveNumberLabel">V26</span>
+				<img id="V26" src="" class="small" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" />
+				<span id="V26_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:231px;left:843px;">
+				<span class="valveNumberLabel" >V27</span>
+				<img id="V27" src="" class="small" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" />
+				<span id="V27_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:595px;left:775px;">
+				<span class="valveNumberLabel">V28</span>
+				<img id="V28" src="" class="small" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" />
+				<span id="V28_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:703px;left:905px;">
+				<span class="valveNumberLabel">V29</span>
+				<img id="V29" src="" class="small" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" />
+				<span id="V29_label" style="display:none;">undefined</span>
+			</div>
+			<div style="top:794px;left:775px;">
+				<span class="valveNumberLabel">V30</span>
+				<img id="V30" src="" class="small" onclick="var status=$('#V30_label').html();toggleValve('V30',status);" />
+				<span id="V30_label" style="display:none;">undefined</span>
+			</div>
+			
+			<div style="top:794px;left:905px;">
+				<span class="valveNumberLabel">V31</span>
+				<img id="V31" src="" class="small" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" />
+				<span id="V31_label" style="display:none;">undefined</span>
+			</div>
+
+			<!-- Not in use -->
+			<!-- <div style="top:794px;left:240px;">
+				<span class="valveNumberLabel">V32</span>
+				<img id="V32" src="" class="small" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" />
+				<span id="V32_label" style="display:none;">undefined</span>
+			</div> -->
+
+			<!-- Display the relays -->
+			<p class="label" style="top:752px;left:1070px;">Pump</p>
+			<div style="top:794px;left:1040px;">
+				<span class="valveNumberLabel">U01</span>
+				<img id="U01" src="" class="small" onclick="var status=$('#U01_label').html();toggleRelay('U01',status);"/>
+				<span id="U01_label" style="display:none;">undefined</span>
+			</div>
+			<!-- Not in use -->
+			<!-- <div style="top:794px;left:411px;">
+				<span class="valveNumberLabel">U02</span>
+				<img id="U02" src="" class="small" onclick="var status=$('#U02_label').html();toggleRelay('U02',status);"/>
+				<span id="U02_label" style="display:none;">undefined</span>
+			</div> -->
+
+			<!-- TILDAS control -->
+			<button onclick="startWritingData();" class="button medium" style="top:36px;left:645px;height:30px;">WD on</button>
+			<button onclick="stopWritingData();" class="button medium" style="top:66px;left:645px;height:30px;">WD off</button>
+			<div id="baratron" class="box medium" style="top:55px;left:720px;">CellP </div>
+			<p class="label" style="top:39px;left:790px;color:white;">Torr (cell)</p>
+
+			<!-- Bellows control -->
+			<img id="bellowsX" src="controller/images/bellows.png" class="bellows" style="top:510px;left:295px;" />
+			<img id="bellowsY" src="controller/images/bellows.png" class="bellows" style="top:510px;left:1100px;" />
+			<img id="bellowsZ" src="controller/images/bellows.png" class="bellows" style="top:320px;left:688px;" />
+			
+			<span id="pressureX" class="box small" style="top:353px;left:319px;">NaN</span>
+			<p class="label" style="top:312px;left:319px;">X (mbar)</p>
+			
+			<span id="pressureY" class="box small" style="top:353px;left:1128px;">NaN</span>
+			<p class="label" style="top:312px;left:1128px;">Y (mbar)</p>
+
+			<div id='pressureA' class="box small" style="top:555px;left:645px;"><em>NaN</em></div>
+			<p class="label" style="top:517px;left:645px;">A (mbar)</p>
+			<img id="loadingA" src="" class="icon" style="top:585px;left:645px;" />
+
+			<img id="motorX" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
+			<span id="percentageX_Steps" class="box small" style="top:625px;left:315px;">NaN</span>
+			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
+			<button onclick="moveBellows('X');" class="button small" style="top:655px;left:365px;">Set X</button>
+
+			<img id="motorY" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:1184px;" />
+			<span id="percentageY_Steps" class="box small" style="top:625px;left:1120px;">NaN</span>
+			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
+			<button onclick="moveBellows('Y');" class="button small" style="top:655px;left:1169px;">Set Y</button>
+			
+			<img id="motorZ" src="controller/images/standing_motor.gif" class="icon" style="top:450px;left:755px;" />
+			<span id="percentageZ_Steps" class="box small" style="top:450px;left:690px;">NaN</span>
+			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
+			<button onclick="moveBellows('Z');" class="button small" style="top:480px;left:740px;">Set Z</button>
+			<img id="warningZ" src="" class="icon" style="top:450px;left:650px;" />
+
+			<!-- Bellow parameters only necessary for the script to work -->
+			<span id="percentageX_Poti" class="box unimportant" style="top:653px;left:1700px;">NaN</span>
+			<span id="percentageY_Poti" class="box unimportant" style="top:653px;left:1750px;">NaN</span>
+			<span id="stepsZ" class="box unimportant" style="top:653px;left:1800px;">NaN</span>
+			
+			<!-- Mixing ratio indicators -->
+			<p class="label" style="top:170px;left:1700px;">Mixing ratios  <span class="decorative" >_________</span></p>
+			<span id="mr1" class="box medium" style="top:215px;left:1700px;">mr1</span>
+				<p class="label" style="top:200px;left:1770px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr2" class="box medium" style="top:245px;left:1700px;">mr2</span>
+				<p class="label" style="top:230px;left:1770px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr3" class="box medium" style="top:275px;left:1700px;">mr3</span>
+				<p class="label" style="top:260px;left:1770px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="mr4" class="box medium" style="top:305px;left:1700px;">mr4</span>
+				<p class="label" style="top:290px;left:1770px;">free-path CO<sub>2</sub> (ppmv)</p>
+			
+			<!-- Edwards gauge -->
+			<span id="edwards" class="box medium" style="top:353px;left:858px;">edwards</span>
+			<p class="label" style="top:312px;left:858px;">Vacuum (mbar)</p>
+			
+			<!-- Sequence and method parameters -->
+			<div style="top:19px;left:1370px;">
+				Sequence: <input type="file" id="uploadSequence">
+			</div>
+			
+			<div style="top:50px;left:1370px;">
+				Method: <input type="file" id="uploadMethod">
+			</div>
+
+			<div style="top:81px;left:1370px;">
+				User:
+				<select name='userName' id='userName'>
+					<option value='David Bajnai'>Bajnai, David</option>
+					<option value='Thierry Wasselin'>Wasselin, Thierry</option>
+					<option value='Dennis Kohl'>Kohl, Dennis</option>
+					<option value='Tommaso Di Rocco'>Di Rocco, Tommaso</option>
+					<option value='Andreas Pack'>Pack, Andreas</option>
+					<option value='Oliver Jaeger'>Jäger, Oliver</option>
+					<option value='Dingsu Feng'>Feng, Dingsu</option>
+					<option value='Fabian Zahnow'>Zahnow, Fabian</option>
+					<option value='Praktikum'>Praktikum</option>
+				</select>
+			</div>
+
+			<div id="sequence" class="scroll" style="top:190px;left:1370px;width:300px;height:150px;"></div>
+			<div id="method" class="scroll" style="top:353px;left:1370px;width:300px;height:318px;"></div>
+
+			<div id='progressBar' style='top:140px;left:1370px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
+			<div id='progress' style='top:140px;left:1370px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
+			<div id="moveStatus" class="info" style="width:307px;top:120px;left:1370px;text-align: right;">-</div>
+			<div id='methodStatus' class="info" style='top:120px;left:1370px;'>Standby</div>
+			
+			<!-- Environment -->
+			<p class="label" style="top:170px;left:30px;">Environment <span class="decorative">_________</span></p>
+			<div id='housingT' class="box medium" style="top:215px;left:30px;">99</div>
+			<p class="label" style="top:200px;left:100px;">°C (box)</p>
+			<div id='setPointTemperature' class="box medium" style="top:245px;left:30px;">99</div>
+			<p class="label" style="top:230px;left:100px;">°C (SP)</p>
+			<div id='fanSpeed' class="box medium" style="top:275px;left:30px;">99</div>
+			<p class="label" style="top:260px;left:100px;">fan speed</p>
+			<div id='roomRH' class="box medium" style="top:305px;left:30px;">99</div>
+			<p class="label" style="top:290px;left:100px;">%rH (box)</p>
+			<div id='roomTemperature' class="box medium" style="top:335px;left:30px;">99</div>
+			<p class="label" style="top:320px;left:100px;">°C (room)</p>
+			<div id='roomHumidity' class="box medium" style="top:365px;left:30px;">99</div>
+			<p class="label" style="top:350px;left:100px;">%rH (room)</p>
+
+			<!-- Script variables -->
+			<p class="label" style="top:335px;left:1700px;">Script variables <span class="decorative">_________</span></p>
+			<div id="sampleName"			  class="info" style="top:380px;left:1700px;">Sample name</div>
+			<div id="timeMeasurementStarted"  class="info" style="top:400px;left:1700px;">Time measurement started</div>
+			<div id="folderName"			  class="info" style="top:420px;left:1700px;">Folder name</div>
+			<div id="cellTargetPressure"	  class="info" style="top:440px;left:1700px;">Cell target pressure</div>
+			<div id="nitrogenTargetPressure"  class="info" style="top:460px;left:1700px;">Collision gas target pressure</div>
+			<div id="refgasTargetPressure"	  class="info" style="top:480px;left:1700px;">Reference target pressure</div>
+			<div id="samgasTargetPressure"	  class="info" style="top:500px;left:1700px;">Sample target pressure</div>
+			<div id="sample_pCO2"			  class="info" style="top:520px;left:1700px;">Sample pCO<sub>2</sub></div>
+			<div id="reference_pCO2"		  class="info" style="top:540px;left:1700px;">Reference pCO<sub>2</sub></div>
+			<div id="correction_pCO2"		  class="info" style="top:560px;left:1700px;">1.000</div>
+			<div style="top:620px;left:1700px;">
+				Polynomial: <input type="number" id="polynomial" value="100" style="width:100px;">
+			</div>
+
+			<!-- The main buttons -->
+			<button onclick="startSequenceButton();" class="button big" style="top:140px;left:1240px;background-color:#63A615;">Start sequence</button>
+			<button onclick="startingPosition();" class="button big" style="top:190px;left:1240px;background-color:#9A6CA6;">Starting position</button>
+			<button onclick="showResultsButton();" class="button big" style="top:230px;left:1240px;">See results</button>
+
+			<!-- Zugzielanzeiger -->
+			<span id="infoJS" class="Zugzielanzeiger" style="top:35px;left:150px;">NaN</span>
+			<div id="cycle" style="top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
+			<div id="digital" class="Zugzielanzeiger" style="top:85px;left:150px;">Time</div>
+			<canvas id="Bahnhofsuhr" class="clock"></canvas>
+
+		</div>
+		
+		</br>
+
+		<details>
+			<summary>Quick start</summary>
+			<ol>
+				<li>Ensure that no sequence is currently running.</li>
+				<li>Reload the front panel webpage (http://localhost).</li>
+				<li>Attach the manifold to the inlet system and plug in the corresponding yellow tubes.</li>
+				<li>Pump the vented volume between the green valve on the manifold and V22. First use the scroll pump then the turbo.</li>
+				<li>Once the vacuum reaches 0.0001 mbar, open the green valve manually.</li>
+				<li>Click the <b><span style="color: #9A6CA6">violet</span></b> <em>Starting position</em> button.</li>
+				<li>To choose the measurement sequence, click the <em>Sequence: Choose File</em> button.</li>
+				<ul>
+				<li>The sequence .csv files are usually in the /home/pi/Desktop folder.</li>
+				<li>You can modify the existing sampleSequence.csv file, or create a new file. The file name does not matter.</li>
+				<li>Modifying a sequence file after it is loaded in will not automatically update on the front panel. You have to refresh the front panel and upload the modified sequence.</li>
+				</ul>
+				<li>To start the measurement, click the <b><span style="color: #63A615">green</span></b> <em>Start sequence</em> button.</li>
+			</ol>
+		</details>
+
+		</br>
+
+		<details>
+
+			<summary>User manual</summary>
+
+			<h3>General notes</h3>
+			<ul>
+				<li>Before stopping the serialComm.py or the Arduino, make sure the Z bellow is at 50%!</li>
+				<li>To reprocess a single measurement: http://192.168.1.242/evaluateData.php?sampleName=221223_025949_test_Air&polynomial=100</li>
+				<li>To reprocess a multiple measurements: /usr/bin/python /var/www/html/Python/batchReprocess.py</li>
+			</ul>
+			
+			<h3>Startup</h3>
+			<ul>
+				<li>To turn the TILDAS on: (1) plug it in, (2) toggle the power switch in the back, (3) turn on the main swith on the front.</li>
+				<li>To allow streaming data from the TILDAS to the rPi, click the "RS" on (TDLWintel bottom left) and set the mode to "Stream Data" (TDLWintel top left).</li>
+				<li>If Python does not get data from the TILDAS (all mixing ratios are zero) toggle the "RS" button in TDLWintel.</li>
+				<li>Start the communication script: /usr/bin/python /var/www/html/Python/serialComm.py</li>
+			</ul>
+
+			<h3>Methods and sequences</h3>
+			<p>The general structure of a command-line in the method files is "command,parameter,wait".
+			You can edit the method .csv files using a text editor or VSCode. The parameter is used for most command types, ignored for some, but it always has to be present.</br>
+			<b>Sequences and methods should always start from a specific starting situation.</b> You can reset the valves to this situation by pressing the <em>Starting Position</em> button.</p>
+			<ul>
+				<li>V03,0,15, &lt;--- Close valve 3 and wait 15 s. See <em>Valve info</em> for additional details.</li>
+				<li>V13,1,12, &lt;--- Open valve 13 and wait 12 s</li>
+				<li>WC,0,5, &lt;--- Write current cell presure on front panel.</li>
+				<li>WA,0,7, &lt;--- Write current pressure at gauge A on the front panel.</li>
+				<li>WR,0,12, &lt;--- Write current reference CO<sub>2</sub> pressure (gauge X) on the front panel. This value is reset after the method is finished.</li>
+				<li>WS,0,6, &lt;--- Write current sample CO<sub>2</sub> pressure (gauge Y) on the front panel. This value is reset after the method is finished.</li>
+				<li>CM,0,1, &lt;--- Write current <em>p</em>CO<sub>2</sub> on the front panel for mixing ratio adjustment. Parameter 0 is for reference gas and 1 for sample gas. This value is reset after the method is finished.</li>
+				<li>IA,363,7, &lt;--- <b>I</b>ntroduces <b>A</b>ir. Opens V15, waits until the pressure on gauge A reaches the value set in the parameter, then closes valves V15.</li>
+				<li>RS,1.700,1, &lt;--- <b>R</b>efill <b>S</b>ample (Y) bellow incrementally from the volume right to V22 to a target pressure set by the parameter. Line needs to be pumped and in starting position and sample bellow at 100%.</li>
+				<li>TWD,1,1, &lt;--- Starts the TILDAS writing data.</li>
+				<li>TWD,0,1, &lt;--- Stops the TILDAS writing data.</li>
+				<li>BX,45.3,12, &lt;--- Move bellows X to 45.3%.</li>
+				<li>BX,-7.2,12, &lt;--- Move bellows X by -7.2% relative to the current position.</li>
+				<li>BY,25.3,12, &lt;--- Move bellows Y to 25.3%.</li>
+				<li>BY,+4.5,12, &lt;--- Move bellows Y by 4.5% relative to the current position.</li>
+				<li>BZ,25.3,12, &lt;--- Move bellows Z to 25.3%. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
+				<li>PX,1.653,10, &lt;--- Move bellows X or expand the gas so that the pressure is 1.653 mbar in bellows X. <b>The starting situation should be V05C, V07C, V06O.</b></li>
+				<li>PY,1.653,10, &lt;--- Move bellows Y so that the pressure is 1.653 mbar in bellows Y. <b>The starting situation should be V11C, V13C, V12O.</b></li></li>
+				<li>QC,39.387,10, &lt;--- Set the cell pressure by moving bellows Z to the pressure written by command WC on the front panel. The parameter 39.387 is only used in case that there is no value given on the frontpanel.</li>
+				<li>SN,366,10, &lt;--- Set the pressure at gauge A by moving bellows Z. The parameter (e.g., 366) is used, unless it is 0. Otherwise the value written by command WA on the front panel is used.</li>
+			</ul>
+
+			<h3>Valve info</h3>
+			<ul>
+				<li>V19 and V20 are linked together, and do not allow to be opened at the same time. When either is opened, the other one closes.</li>
+				<li>V17 and V27 are linked together, and do not allow to be opened at the same time. When either is opened, the other one closes.</li>
+			</ul>
+		</details>
+		
+		<!-- JavaScript files -->
+		<!-- The jQuery is downloaded so that it works without an internet connection -->
+		<script src="controller/js/jQuery_v3.7.1.js"></script>
+		<script src="controller/js/frontPanel.js"></script>
+		
+		</body>
+</html>
