@@ -1,5 +1,5 @@
 <!-- This is the README file for GitHub -->
-# TARDIS: <img src="Images/TARDIS_logo.png" align="right" width="105"/> <br/> TILDAS + Automated Remix & Dual Inlet System
+# TARDIS: <img src="data/images/TARDIS_logo.png" align="right" width="105"/> <br/> TILDAS + Automated Remix & Dual Inlet System
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8337576.svg)](https://doi.org/10.5281/zenodo.8337576)
 [![CodeFactor](https://www.codefactor.io/repository/github/davidbajnai/tardis/badge?s=e60c8acc0095fc83f8522a69115b1e3ed10c7320)](https://www.codefactor.io/repository/github/davidbajnai/tardis)
