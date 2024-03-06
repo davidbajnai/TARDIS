@@ -26,13 +26,3 @@ it under the terms of the [GNU General Public License version 3](LICENSE), or (a
 but without any warranty.
 
 Please follow the [provided citation format](CITATION.cff) when referencing this software.
-
-<hr>
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="Images/GZG_logo_white.png">
-    <img src="/controller/images/GZG_logo_black.png" align="left" height="90">
-</picture>
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="Images/GOE_logo_white.png">
-    <img src="/controller/images/GOE_logo_black.png" align="right" height="80"/>
-</picture>
