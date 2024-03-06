@@ -17,6 +17,8 @@ The inlet system and the methods we use to measure the triple oxygen isotope com
 
 The supplementary files of the manuscript are deposited in the [Manuscript](/data/Manuscript) folder.
 
+[Release v2.0](https://github.com/davidbajnai/TARDIS/tree/v2.0) includes the original files used in the manuscript. Improvements made since publication are listed in the [Changelog](CHANGELOG.md). 
+
 ## License
 
 Copyright (C) 2023 <a href="https://davidbajnai.eu">David Bajnai</a>, <a href="https://www.uni-goettingen.de/en/78572.html">Andreas Pack</a>
