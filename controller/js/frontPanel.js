@@ -397,6 +397,7 @@ $("body").on("change", "#uploadSequence", function () {
         processData: false,
         contentType: false,
         success: function (result) {
+
             console.log(`${new Date().toLocaleTimeString()}, `+ "Sequence uploaded sucessfully");
 
             // Delete all elements in div sequence
@@ -732,8 +733,6 @@ setInterval(function () {
                 $("#pressureA").html(),
                 $("#edwards").html().trim(),
                 parseFloat($("#fanSpeed").html()),
-                parseFloat($("#roomTemperature").html()),
-                parseFloat($("#roomHumidity").html()),
             ]);
 
             if (currentTime % 30 == 0) {

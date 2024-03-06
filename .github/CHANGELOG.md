@@ -1,11 +1,12 @@
-# version 2.1.9000
+# version 3.0.9000
 
+## Hardware
 * Replaced the Raspberry Pi 4 with a mini computer running Ubuntu
-* Restructured the html folder
-* Updated the evaluateData.php to work with the new server
+* Removed room temperature and humidity sensor
+
+## Software
+* Restructured the html folder to follow the model–view–controller pattern
+* Updated the evaluateData.php to use SSH to transfer files
 * Updated the evaluateData.py to speed it up
-* The insulated box's temperature PID controller is now running on a second Arduino
-* Removed fanspeed from the Arduino's data stream
 * Removed room temperature and room humidity values from front panel and logfile
-* Donwloaded jQuery to work offline
-* minor improvments and bug fixes
+* Additional minor improvments and bug fixes

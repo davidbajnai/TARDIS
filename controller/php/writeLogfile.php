@@ -19,7 +19,7 @@ if (str_contains($sampleName, "refill")) {
 // Create a logfile if it doesnt exist yet
 if (file_exists($folderName . "/logFile.csv") === false) {
     // Name the header row
-    file_put_contents($folderName . "/logFile.csv", "sampleName,Time(abs),boxTemperature,boxSetpoint,boxHumidity,percentageX,percentageY,percentageZ,pressureX,pressureY,pressureA,vacuum,fanSpeed,roomTemperature,roomHumidity\n", FILE_APPEND  | LOCK_EX);
+    file_put_contents($folderName . "/logFile.csv", "sampleName,Time(abs),boxTemperature,boxSetpoint,boxHumidity,percentageX,percentageY,percentageZ,pressureX,pressureY,pressureA,vacuum,fanSpeed\n", FILE_APPEND  | LOCK_EX);
 }
 
 // Add data to the logfile

@@ -25,7 +25,7 @@ if (isset($_POST['sampleName'])) {
 // Start the timer
 $start_time = microtime(true);
 
-$cmd = "/usr/bin/python3 Python/evaluateData.py " . $sampleName . " " . $polynomial . " 2>&1";
+$cmd = "python3 ../python/evaluateData.py " . $sampleName . " " . $polynomial . " 2>&1";
 $result = shell_exec($cmd); // isotope ratios from the evaluation script
 
 // Stop the timer
@@ -46,8 +46,7 @@ if (trim($resultArray[1]) != "(most") // Only upload if data make sense
     echo "<br>Uploading results to the database...<br>";
 
     // Create a ZIP archive of all data and upload that too the isolaborserver
-    // exec("cd /var/www/html/Results/$sampleName/ && zip -j $sampleName.zip *");
-    // echo "<br />Data zipped.<br />";
+    exec("cd /var/www/html/data/Results/$sampleName/ && zip -j $sampleName.zip *");
 
     // Set additional POST fields
     $postData = array(
@@ -84,35 +83,65 @@ if (trim($resultArray[1]) != "(most") // Only upload if data make sense
     echo "<br><br>Uploading files to server...<br>";
 
     // Open ftp server
-    include_once('controller/config/.config.php');
+    include_once('../config/.config.php');
 
     $filesToUpload = array(
         "FitPlot.png",
-        "bracketingResults.png"
+        "bracketingResults.png",
+        "rawData.png",
+        "$sampleName.zip"
     );
 
-    $localDirectory = "/var/www/html/Results/" . $sampleName;
+    $localDirectory = "/var/www/html/data/Results/" . $sampleName;
     $remoteDirectory = "/var/www/html/data";
+
+    $connection = ssh2_connect($server_IP);
+    if (!$connection) {
+        die("Failed to connect to the SSH server.\n");
+    }
+
+    // Authenticate with the SSH server
+    if (!ssh2_auth_password($connection, $username, $password)) {
+        die("Failed to authenticate with the SSH server.\n");
+    }
+
+    // Initialize SFTP subsystem
+    $sftp = ssh2_sftp($connection);
+    if (!$sftp) {
+        die("Failed to initialize SFTP subsystem.\n");
+    }
 
     foreach ($filesToUpload as $fileName) {
         $localFilePath = "$localDirectory/$fileName";
         $remoteFilePath = "$remoteDirectory/$fileName";
-    
-        // Construct the SCP command
-  
-        // Execute the SCP command
-        exec("scp -P $port -i /home/pi/.ssh/id_rsa $localFilePath $username@$server:$remoteFilePath 2>&1", $output, $returnCode);
-            
-        if ($returnCode !== 0) {
-            echo "Failed to upload file: $fileName<br>";
-            echo "SCP command output: " . implode("\n", $output) . "<br>";
-        } else {
-            echo "File uploaded successfully: $fileName\n";
+
+        // Upload the file via SFTP
+        $stream = fopen("ssh2.sftp://$sftp$remoteFilePath", 'w');
+        if (!$stream) {
+            echo "Failed to open remote file for writing: $remoteFilePath\n";
+            continue;
         }
+
+        $data = file_get_contents($localFilePath);
+        if ($data === false) {
+            echo "Failed to read local file: $localFilePath\n";
+            fclose($stream);
+            continue;
+        }
+
+        $bytesWritten = fwrite($stream, $data);
+        fclose($stream);
+
+        if ($bytesWritten === false) {
+            echo "Failed to write data to remote file: $remoteFilePath\n";
+            continue;
+        }
+
+        echo "File uploaded successfully: $fileName</br>";
     }
 
     // Delete some of the local files to save space on the Raspberry
-    exec("rm Results/$sampleName/$sampleName.zip");
+    exec("rm /var/www/html/data/Results/$sampleName/$sampleName.zip");
     // exec("rm Results/$sampleName/*.png");
-    exec("rm Results/$sampleName/bracketingResults.xlsx");
+    exec("rm /var/www/html/data/Results/$sampleName/bracketingResults.xlsx");
 }

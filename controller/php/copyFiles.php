@@ -26,7 +26,7 @@ if (str_contains($folderName, "folder") === true) {
 $StartDate = DateTime::createFromFormat('U', $StartDate)->setTimezone(new DateTimeZone('CET'));
 echo "Search files created after: " . date_format($StartDate, 'ymd_His' . "\n");
 
-$path = '/mnt/TILDAS-CS-132/Data';
+$path = '/mnt/TILDAS_PC/Data';
 $files = getFiles($path);
 
 if (empty($files)) {
@@ -34,7 +34,7 @@ if (empty($files)) {
 } else {
     foreach ($files as $file) {
         if ($file[0] == "2" && $file[6] == "_" && $file[13] == "." && (substr($file, -3) == "str" || substr($file, -3) == "stc") && DateTimeImmutable::createFromFormat('ymd_His', substr($file, 0, 13)) > $StartDate) {
-            exec("cp /mnt/TILDAS-CS-132/Data/$file $folderName/$file");
+            exec("cp /mnt/TILDAS_PC/Data/$file $folderName/$file");
         }
     }
 }

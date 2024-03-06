@@ -2,7 +2,7 @@
 
 # Import libraries
 import os
-os.environ['MPLCONFIGDIR'] = "/var/www/html/Python"
+os.environ['MPLCONFIGDIR'] = "/var/www/html/controller/python"
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 import warnings
@@ -76,7 +76,7 @@ def combinedFunction(comboData, r0, s0, a1, a2, a3):
 
 # Import measurement info
 samID = str(sys.argv[1])  # Something like 230118_084902_heavyVsRef
-folder = "../Results/" + samID + "/"
+folder = "/var/www/html/data/Results/" + samID + "/"
 polynomial = str(sys.argv[2])  # String
 
 # Calculate the start time of the measurement.
@@ -103,7 +103,6 @@ else:
 i = 0
 for file in strFiles:
     baseName = file[:-4]
-
     # The .str files contain the isotopologue mixing ratios
     dfstr = pd.read_csv(folder + baseName + ".str", names=["Time(abs)", "I627", "I628", "I626", "CO2"], delimiter=" ", skiprows=1, index_col=False)
     
@@ -123,7 +122,7 @@ for file in strFiles:
     if i == 0:
         dfAll = df
     else:
-        dfAll = dfAll.append(df, ignore_index=True)
+        dfAll = pd.concat([dfAll, df], ignore_index=True)
     i = i + 1
 df = dfAll
 
@@ -480,7 +479,7 @@ else:
         dfm = df.loc[df['Cycle'] > 0]
         cy = 2 # the number of the first proper reference cycle
 
-    dfm = dfm.groupby(['Cycle'])['Time(rel)',"d17O_raw","d18O_raw","Dp17O_raw"].mean()
+    dfm = dfm.groupby(['Cycle'])[['Time(rel)', "d17O_raw", "d18O_raw", "Dp17O_raw"]].mean()
     plt.scatter(dfm.iloc[:,0], dfm.iloc[:,1], marker = "*", s = 20, c = colBracketing, label = "Cycle avg", zorder = 5)
 
     while cy < df['Cycle'].max():
@@ -774,7 +773,7 @@ else:
     # dfBracketingResults['IH_score'] = modified_z_score
 
     # Export bracketing data to a file, including outliers
-    dfBracketingResults.to_excel(excel_writer=folder + "bracketingResults.xlsx", header = True, index = False)
+    # dfBracketingResults.to_excel(excel_writer=folder + "bracketingResults.xlsx", header = True, index = False)
 
     # Final bracketing results
     d18O_SRB = round(np.mean(dfBracketingResults['d18O']), 3)

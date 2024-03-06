@@ -8,7 +8,7 @@ if (isset($_POST['methodFileName'])) {
     // Get the name of the uploaded file
     $filename = $_POST['methodFileName'];
     // The file should be here
-    $location = "./Methods/" . $filename;
+    $location = "../../data//Methods/" . $filename;
 
 } else if (isset($_FILES['file']['name'])) {
 
@@ -23,12 +23,12 @@ if (isset($_POST['methodFileName'])) {
     }
 
     // Choose where to save the uploaded file
-    $location = "./Methods/" . $filename;
+    $location = "../../data/Methods/" . $filename;
 
     // Save the uploaded file to the local filesystem
     if ( !move_uploaded_file($_FILES['file']['tmp_name'], $location) )
     { 
-        error_log("Method file could not be saved to ../html/Methods"); 
+        error_log("Method file could not be saved to $location"); 
         exit;
     }
 
