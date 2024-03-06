@@ -1,5 +1,5 @@
 <!-- This is the README file for GitHub -->
-# TARDIS: <img src="/data/images/TARDIS_logo.png" align="right" width="105"/> <br/> TILDAS + Automated Remix & Dual Inlet System
+# TARDIS: <img src="/controller/images/TARDIS_logo.png" align="right" width="105"/> <br/> TILDAS + Automated Remix & Dual Inlet System
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8337576.svg)](https://doi.org/10.5281/zenodo.8337576)
 [![CodeFactor](https://www.codefactor.io/repository/github/davidbajnai/tardis/badge?s=e60c8acc0095fc83f8522a69115b1e3ed10c7320)](https://www.codefactor.io/repository/github/davidbajnai/tardis)
@@ -30,9 +30,9 @@ Please follow the [provided citation format](CITATION.cff) when referencing this
 <hr>
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="Images/GZG_logo_white.png">
-    <img src="/data/images/GZG_logo_black.png" align="left" height="90">
+    <img src="/controller/images/GZG_logo_black.png" align="left" height="90">
 </picture>
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="Images/GOE_logo_white.png">
-    <img src="/data/images/GOE_logo_black.png" align="right" height="80"/>
+    <img src="/controller/images/GOE_logo_black.png" align="right" height="80"/>
 </picture>
