@@ -300,12 +300,6 @@
 			<p class="label" style="top:230px;left:100px;">°C (SP)</p>
 			<div id='fanSpeed' class="box medium" style="top:275px;left:30px;">99</div>
 			<p class="label" style="top:260px;left:100px;">fan speed</p>
-			<div id='roomRH' class="box medium" style="top:305px;left:30px;">99</div>
-			<p class="label" style="top:290px;left:100px;">%rH (box)</p>
-			<div id='roomTemperature' class="box medium" style="top:335px;left:30px;">99</div>
-			<p class="label" style="top:320px;left:100px;">°C (room)</p>
-			<div id='roomHumidity' class="box medium" style="top:365px;left:30px;">99</div>
-			<p class="label" style="top:350px;left:100px;">%rH (room)</p>
 
 			<!-- Script variables -->
 			<p class="label" style="top:335px;left:1700px;">Script variables <span class="decorative">_________</span></p>
@@ -374,7 +368,7 @@
 				<li>To turn the TILDAS on: (1) plug it in, (2) toggle the power switch in the back, (3) turn on the main swith on the front.</li>
 				<li>To allow streaming data from the TILDAS to the rPi, click the "RS" on (TDLWintel bottom left) and set the mode to "Stream Data" (TDLWintel top left).</li>
 				<li>If Python does not get data from the TILDAS (all mixing ratios are zero) toggle the "RS" button in TDLWintel.</li>
-				<li>Start the communication script: /usr/bin/python /var/www/html/controller/python/serialComm.py</li>
+				<li>Start the communication script: python3 /var/www/html/controller/python/serialComm.py</li>
 			</ul>
 
 			<h3>Methods and sequences</h3>

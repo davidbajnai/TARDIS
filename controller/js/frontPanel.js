@@ -12,7 +12,7 @@ var cmd = "";
 function sendCommand(cmd) {
     $.ajax({
         type: "POST",
-        url: "sendCommand.php",
+        url: "controller/php/sendCommand.php",
         data: { cmd: cmd },
         async: false,
         success: function (response) {
@@ -24,37 +24,37 @@ function sendCommand(cmd) {
             // Display some images based on moveStatus
             if (
                 statusArr[1] == "IA" &&
-                $("#loadingA").attr("src") != "Images/loading.gif"
+                $("#loadingA").attr("src") != "controller/images/loading.gif"
             ) {
-                $("#loadingA").attr("src", "Images/loading.gif");
+                $("#loadingA").attr("src", "controller/images/loading.gif");
             } else if (statusArr[1] != "IA") {
                 $("#loadingA").attr("src", "");
             }
 
             if (
                 statusArr[1] == "MX" &&
-                $("#motorX").attr("src") == "Images/standing_motor.gif"
+                $("#motorX").attr("src") == "controller/images/standing_motor.gif"
             ) {
-                $("#motorX").attr("src", "Images/rotating_motor.gif");
+                $("#motorX").attr("src", "controller/images/rotating_motor.gif");
             } else if (
                 statusArr[1] == "MY" &&
-                $("#motorY").attr("src") == "Images/standing_motor.gif"
+                $("#motorY").attr("src") == "controller/images/standing_motor.gif"
             ) {
-                $("#motorY").attr("src", "Images/rotating_motor.gif");
+                $("#motorY").attr("src", "controller/images/rotating_motor.gif");
             } else if (
                 statusArr[1] == "MZ" &&
-                $("#motorZ").attr("src") == "Images/standing_motor.gif"
+                $("#motorZ").attr("src") == "controller/images/standing_motor.gif"
             ) {
-                $("#motorZ").attr("src", "Images/rotating_motor.gif");
+                $("#motorZ").attr("src", "controller/images/rotating_motor.gif");
             } else if (
                 statusArr[1] == "-" &&
-                ($("#motorX").attr("src") == "Images/rotating_motor.gif" ||
-                    $("#motorY").attr("src") == "Images/rotating_motor.gif" ||
-                    $("#motorZ").attr("src") == "Images/rotating_motor.gif")
+                ($("#motorX").attr("src") == "controller/images/rotating_motor.gif" ||
+                    $("#motorY").attr("src") == "controller/images/rotating_motor.gif" ||
+                    $("#motorZ").attr("src") == "controller/images/rotating_motor.gif")
             ) {
-                $("#motorX").attr("src", "Images/standing_motor.gif");
-                $("#motorY").attr("src", "Images/standing_motor.gif");
-                $("#motorZ").attr("src", "Images/standing_motor.gif");
+                $("#motorX").attr("src", "controller/images/standing_motor.gif");
+                $("#motorY").attr("src", "controller/images/standing_motor.gif");
+                $("#motorZ").attr("src", "controller/images/standing_motor.gif");
             }
 
             // X bellows
@@ -82,9 +82,9 @@ function sendCommand(cmd) {
 
             if (
                 statusArr[6] != 7980 &&
-                $("#warningZ").attr("src") != "Images/warning.png"
+                $("#warningZ").attr("src") != "controller/images/warning.png"
             ) {
-                $("#warningZ").attr("src", "Images/warning.png");
+                $("#warningZ").attr("src", "controller/images/warning.png");
             } else if (statusArr[6] == 7980) {
                 $("#warningZ").attr("src", "");
             }
@@ -155,12 +155,12 @@ function sendCommand(cmd) {
                 if (valveArray.charAt(i - 1) == "0") {
                     $("#V" + n + i.toString()).attr(
                         "src",
-                        "Images/" + positions[i - 1] + "_closed.png"
+                        "controller/images/" + positions[i - 1] + "_closed.png"
                     );
                 } else {
                     $("#V" + n + i.toString()).attr(
                         "src",
-                        "Images/" + positions[i - 1] + "_open.png"
+                        "controller/images/" + positions[i - 1] + "_open.png"
                     );
                 }
                 i = i + 1;
@@ -173,9 +173,9 @@ function sendCommand(cmd) {
             while (i <= 2) {
                 $("#U" + "0" +  i.toString() + "_label").html(relayArray[i - 1]);
                 if (relayArray[i - 1] == 0) {
-                    $("#U" + "0" + i.toString()).attr("src", "Images/relay_off.png");
+                    $("#U" + "0" + i.toString()).attr("src", "controller/images/relay_off.png");
                 } else {
-                    $("#U" + "0" + i.toString()).attr("src", "Images/relay_on.png");
+                    $("#U" + "0" + i.toString()).attr("src", "controller/images/relay_on.png");
                 }
                 i = i + 1;
             }
@@ -215,14 +215,6 @@ function sendCommand(cmd) {
             // Edwards vacuum gauge
             var edwards = statusArr[24];
             $("#edwards").html(parseFloat(edwards).toFixed(4));
-
-            // Room humidity
-            var roomHumidity = statusArr[25];
-            $("#roomHumidity").html(roomHumidity);
-
-            // Room temperature
-            var roomTemperature = statusArr[26];
-            $("#roomTemperature").html(roomTemperature);
 
             // Reset the command string
             cmd = "";
@@ -341,7 +333,7 @@ var colArr = [];
 // Load next method in sequence
 function loadMethod(methodFileName) {
     $.ajax({
-        url: "uploadMethod.php",
+        url: "controller/php/uploadMethod.php",
         data: { methodFileName: methodFileName },
         type: "POST",
         success: function (result) {
@@ -383,7 +375,7 @@ $("body").on("change", "#uploadMethod", function () {
     var data = new FormData();
     data.append("file", this.files[0]);
     $.ajax({
-        url: "uploadMethod.php",
+        url: "controller/php/uploadMethod.php",
         data: data,
         type: "POST",
         processData: false,
@@ -399,7 +391,7 @@ $("body").on("change", "#uploadSequence", function () {
     var data = new FormData();
     data.append("file", this.files[0]);
     $.ajax({
-        url: "uploadSequence.php",
+        url: "controller/php/uploadSequence.php",
         data: data,
         type: "POST",
         processData: false,
@@ -445,7 +437,7 @@ function createFolder() {
     console.log(`${new Date().toLocaleTimeString()}, ` + "Calling createFolder.php");
     $.ajax({
         type: "POST",
-        url: "createFolder.php",
+        url: "controller/php/createFolder.php",
         async: false,
         data: {
             date: $("#timeMeasurementStarted").html(), // Date and time when measurement started in UNIX format & UTC timezone
@@ -462,7 +454,7 @@ function createFolder() {
 function writeLogfile(logData, folderName, sampleName) {
     $.ajax({
         type: "POST",
-        url: "writeLogfile.php",
+        url: "controller/php/writeLogfile.php",
         data: {
             sampleName: sampleName,
             logData: logData,
@@ -481,7 +473,7 @@ function copyFiles() {
     console.log(`${new Date().toLocaleTimeString()}, `+ "Calling copyFiles.php");
     $.ajax({
         type: "POST",
-        url: "copyFiles.php",
+        url: "controller/php/copyFiles.php",
         async: false,
         data: {
             date: $("#timeMeasurementStarted").html(), // In UNIX format & UTC timezone
