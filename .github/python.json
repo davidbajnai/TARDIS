@@ -1,7 +1,7 @@
 {
     "url": "https://github.com/davidbajnai/TARDIS/master/.github/python.json",
     "query": "$.version",
-    "name": "3.10",
+    "version": "3.10",
     "label": "Python",
     "labelColor": "yellow",
     "color": "green",
