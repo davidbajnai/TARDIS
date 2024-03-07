@@ -58,7 +58,7 @@ function sendCommand(cmd) {
             }
 
             // X bellows
-            $("#percentageX_Steps").html(parseFloat(statusArr[2]).toFixed(2)); // bellow expansion based on motor steps
+            $("#percentageX").html(parseFloat(statusArr[2]).toFixed(2)); // bellow expansion based on motor steps
             $("#percentageX_Poti").html(parseFloat(statusArr[3]).toFixed(1)); // bellow expansion based on potentiometer
             $("#bellowsX").css(
                 "height",
@@ -66,7 +66,7 @@ function sendCommand(cmd) {
             );
 
             // Y bellows
-            $("#percentageY_Steps").html(parseFloat(statusArr[4]).toFixed(2)); // bellow expansion based on motor steps
+            $("#percentageY").html(parseFloat(statusArr[4]).toFixed(2)); // bellow expansion based on motor steps
             $("#percentageY_Poti").html(parseFloat(statusArr[5]).toFixed(1)); // bellow expansion based on potentiometer
             $("#bellowsY").css(
                 "height",
@@ -74,7 +74,7 @@ function sendCommand(cmd) {
 
             // Z bellows
             $("#stepsZ").html(parseInt(statusArr[6]));
-            $("#percentageZ_Steps").html(parseFloat(statusArr[7]).toFixed(1));
+            $("#percentageZ").html(parseFloat(statusArr[7]).toFixed(1));
             $("#bellowsZ").css(
                 "height",
                 parseInt(10 + 0.9 * statusArr[7]) + "px"
@@ -89,24 +89,20 @@ function sendCommand(cmd) {
                 $("#warningZ").attr("src", "");
             }
 
-            // statusArr[8] is a control string "A"
-
             // X baratron in mbar (max. 5 mbar)
-            var pressureX = parseFloat(statusArr[9]);
+            var pressureX = parseFloat(statusArr[8]);
             $("#pressureX").html(pressureX.toFixed(3));
 
             // Y baratron in mbar (max. 5 mbar)
-            var pressureY = parseFloat(statusArr[10]);
+            var pressureY = parseFloat(statusArr[9]);
             $("#pressureY").html(pressureY.toFixed(3));
 
             // A baratron in mbar (max. 500 mbar)
-            var pressureA = parseFloat(statusArr[11]);
+            var pressureA = parseFloat(statusArr[10]);
             $("#pressureA").html(pressureA.toFixed(1));
 
-            // statusArr[12] is a control string "B"
-
             // Valve status
-            var valveArray = statusArr[13];
+            var valveArray = statusArr[11];
             const positions = [
                 "vertical", // V01
                 "vertical", // V02
@@ -168,7 +164,7 @@ function sendCommand(cmd) {
 
 
             // Relay status
-            var relayArray = statusArr[14];
+            var relayArray = statusArr[12];
             var i = 1;
             while (i <= 2) {
                 $("#U" + "0" +  i.toString() + "_label").html(relayArray[i - 1]);
@@ -181,40 +177,40 @@ function sendCommand(cmd) {
             }
 
             // Box humidity
-            var roomRH = statusArr[15];
-            $("#roomRH").html(roomRH);
+            var boxHumidity = statusArr[13];
+            $("#boxHumidity").html(boxHumidity);
 
             // Box temperature
-            var housingT = statusArr[16];
-            $("#housingT").html(housingT);
+            var boxTemperature = statusArr[14];
+            $("#boxTemperature").html(boxTemperature);
 
             // Box setpoint temperature
-            var SPT = parseFloat(statusArr[17]);
-            $("#setPointTemperature").html(SPT.toFixed(1));
+            var SPT = parseFloat(statusArr[15]);
+            $("#boxSetpoint").html(SPT.toFixed(1));
 
             // Fan speed
-            var fanSpeed = statusArr[18];
+            var fanSpeed = statusArr[16];
             $("#fanSpeed").html(fanSpeed);
 
             // Cell pressure from the TILDAS in Torr
             // The cell's baratron is zeroed here
             var baratronTorr =
-                parseFloat(statusArr[19]) * 1 + (0.406 + 0.223) / 1.33322;
+                parseFloat(statusArr[17]) * 1 + (0.406 + 0.223) / 1.33322;
             $("#baratron").html(baratronTorr.toFixed(3));
 
             // CO2 mixing ratios from the TILDAS
-            var mr1 = statusArr[20];
+            var mr1 = statusArr[18];
             $("#mr1").html(parseFloat(mr1).toFixed(3));
-            var mr2 = statusArr[21];
+            var mr2 = statusArr[19];
             $("#mr2").html(parseFloat(mr2).toFixed(3));
-            var mr3 = statusArr[22];
+            var mr3 = statusArr[20];
             $("#mr3").html(parseFloat(mr3).toFixed(3));
-            var mr4 = statusArr[23];
+            var mr4 = statusArr[21];
             $("#mr4").html(parseFloat(mr4).toFixed(3));
 
-            // Edwards vacuum gauge
-            var edwards = statusArr[24];
-            $("#edwards").html(parseFloat(edwards).toFixed(4));
+            // vacuum vacuum gauge
+            var vacuum = statusArr[22];
+            $("#vacuum").html(parseFloat(vacuum).toFixed(4));
 
             // Reset the command string
             cmd = "";
@@ -452,14 +448,13 @@ function createFolder() {
 }
 
 // Write logfile.csv
-function writeLogfile(logData, folderName, sampleName) {
+function writeLogfile(logDataJSON, logFileName) {
     $.ajax({
         type: "POST",
         url: "controller/php/writeLogfile.php",
         data: {
-            sampleName: sampleName,
-            logData: logData,
-            folderName: folderName,
+            logDataJSON: encodeURIComponent(logDataJSON),
+            logFileName: logFileName,
         },
         success: function (response) {
             if (response != "") {
@@ -703,7 +698,7 @@ var executed = "yes";
 let cycleJS = 0;
 let startTimeJS = new Date().getTime();
 let speedJS = 0;
-var currentTimeOld = 0;
+var lastTimeUpdated = 0;
 var logData = [];
 var sample = 0;
 var cycle = 0;
@@ -718,31 +713,32 @@ setInterval(function () {
         var currentTime = parseInt(new Date().getTime() / 1000);
 
         // Save data to logfile array every 5 seconds
-        if (currentTime % 5 == 0 && currentTime != currentTimeOld && $("#sampleName").html() != "") {
+        if (currentTime % 5 == 0 &&
+            currentTime != lastTimeUpdated &&
+            $("#sampleName").html() != "" &&
+            !$("#sampleName").html().includes("refill")) {
             // Unix -> Mac timestamp, TILDAS uses Mac timestamp
-            logData.push([
-                parseInt(currentTime + 2082844800 + 3600),
-                parseFloat($("#housingT").html()),
-                parseFloat($("#setPointTemperature").html()),
-                parseFloat($("#roomRH").html()),
-                $("#percentageX_Steps").html(),
-                $("#percentageY_Steps").html(),
-                $("#percentageZ_Steps").html(),
-                $("#pressureX").html(),
-                $("#pressureY").html(),
-                $("#pressureA").html(),
-                $("#edwards").html().trim(),
-                parseFloat($("#fanSpeed").html()),
-            ]);
+            let logObject = {
+                "Time(abs)": parseInt(currentTime + 2082844800 + 3600),
+                "SampleName": $("#sampleName").html(),
+                "boxTemperature": parseFloat($("#boxTemperature").html()),
+                "boxSetpoint": parseFloat($("#boxSetpoint").html()),
+                "boxHumidity": parseFloat($("#boxHumidity").html()),
+                "percentageX": $("#percentageX").html(),
+                "percentageY": $("#percentageY").html(),
+                "percentageZ": $("#percentageZ").html(),
+                "pressureX": $("#pressureX").html(),
+                "pressureY": $("#pressureY").html(),
+                "pressureA": $("#pressureA").html(),
+                "vacuum": $("#vacuum").html().trim(),
+                "fanSpeed": parseFloat($("#fanSpeed").html())
+            };
 
-            if (currentTime % 30 == 0) {
-                // Write data to logfile every 30 seconds
-                // console.log("Writing to logfile now.");
-                writeLogfile(logData, $('#folderName').html(), $('#sampleName').html());
-                // Reset logfile array
-                logData = [];
-            }
-            currentTimeOld = currentTime;
+            // Convert logObject to JSON string
+            let logDataJSON = JSON.stringify(logObject);
+            let logFileName = "../../" + $('#folderName').html() + "/logFile.csv";
+            writeLogfile(logDataJSON, logFileName);
+            var lastTimeUpdated = parseInt(new Date().getTime() / 1000);
         }
 
         // vvv The command "if" series starts here vvv
@@ -919,7 +915,7 @@ setInterval(function () {
             if (parameterArray[line].substr(0, 1) == "+" || parameterArray[line].substr(0, 1) == "-") {
                 // Move increment
                 // Get current bellows position
-                let currentPercent = parseFloat($("#percentage" + commandsArray[line][1] + "_Steps").text());
+                let currentPercent = parseFloat($("#percentage" + commandsArray[line][1]).text());
 
                 console.log(
                     `${new Date().toLocaleTimeString()}, ` +
@@ -1107,7 +1103,7 @@ setInterval(function () {
                 " Torr"
             );
 
-            let percent = parseFloat($("#percentageZ_Steps").text());
+            let percent = parseFloat($("#percentageZ").text());
             console.log(
                 `${new Date().toLocaleTimeString()}, ` +
                 "Bellow Z is at " +

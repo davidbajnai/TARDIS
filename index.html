@@ -225,17 +225,17 @@
 			<img id="loadingA" src="" class="icon" style="top:585px;left:645px;" />
 
 			<img id="motorX" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
-			<span id="percentageX_Steps" class="box small" style="top:625px;left:315px;">NaN</span>
+			<span id="percentageX" class="box small" style="top:625px;left:315px;">NaN</span>
 			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
 			<button onclick="moveBellows('X');" class="button small" style="top:655px;left:365px;">Set X</button>
 
 			<img id="motorY" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:1184px;" />
-			<span id="percentageY_Steps" class="box small" style="top:625px;left:1120px;">NaN</span>
+			<span id="percentageY" class="box small" style="top:625px;left:1120px;">NaN</span>
 			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
 			<button onclick="moveBellows('Y');" class="button small" style="top:655px;left:1169px;">Set Y</button>
 			
 			<img id="motorZ" src="controller/images/standing_motor.gif" class="icon" style="top:450px;left:755px;" />
-			<span id="percentageZ_Steps" class="box small" style="top:450px;left:690px;">NaN</span>
+			<span id="percentageZ" class="box small" style="top:450px;left:690px;">NaN</span>
 			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
 			<button onclick="moveBellows('Z');" class="button small" style="top:480px;left:740px;">Set Z</button>
 			<img id="warningZ" src="" class="icon" style="top:450px;left:650px;" />
@@ -257,7 +257,7 @@
 				<p class="label" style="top:290px;left:1770px;">free-path CO<sub>2</sub> (ppmv)</p>
 			
 			<!-- Edwards gauge -->
-			<span id="edwards" class="box medium" style="top:353px;left:858px;">edwards</span>
+			<span id="vacuum" class="box medium" style="top:353px;left:858px;">vacuum</span>
 			<p class="label" style="top:312px;left:858px;">Vacuum (mbar)</p>
 			
 			<!-- Sequence and method parameters -->
@@ -294,12 +294,14 @@
 			
 			<!-- Environment -->
 			<p class="label" style="top:170px;left:30px;">Environment <span class="decorative">_________</span></p>
-			<div id='housingT' class="box medium" style="top:215px;left:30px;">99</div>
-			<p class="label" style="top:200px;left:100px;">°C (box)</p>
-			<div id='setPointTemperature' class="box medium" style="top:245px;left:30px;">99</div>
+			<div id='boxHumidity' class="box medium" style="top:215px;left:30px;">99</div>
+			<p class="label" style="top:200px;left:100px;">% rH</p>
+			<div id='boxSetpoint' class="box medium" style="top:245px;left:30px;">99</div>
 			<p class="label" style="top:230px;left:100px;">°C (SP)</p>
-			<div id='fanSpeed' class="box medium" style="top:275px;left:30px;">99</div>
-			<p class="label" style="top:260px;left:100px;">fan speed</p>
+			<div id='boxTemperature' class="box medium" style="top:275px;left:30px;">99</div>
+			<p class="label" style="top:260px;left:100px;">°C (box)</p>
+			<div id='fanSpeed' class="box medium" style="top:305px;left:30px;">99</div>
+			<p class="label" style="top:290px;left:100px;">fan speed</p>
 
 			<!-- Script variables -->
 			<p class="label" style="top:335px;left:1700px;">Script variables <span class="decorative">_________</span></p>
@@ -324,7 +326,7 @@
 
 			<!-- Zugzielanzeiger -->
 			<span id="infoJS" class="Zugzielanzeiger" style="top:35px;left:150px;">NaN</span>
-			<div id="cycle" style="top:45px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
+			<div id="cycle" style="top:42px;left:255px;width:200px;font-family:monospace;color:#ffffff;font-size:26px">9¾</div>
 			<div id="digital" class="Zugzielanzeiger" style="top:85px;left:150px;">Time</div>
 			<canvas id="Bahnhofsuhr" class="clock"></canvas>
 
@@ -407,8 +409,8 @@
 		
 		<!-- JavaScript files -->
 		<!-- The jQuery is downloaded so that it works without an internet connection -->
-		<script src="controller/js/jQuery_v3.7.1.js"></script>
-		<script src="controller/js/frontPanel.js"></script>
+		<script src="controller/js/jQuery_v3.7.1.js" lang="en"></script>
+		<script src="controller/js/frontPanel.js" lang="en"></script>
 		
 		</body>
 </html>

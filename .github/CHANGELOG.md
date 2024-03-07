@@ -7,6 +7,8 @@
 ## Software
 * Restructured the html folder to follow the model–view–controller pattern
 * Updated the evaluateData.php to use SSH to transfer files
-* Updated the evaluateData.py to speed it up
-* Removed room temperature and room humidity values from front panel and logfile
+* Arduino now sends status as a JSON string
+* Writing the logFile is done using a JSON string
+* Removed room temperature and room humidity values from front panel and logFile
+* Relative humidity is shown on the front panel
 * Additional minor improvments and bug fixes

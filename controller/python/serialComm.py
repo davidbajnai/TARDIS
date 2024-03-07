@@ -2,7 +2,7 @@ from pymemcache.client import base
 import time
 import serial
 import datetime
-import re
+import ujson
 
 # Arduino serial communication
 try:
@@ -14,7 +14,7 @@ except serial.SerialException:
     quit()
 
 # Edwards pressure gauge serial communication
-# NOTE: There are two USB serial ports conneted to the rPi: USB1 and USB0
+# NOTE: There are two USB serial ports conneted: USB1 and USB0
 #       Here we test which is the Edwards. The other one has to be the TILDAS.
 MAX_ATTEMPTS = 10
 EXPECTED_MESSAGE_LENGTH = 9
@@ -85,6 +85,7 @@ vacuum = '9.999'
 arduinoStatus = ""
 laserStatus = "0,0,0,0,0"
 ArduinoError = 0
+statlen = 3
 
 # Connect to the shared variable
 m = base.Client(('127.0.0.1', 11211))
@@ -93,8 +94,9 @@ m.set('key2', "")
 print("Transmitting to and recieving data from sendCommand.php...")
 
 try:
-    start_time = time.time()
-    loops = 1
+    start_time_elapsed = time.time()
+    start_time_speed = time.time()
+    elapsed_time = 0
     while True:
 
         # Read the data stream from the laser spectrometer
@@ -122,37 +124,31 @@ try:
                 # This error could occur when starting the script
                 laserStatus = "0,0,0,0,0"
 
-        # Read Arduino data
+        # Read the JSON string sent by the Arduino
         try:
-            arduinoStatusNew = arduino.readline().decode('utf-8').strip()
-        except UnicodeDecodeError:
-            # Try to read the status string again if it failed the first time
-            time.sleep(0.05)
-            arduinoStatusNew = arduino.readline().decode('utf-8').strip()
-        
-        # print(arduinoStatusNew) # Show the raw serial output of the Arduino in the Terminal - for debugging
+            arduinoStatusNew = arduino.readline()
+            statlen = len(arduinoStatusNew)
+            arduinoStatusNew = arduinoStatusNew.decode('utf-8').strip()
+            arduinoStatusNew = ujson.loads(arduinoStatusNew)
+            # print(arduinoStatusNew) # Show the raw serial output of the Arduino in the Terminal - for debugging
 
-        # Check if we have a complete string using a regular expression
-        pattern = re.compile(r'^-?[A-Z]{0,}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+\.\d{2}[,][-]?\d+\.\d{1}[,][-]?\d+[,][-]?\d+\.\d{2}[,][A][,][-]?\d+\.\d{3}[,][-]?\d+\.\d{3}[,][-]?\d+\.\d{1}[,][B][,]\d{32}[,]\d{2}[,]\d{1,3}\.\d{2}[,]\d{2,3}\.\d{3}[,]\d{2}\.\d{2}[,](?:0|[1-9]\d?|100)$')
-        if re.match(pattern, arduinoStatusNew):
-            arduinoStatus = arduinoStatusNew
-        else:
+            # Convert JSON data to comma-separated string without keys
+            arduinoStatus = ""
+            arduinoStatus = ",".join(arduinoStatusNew.values())
+
+        except (UnicodeDecodeError, ujson.JSONDecodeError):
             ArduinoError += 1
-            # arduinoStatus = arduinoStatusNew
+        
+        # print(arduinoStatus) # Show the formatted serial output of the Arduino in the Terminal - for debugging
 
-        # Read Edwards pressure gauge and temperature sensor every 10 cycles
-        if(loops % 10 == 0):
-
-            edwards_gauge.write( bytes('?GA1\r','utf-8') )
+        # Read Edwards pressure gauge and temperature sensor every 10 seconds
+        if(elapsed_time %  10 == 0):
             try:
-                edwards_response = edwards_gauge.readline().decode('utf-8')
-            except UnicodeDecodeError:
-                edwards_response = "1.00E-04 "
-            # A little formatting is necessary because the string is sometimes broken
-            if len(edwards_response) == EXPECTED_MESSAGE_LENGTH:
+                edwards_gauge.write( bytes('?GA1\r','utf-8') )
+                edwards_response = edwards_gauge.readline().decode('utf-8').strip()
                 vacuum = str(round(float(edwards_response), 4))
-
-            time.sleep(0.05)
+            except UnicodeDecodeError:
+                vacuum = '9.999'
 
         # Create a status string from the information from Arduino, TILDAS, Edwards gauge, and room sensor and store it for PHP in the shared variable 'key'
         if( arduinoStatus != "" ):
@@ -166,7 +162,7 @@ try:
 
             # print(status) # Show the status string in the Terminal - for debugging
 
-            time.sleep(0.05)
+            # time.sleep(0.05)
 
         # Receive commands for Arduino from PHP via shared variable #2, defined in sendCommand.php
         value = m.get('key2').decode('UTF-8')
@@ -179,14 +175,18 @@ try:
         # Clean up the shared variables
         m.close()
 
-        # Calculate and print the loop info
-        elapsed_time = time.time() - start_time
+        # Calculate the elapsed time since start
+        elapsed_time = time.time() - start_time_elapsed
         days, remainder = divmod(int(elapsed_time), 86400)
         hours, remainder = divmod(remainder, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        print("  Elapsed: {} d, {} h, {} m, {} s".format(int(days), int(hours), int(minutes), int(seconds)) + " | Speed: " + str(round(loops/elapsed_time,1)) + " Hz | Arduino errors: " + str(ArduinoError) + "   ", end="\r")
-        loops += 1
+        # Calculate the speed
+        time_taken = time.time() - start_time_speed
+        speed = 1 / time_taken
+
+        print(f"  Elapsed: {days:.0f} d, {hours:.0f} h, {minutes:.0f} m, {seconds:.0f} s | Speed: {speed:.1f}Hz | Arduino errors: {ArduinoError:.0f}      ", end="\r")
+        start_time_speed = time.time()
 
 except KeyboardInterrupt:
     m.close()

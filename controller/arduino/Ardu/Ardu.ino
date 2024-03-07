@@ -1,5 +1,6 @@
 #include <AccelStepper.h>
 #include "Adafruit_SHTC3.h"
+#include <ArduinoJson.h>
 
 // This is the temperature sensor
 Adafruit_SHTC3 shtc3 = Adafruit_SHTC3();
@@ -40,6 +41,11 @@ long Ysteps = 0;
 long Zsteps = 0;
 unsigned long startMillis = 0;
 const byte relayPins[] = {18, 19};
+String valveStatus;
+String relayStatus;
+
+StaticJsonDocument<350> doc; // Define a JSON document
+String jsonString;
 
 AccelStepper Xaxis(AccelStepper::DRIVER, 3, 2); // mode, step, direction
 const byte Xenable = 4;
@@ -691,50 +697,43 @@ void sendStatus( String param )
   Ypercentage = Ypercentage / n;
   boxTemp = boxTemp / n;
 
-  // Send the status string via serial
-  Serial.print(param);
-  Serial.print(",");
-  Serial.print(Xaxis.currentPosition() * 100.0000 / 62438.00, 2);
-  Serial.print(",");
-  Serial.print(Xpercentage, 1);
-  Serial.print(",");
-  Serial.print(Yaxis.currentPosition() * 100.0000 / 62438.00, 2);
-  Serial.print(",");
-  Serial.print(Ypercentage, 1);
-  Serial.print(",");
-  Serial.print(Zaxis.currentPosition());
-  Serial.print(",");
-  Serial.print(Zaxis.currentPosition() * 100 / 15960.00, 2);
-  Serial.print(",");
-  Serial.print("A");
-  Serial.print(",");
-  Serial.print(Xpressure, 3);
-  Serial.print(",");
-  Serial.print(Ypressure, 3);
-  Serial.print(",");
-  Serial.print(Apressure, 1);
-  Serial.print(",");
-  Serial.print("B");
-  Serial.print(",");
-  // Print out the status of the valves
+  // Get valve states
+  valveStatus = "";
   for (byte pinNr = 22; pinNr <= 53; pinNr++) {
-    Serial.print(digitalRead(pinNr) == LOW ? "0" : "1");
+    valveStatus += digitalRead(pinNr) == LOW ? "0" : "1";
   }
-  Serial.print(",");
-  // Print out the status of the relays
+  // Get relay states
+  relayStatus = "";
   for (byte relayPinNr = 0; relayPinNr <= 1; relayPinNr++) {
-    Serial.print(digitalRead(relayPins[relayPinNr]) == LOW ? "1" : "0");
+    relayStatus += digitalRead(relayPins[relayPinNr]) == LOW ? "1" : "0";
   }
-  Serial.print(",");
-  Serial.print(boxHum, 2);
-  Serial.print(",");
-  Serial.print(boxTemp, 3);
-  Serial.print(",");
-  Serial.print(SPT, 2);
-  Serial.print(",");
-  Serial.print(fanSpeed);
-  Serial.println(""); // End of status string
-  Serial.flush();     // Waits for the transmission of outgoing serial data to complete
+
+  // Clear the JSON string
+  doc.clear();
+
+  // Create a JSON string with keys
+  doc["param"] = param;
+  doc["X_position"] = String(Xaxis.currentPosition() * 100.0000 / 62438.00, 2);
+  doc["X_percentage"] = String(Xpercentage,1);
+  doc["Y_position"] = String(Yaxis.currentPosition() * 100.0000 / 62438.00, 2);
+  doc["Y_percentage"] = String(Ypercentage,1);
+  doc["Z_position"] = String(Zaxis.currentPosition());
+  doc["Z_percentage"] = String(Zaxis.currentPosition() * 100 / 15960.00, 2);
+  doc["X_pressure"] = String(Xpressure, 3);
+  doc["Y_pressure"] = String(Ypressure, 3);
+  doc["A_pressure"] = String(Apressure, 1);
+  doc["valves"] = valveStatus;
+  doc["relays"] = relayStatus;
+  doc["boxHumidity"] = String(boxHum, 2);
+  doc["boxTemperature"] = String(boxTemp, 2);
+  doc["boxSetpoint"] = String(SPT,2);
+  doc["fanSpeed"] = String(fanSpeed);
+
+  // Serialize the JSON document
+  doc.shrinkToFit();
+  String jsonString = doc.as<String>();
+  Serial.println(jsonString);
+  Serial.flush();
 }
 
 
