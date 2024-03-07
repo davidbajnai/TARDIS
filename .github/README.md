@@ -15,9 +15,8 @@ The inlet system and the methods we use to measure the triple oxygen isotope com
 >[!IMPORTANT]
 >Bajnai, D., Pack, A., Arduin Rode, F., Seefeld, M., Surma, J., Di Rocco, T., 2023. A dual inlet system for laser spectroscopy of triple oxygen isotopes in carbonate-derived and air CO<sub>2</sub>. Geochemistry, Geophysics, Geosystems 24, e2023GC010976. [10.1029/2023GC010976](https://doi.org/10.1029/2023GC010976)
 
-[!TIP]
->The supplementary files of the manuscript are deposited in the [Manuscript](/data/Manuscript) folder.
->[Release v2.0](https://github.com/davidbajnai/TARDIS/tree/v2.0) includes the original files used in the manuscript. Improvements made since publication are listed in the [Changelog](CHANGELOG.md). 
+>[!TIP]
+>The supplementary files of the manuscript are deposited in the [Manuscript](/data/Manuscript) folder. [Release v2.0](https://github.com/davidbajnai/TARDIS/tree/v2.0) includes the original files used in the manuscript. Improvements made since publication are listed in the [Changelog](CHANGELOG.md). 
 
 ## License
 
