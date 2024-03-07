@@ -13,10 +13,10 @@ $StartDate = DateTime::createFromFormat('U', $StartDate)->setTimezone(new DateTi
 
 // Do not create a folder for bellow refill
 if ($sampleName != ""  and str_contains($sampleName, "refill") === false) {
-    $folderName = date_format($StartDate, "ymd_His") . "_" . $sampleName;
-    mkdir("data/Results/" . $folderName, 0777);
-    if (is_dir("data/Results/" . $folderName)) {
-        echo "data/Results/" . $folderName;
+    $sampleNameDate = date_format($StartDate, "ymd_His") . "_" . $sampleName;
+    mkdir("../../data/Results/" . $sampleNameDate, 0777);
+    if (is_dir("../../data/Results/" . $sampleNameDate)) {
+        echo "data/Results/" . $sampleNameDate;
     } else {
         echo "Error: could not create folder.";
     }
