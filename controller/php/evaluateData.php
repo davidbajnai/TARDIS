@@ -6,26 +6,22 @@
 date_default_timezone_set('Europe/Berlin');
 
 if (isset($_POST['sampleName'])) {
-    if (str_contains($_POST['sampleName'], "folder") === true) {
-        echo ("This was a refill, there will be no data processing.");
-        exit();
-    }
-    $sampleName = explode("/", $_POST['sampleName']); // Results/220226_084003_sampleName
-    $sampleName = $sampleName[1];
-    $polynomial = $_POST['polynomial']; // 0…3, 100 for standard bracketing
-    $userName = urlencode($_POST['userName']);
+    $sampleName = urldecode($_POST['sampleName']); 
+    $userName = urldecode($_POST['userName']);
     echo "Parameters are recieved from JavaScript<br><br>";
 } else {
-    $sampleName = $_GET['sampleName']; // Give sample name via URL
-    $polynomial = $_GET['polynomial']; // 0…3, 100 for standard bracketing
-    $userName = $_POST['userName'];
+    $sampleName = urldecode($_GET['sampleName']);
+    $userName = urldecode($GET['userName']);
     echo "Parameters are recieved via URL<br><br>";
 }
+
+// Import necessary data 
+include_once('../config/.config.php');
 
 // Start the timer
 $start_time = microtime(true);
 
-$cmd = "python3 ../python/evaluateData.py " . $sampleName . " " . $polynomial . " 2>&1";
+$cmd = "python3 ../python/evaluateData.py " . $sampleName . " " . " 2>&1";
 $result = shell_exec($cmd); // isotope ratios from the evaluation script
 
 // Stop the timer
@@ -62,28 +58,22 @@ if (trim($resultArray[1]) != "(most") // Only upload if data make sense
         "pCO2Sam" => trim($resultArray[9] ?? ''),
         "PCellRef" => trim($resultArray[10] ?? ''),
         "PCellSam" => trim($resultArray[11] ?? ''),
-        "userName" => trim($userName ?? 'David Bajnai')
+        "userName" => trim($userName ?? 'Bajnai')
     );
 
     // Convert data to JSON format
-    $jsonData = json_encode($postData);
-    $encodedData = urlencode($jsonData);
+    $encodedData = urlencode(json_encode($postData));
 
     // URL to send the data
-    $uploadUrl = "http://10.132.1.101/controller/php/dataInputTILDAS.php";
+    $uploadURL = "http://". $server_IP . "/controller/php/dataInputTILDAS.php" . "?jsonstring=" . $encodedData;
 
-    $finalUrl = $uploadUrl . "?jsonstring=" . $encodedData;
-
-    $response = file_get_contents($finalUrl);
+    $response = file_get_contents($uploadURL);
 
     echo $response;
 
 
     // Upload files to server.
     echo "<br><br>Uploading files to server...<br>";
-
-    // Open ftp server
-    include_once('../config/.config.php');
 
     $filesToUpload = array(
         "FitPlot.png",
@@ -93,51 +83,57 @@ if (trim($resultArray[1]) != "(most") // Only upload if data make sense
     );
 
     $localDirectory = "/var/www/html/data/Results/" . $sampleName;
-    $remoteDirectory = "/var/www/html/data";
+    $remoteDirectory = "/var/www/html/data/measurementFiles/" . $sampleName;
 
     $connection = ssh2_connect($server_IP);
     if (!$connection) {
-        die("Failed to connect to the SSH server.\n");
+        die("Failed to connect to the SSH server.</br>");
     }
 
     // Authenticate with the SSH server
-    if (!ssh2_auth_password($connection, $username, $password)) {
-        die("Failed to authenticate with the SSH server.\n");
+    if (!ssh2_auth_password($connection, $server_user, $server_passwd)) {
+        die("Failed to authenticate with the SSH server.</br>");
     }
 
     // Initialize SFTP subsystem
     $sftp = ssh2_sftp($connection);
     if (!$sftp) {
-        die("Failed to initialize SFTP subsystem.\n");
+        die("Failed to initialize SFTP subsystem.</br>");
+    }
+
+    // Check if remote directory exists
+    $stat = ssh2_sftp_stat($sftp, $remoteDirectory);
+    if ($stat !== false && $stat['mode'] & 0040000) {
+        echo "Remote directory exists.</br>";
+    } else {
+        // Create remote directory if it doesn't exist
+        if (!ssh2_sftp_mkdir($sftp, $remoteDirectory)) {
+            die("Failed to create remote directory.</br>");
+        }
+        echo "Remote directory created.</br>";
     }
 
     foreach ($filesToUpload as $fileName) {
+
         $localFilePath = "$localDirectory/$fileName";
         $remoteFilePath = "$remoteDirectory/$fileName";
 
         // Upload the file via SFTP
-        $stream = fopen("ssh2.sftp://$sftp$remoteFilePath", 'w');
+        $stream = fopen($localFilePath, 'r');
         if (!$stream) {
-            echo "Failed to open remote file for writing: $remoteFilePath\n";
+            echo "Failed to open local file for reading: $localFilePath</br>";
             continue;
         }
 
-        $data = file_get_contents($localFilePath);
-        if ($data === false) {
-            echo "Failed to read local file: $localFilePath\n";
-            fclose($stream);
-            continue;
+        $upload = ssh2_scp_send($connection, $localFilePath, $remoteFilePath, 0644);
+
+        if (!$upload) {
+            echo "Failed to upload file: $localFilePath</br>";
+        } else {
+            echo "File uploaded successfully: $localFilePath</br>";
         }
 
-        $bytesWritten = fwrite($stream, $data);
         fclose($stream);
-
-        if ($bytesWritten === false) {
-            echo "Failed to write data to remote file: $remoteFilePath\n";
-            continue;
-        }
-
-        echo "File uploaded successfully: $fileName</br>";
     }
 
     // Delete some of the local files to save space on the Raspberry

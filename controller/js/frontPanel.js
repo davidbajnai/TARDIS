@@ -6,6 +6,8 @@
 
 // Global variable needed by the JS but not the HTML
 var cmd = "";
+var sampleNameDate = "";
+
 
 // Fetch the status string from sendCommand.php
 // Send a command to the Arduino or the TILDAS via sendCommand.php
@@ -441,8 +443,10 @@ function createFolder() {
             sampleName: $("#sampleName").html(),
         },
         success: function (response) {
-            console.log(`${new Date().toLocaleTimeString()}, ` + response);
+            console.log(`${new Date().toLocaleTimeString()}, Folder created: ${response}`);
             $("#folderName").html(response);
+            sampleNameDate = response.split("/").pop();
+            console.log("Sample name used for the evaluation: " + sampleNameDate);
         },
     });
 }
@@ -458,22 +462,22 @@ function writeLogfile(logDataJSON, logFileName) {
         },
         success: function (response) {
             if (response != "") {
-                console.log(`${new Date().toLocaleTimeString()}, ` + response);
+                // console.log(`${new Date().toLocaleTimeString()}, ` + response);
             }
         },
     });
 }
 
 // Copy all files with a date younger than timeMeasurementStarted
-function copyFiles() {
-    console.log(`${new Date().toLocaleTimeString()}, `+ "Calling copyFiles.php");
+function copyFiles(timeMeasurementStarted, folderName) {
+    console.log(`${new Date().toLocaleTimeString()}, ` + "Calling copyFiles.php for " + folderName);
     $.ajax({
         type: "POST",
         url: "controller/php/copyFiles.php",
         async: false,
         data: {
-            date: $("#timeMeasurementStarted").html(), // In UNIX format & UTC timezone
-            folderName: $("#folderName").html(), // Something like: Results/230306_123421_sampleName
+            timeMeasurementStarted: timeMeasurementStarted, // In UNIX format & UTC timezone
+            folderName: encodeURIComponent(folderName), // Where the sample data is saved
         },
         success: function (response) {
             console.log(`${new Date().toLocaleTimeString()}, ` + response);
@@ -482,16 +486,15 @@ function copyFiles() {
 }
 
 // Evaluate data after the measurement is finished
-function evaluateData() {
-    console.log(`${new Date().toLocaleTimeString()}, `+ "Calling evaluateData.php");
+function evaluateData(sampleNameDate, userName) {
+    console.log(`${new Date().toLocaleTimeString()}, ` + "Calling evaluateData.php for " + sampleNameDate);
     $.ajax({
         type: "POST",
-        url: "evaluateData.php",
+        url: "controller/php/evaluateData.php",
         async: true,
         data: {
-            sampleName: $("#folderName").html(),
-            userName: $("#userName").val(),
-            polynomial: $("#polynomial").val(),
+            sampleName: encodeURIComponent(sampleNameDate), // something like 240323_092903_DH11
+            userName: encodeURIComponent(userName),
         },
     }).done(function (result) {
         console.log(`${new Date().toLocaleTimeString()}, ` + result);
@@ -501,7 +504,7 @@ function evaluateData() {
 // Show results button
 function showResultsButton() {
     window.open(
-        "http://192.168.1.1/isotope/Isotopes_data_list.php?MaxNumber=20&SampleTypeSearch=CO2",
+        "http://10.132.1.101/viewer",
         "_blank"
     );
 }
@@ -719,7 +722,7 @@ setInterval(function () {
             !$("#sampleName").html().includes("refill")) {
             // Unix -> Mac timestamp, TILDAS uses Mac timestamp
             let logObject = {
-                "Time(abs)": parseInt(currentTime + 2082844800 + 3600),
+                "Time(abs)": parseInt(new Date().getTime() / 1000 + 2082844800 + 3600),
                 "SampleName": $("#sampleName").html(),
                 "boxTemperature": parseFloat($("#boxTemperature").html()),
                 "boxSetpoint": parseFloat($("#boxSetpoint").html()),
@@ -1153,10 +1156,15 @@ setInterval(function () {
                 $("#methodStatus").html('Sample finished');
                 $("#sample" + sample).append(" &#10003;");
                 $("#sample" + sample)[0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-                // Copy files from TILDAS to raspberry folder
-                copyFiles();
-                // Execute Python script
-                evaluateData();
+                
+                // Evalaute data using Python and upload files to server
+                // and copy files from TILDAS to raspberry folder
+                if (!$("#sampleName").html().includes("refill") && !$("#sampleName").html().includes("folder")) {
+                    copyFiles($("#timeMeasurementStarted").html(), $("#folderName").html());
+                    evaluateData(sampleNameDate, $("#userName").val());
+                } else {
+                    console.log("There will be no data processing.");
+                }
 
                 // Move to the next sample and check if it exists
                 sample++;

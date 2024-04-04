@@ -315,9 +315,6 @@
 			<div id="sample_pCO2"			  class="info" style="top:520px;left:1700px;">Sample pCO<sub>2</sub></div>
 			<div id="reference_pCO2"		  class="info" style="top:540px;left:1700px;">Reference pCO<sub>2</sub></div>
 			<div id="correction_pCO2"		  class="info" style="top:560px;left:1700px;">1.000</div>
-			<div style="top:620px;left:1700px;">
-				Polynomial: <input type="number" id="polynomial" value="100" style="width:100px;">
-			</div>
 
 			<!-- The main buttons -->
 			<button onclick="startSequenceButton();" class="button big" style="top:140px;left:1240px;background-color:#63A615;">Start sequence</button>
@@ -362,7 +359,7 @@
 			<h3>General notes</h3>
 			<ul>
 				<li>Before stopping the serialComm.py or the Arduino, make sure the Z bellow is at 50%!</li>
-				<li>To reprocess a measurement: http://localhost/controller/evaluateData.php?sampleName=221223_025949_test_Air&polynomial=100</li>
+				<li>To reprocess a measurement: http://localhost/controller/php/evaluateData.php?sampleName=221223_025949_test_Air</li>
 			</ul>
 			
 			<h3>Startup</h3>

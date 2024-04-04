@@ -2,7 +2,7 @@
 
 ## Hardware
 * Replaced the Raspberry Pi 4 with a mini computer running Ubuntu
-* Removed room temperature and humidity sensor
+* Removed the room temperature and humidity sensors
 
 ## Software
 * Restructured the html folder to follow the model–view–controller pattern

@@ -6,7 +6,7 @@ import ujson
 
 # Arduino serial communication
 try:
-    arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0.5)
+    arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0.2)
     print(" ✓ Connection to Arduino established")
     time.sleep(1)
 except serial.SerialException:
@@ -20,7 +20,7 @@ MAX_ATTEMPTS = 10
 EXPECTED_MESSAGE_LENGTH = 9
 try:
     # Connect to 'something' over USB1
-    edwards_gauge = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0.05)
+    edwards_gauge = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0)
     time.sleep(2)
     attempts = 1
     success = False
@@ -43,7 +43,7 @@ try:
     if success is False:
         edwards_gauge.close() # close previous connection
         # Connect to 'something' over USB0
-        edwards_gauge = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0.05)
+        edwards_gauge = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0)
         time.sleep(1)
         attempts = 0
         while attempts < MAX_ATTEMPTS and success is False:
@@ -85,7 +85,6 @@ vacuum = '9.999'
 arduinoStatus = ""
 laserStatus = "0,0,0,0,0"
 ArduinoError = 0
-statlen = 3
 
 # Connect to the shared variable
 m = base.Client(('127.0.0.1', 11211))
@@ -127,28 +126,39 @@ try:
         # Read the JSON string sent by the Arduino
         try:
             arduinoStatusNew = arduino.readline()
-            statlen = len(arduinoStatusNew)
             arduinoStatusNew = arduinoStatusNew.decode('utf-8').strip()
             arduinoStatusNew = ujson.loads(arduinoStatusNew)
             # print(arduinoStatusNew) # Show the raw serial output of the Arduino in the Terminal - for debugging
+
+            # Check if the JSON string is correct lenght
+            if len(arduinoStatusNew) != 16:
+                raise ValueError("Invalid number of values in the JSON string")
+
+            # Check if some of the values make sense
+            z_percentage = float(arduinoStatusNew.get('Z_percentage', 0))
+            x_pressure = float(arduinoStatusNew.get('X_pressure', 0))
+            y_pressure = float(arduinoStatusNew.get('Y_pressure', 0))
+            if not (0 <= z_percentage <= 100 and -1 <= x_pressure <= 7 and -1 <= y_pressure <= 7):
+                raise ValueError("Invalid values in the JSON string")
 
             # Convert JSON data to comma-separated string without keys
             arduinoStatus = ""
             arduinoStatus = ",".join(arduinoStatusNew.values())
 
-        except (UnicodeDecodeError, ujson.JSONDecodeError):
+        except (UnicodeDecodeError, TypeError, ValueError, ujson.JSONDecodeError):
             ArduinoError += 1
         
         # print(arduinoStatus) # Show the formatted serial output of the Arduino in the Terminal - for debugging
 
-        # Read Edwards pressure gauge and temperature sensor every 10 seconds
-        if(elapsed_time %  10 == 0):
+        # Read Edwards pressure gauge and temperature sensor every 5 seconds
+        if(int(time.time()) % 5 == 0):
             try:
                 edwards_gauge.write( bytes('?GA1\r','utf-8') )
                 edwards_response = edwards_gauge.readline().decode('utf-8').strip()
                 vacuum = str(round(float(edwards_response), 4))
-            except UnicodeDecodeError:
-                vacuum = '9.999'
+            except (UnicodeDecodeError, ValueError):
+                pass # broken response from the Edwards gauge -> do nothing
+
 
         # Create a status string from the information from Arduino, TILDAS, Edwards gauge, and room sensor and store it for PHP in the shared variable 'key'
         if( arduinoStatus != "" ):

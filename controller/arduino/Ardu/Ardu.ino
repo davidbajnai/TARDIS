@@ -162,7 +162,7 @@ void wait(int seconds, String message)
   while (millis() < startMillis + seconds * 1000)
   {
     sendStatus(message);
-    delay(10);
+    delay(100);
   }
 }
 
@@ -712,7 +712,7 @@ void sendStatus( String param )
   doc.clear();
 
   // Create a JSON string with keys
-  doc["param"] = param;
+  doc["moveStatus"] = param;
   doc["X_position"] = String(Xaxis.currentPosition() * 100.0000 / 62438.00, 2);
   doc["X_percentage"] = String(Xpercentage,1);
   doc["Y_position"] = String(Yaxis.currentPosition() * 100.0000 / 62438.00, 2);
@@ -855,6 +855,6 @@ void loop()
   // Print out the current settings
   sendStatus("-");
 
-  delay(50);
+  delay(20);
 
 }

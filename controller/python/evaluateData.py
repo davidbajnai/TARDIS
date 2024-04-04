@@ -77,7 +77,7 @@ def combinedFunction(comboData, r0, s0, a1, a2, a3):
 # Import measurement info
 samID = str(sys.argv[1])  # Something like 230118_084902_heavyVsRef
 folder = "/var/www/html/data/Results/" + samID + "/"
-polynomial = str(sys.argv[2])  # String
+polynomial = "100"  # Now hardcoded - will need to remove poly option
 
 # Calculate the start time of the measurement.
 # The TILDAS and the loglife use Mac time, which is the number of seconds since 1904-01-01
