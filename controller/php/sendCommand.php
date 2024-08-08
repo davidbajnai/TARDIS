@@ -36,6 +36,18 @@
 
             // Send the TILDAS commands to stop the data acquisition
             sendCommandViaTCP("amass0\r\namwd0\r\n", $TILDAS_IP);
+        
+
+        } else if( $_POST['cmd'] == "BG0" ) {
+
+            // Send the TILDAS commands to suspend background fitting
+            sendCommandViaTCP("bdfits1\r\n", $TILDAS_IP);
+        
+
+        } else if( $_POST['cmd'] == "BG1" ) {
+
+            // Send the TILDAS command to enable background fitting
+            sendCommandViaTCP("bdfits0\r\n", $TILDAS_IP);
 
         } else {
             

@@ -288,6 +288,18 @@ function stopWritingData() {
     console.log(`${new Date().toLocaleTimeString()}, Stopping data recording on TILDAS`);
 }
 
+// Suspend background fitting on TILDAS
+function suspendFit() {
+    cmd = 'BG0';
+    console.log(`${new Date().toLocaleTimeString()}, Background fitting suspended on TILDAS`);
+}
+
+// Suspend background fitting on TILDAS
+function enableFit() {
+    cmd = 'BG1';
+    console.log(`${new Date().toLocaleTimeString()}, Background fitting enabled on TILDAS`);
+}
+
 // Set valves to starting position
 function startingPosition() {
     cmd = 'KL';
@@ -906,6 +918,21 @@ setInterval(function () {
                 );
 
                 cycle++;
+            }
+
+            doThisAfterEveryCommand("executed");
+        }
+
+
+        // Suspend or enable background fitting on TILDAS
+        else if (commandsArray[line][0] == "B" && commandsArray[line][1] == "G" && executed == "yes" && moving == "no" && waiting == "no") {
+            doThisBeforeEveryCommand();
+
+            // Execute command at laser spectrometer: Stop writing data to disk
+            if (parameterArray[line] == 0) {
+                suspendFit();
+            } else if (parameterArray[line] == 1) {
+                enableFit();
             }
 
             doThisAfterEveryCommand("executed");
