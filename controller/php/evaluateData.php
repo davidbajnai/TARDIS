@@ -4,6 +4,8 @@
 // evaluation data and send the results to the isolabor server
 
 date_default_timezone_set('Europe/Berlin');
+$timestamp = time();
+$DateTimeAdded = date("Y-m-d H:i:s", $timestamp);
 
 if (isset($_POST['sampleName'])) {
     $sampleName = urldecode($_POST['sampleName']); 
@@ -31,37 +33,23 @@ $duration = $end_time - $start_time;
 echo "Data evalauted in " . round($duration, 2) . " seconds:<br/>";
 echo $result . "<br>";
 
-$resultArray = explode(" ", $result);
+$postData = json_decode($result, true);
 
-// Now upload the data to the Isolabor server
-if (trim($resultArray[1]) != "(most") // Only upload if data make sense
-{
-    
-    // Upload data to database
+// Check if decoding was successful
+if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
+    die('<br>Error decoding JSON from Python script.');
+} else {
 
     echo "<br>Uploading results to the database...<br>";
 
-    // Create a ZIP archive of all data and upload that too the isolaborserver
-    exec("cd /var/www/html/data/Results/$sampleName/ && zip -j $sampleName.zip *");
+    // Add some extra variables to the array
+    $userName_json = !empty($userName) ? $userName : 'David Bajnai';
+    $postData['Analyst'] = trim($userName_json);
+    $postData['SampleType'] = "CO2";
+    $postData['Method'] = "IR absorption";
+    $postData['MassSpectrometer'] = "TILDAS";
+    $postData['DateTimeAdded'] = $DateTimeAdded;
 
-    // Set additional POST fields
-    $postData = array(
-        "sampleName" => $sampleName ?? '',
-        "d17O" => trim($resultArray[1] ?? ''),
-        "d18O" => trim($resultArray[2] ?? ''),
-        "d18OError" => trim($resultArray[3] ?? ''),
-        "CapD17O" => trim($resultArray[4] ?? ''),
-        "CapD17OError" => trim($resultArray[5] ?? ''),
-        "d17Oreference" => trim($resultArray[6] ?? ''),
-        "d18Oreference" => trim($resultArray[7] ?? ''),
-        "pCO2Ref" => trim($resultArray[8] ?? ''),
-        "pCO2Sam" => trim($resultArray[9] ?? ''),
-        "PCellRef" => trim($resultArray[10] ?? ''),
-        "PCellSam" => trim($resultArray[11] ?? ''),
-        "userName" => trim($userName ?? 'Bajnai')
-    );
-
-    // Convert data to JSON format
     $encodedData = urlencode(json_encode($postData));
 
     // URL to send the data
@@ -72,17 +60,57 @@ if (trim($resultArray[1]) != "(most") // Only upload if data make sense
     echo $response;
 
 
-    // Upload files to server.
     echo "<br><br>Uploading files to server...<br>";
+
+    // Get the sample name
+    $sampleName = $postData['SampleName'];
+
+    // Get the local directory
+    $localDirectory = "/var/www/html/data/Results/" . $sampleName;
+
+    // Copy SPE files from the TILDAS PC to the local directory
+    $csvFile = $localDirectory . "/list_of_SPE_files.csv";
+    $localSPEDirectory = $localDirectory . "/SPE_files";
+    if (!is_dir($localSPEDirectory) && file_exists($csvFile)) {
+        mkdir($localSPEDirectory, 0777, true);
+
+        $csv = fopen($csvFile, "r");
+        $speFiles = array();
+        while (!feof($csv)) {
+            $speFiles[] = fgetcsv($csv)[0];
+        }
+        fclose($csv);
+
+        exec("rm " . $csvFile);
+
+        if (count(scandir('/mnt/TILDAS_PC')) <= 2) {
+            echo("<br>TILDAS PC not mounted.<br>");
+        } else {
+            $speFiles = array_diff($speFiles, array(''));
+            foreach ($speFiles as $speFile) {
+                $localFilePath = $localDirectory . "/SPE_files/" . basename($speFile);
+                if (file_exists($speFile)) {
+                    exec("cp " . escapeshellarg($speFile) . " " . escapeshellarg($localFilePath));
+                } else {
+                    echo "<br>File not found: $speFile";
+                }
+            }
+        }
+    } else {
+        echo("<br>SPE files not copied<br>");
+    }
+    echo "</br>";
+
+    // Create a ZIP archive of all files and upload that too the isolaborserver
+    exec("cd /var/www/html/data/Results/$sampleName/ && zip -j $sampleName.zip *");
 
     $filesToUpload = array(
         "FitPlot.png",
-        "bracketingResults.png",
+        // "bracketingResults.png",
         "rawData.png",
         "$sampleName.zip"
     );
 
-    $localDirectory = "/var/www/html/data/Results/" . $sampleName;
     $remoteDirectory = "/var/www/html/data/measurementFiles/" . $sampleName;
 
     $connection = ssh2_connect($server_IP);

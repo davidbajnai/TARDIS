@@ -2,51 +2,52 @@
 #include "Adafruit_SHTC3.h"
 #include <ArduinoJson.h>
 
-// This is the temperature sensor
-Adafruit_SHTC3 shtc3 = Adafruit_SHTC3();
+// Initialize the variables --------------------------------------------------------------------
 
+Adafruit_SHTC3 shtc3 = Adafruit_SHTC3(); // Temperature sensor
 long XstartPos = 0;
 long YstartPos = 0;
 long ZstartPos = 0;
 long steps = 0;
 char command;
 String string;
-float Xpercentage = 0.00;
-float Ypercentage = 0.00;
-float Zpercentage = 0.00;
-float Xpressure = 0.00;
-float Ypressure = 0.00;
-float Apressure = 0.0;
+float Xpercentage = 0.0f;
+float Ypercentage = 0.0f;
+float Zpercentage = 0.0f;
+float Xpressure = 0.0f;
+float Ypressure = 0.0f;
+float Zpressure = 0.0f;
 float XpressureArray[200];
 float YpressureArray[200];
-float ApressureArray[200];
+float ZpressureArray[200];
 float XpercentageArray[200];
 float YpercentageArray[200];
 float boxTempArray[200];
-int fanSpeed = 0;
-float boxTemp = 0.000;
-float SPT = 32.5; // Set the housing temperature here
-float boxHum = 0.00;
+float fanSpeed = 0.0f;
+float boxTemp = 0.0f;
+const float SPT = 32.5f; // Set the housing temperature here
+float boxHum = 0.0f;
 unsigned long now = 0;
 unsigned long lastTime = 0;
 unsigned long timeChange = 0;
-float Terror = 0.000;
-float errSum = 0.000;
-float dErr = 0.000;
-float lastErr = 0.000;
+float Terror = 0.0f;
+float errSum = 0.0f;
+float dErr = 0.0f;
+float lastErr = 0.0f;
 unsigned long cycl = 0;
-float targetPercent = 0.000;
+float targetPercent = 0.0f;
 long Xsteps = 0;
 long Ysteps = 0;
 long Zsteps = 0;
 unsigned long startMillis = 0;
-const byte relayPins[] = {18, 19};
 String valveStatus;
 String relayStatus;
-
-StaticJsonDocument<350> doc; // Define a JSON document
+StaticJsonDocument<350> doc;
 String jsonString;
 
+// Define the pinout ---------------------------------------------------------------------------
+
+// Stepper motor control
 AccelStepper Xaxis(AccelStepper::DRIVER, 3, 2); // mode, step, direction
 const byte Xenable = 4;
 AccelStepper Yaxis(AccelStepper::DRIVER, 6, 5);
@@ -54,15 +55,82 @@ const byte Yenable = 7;
 AccelStepper Zaxis(AccelStepper::DRIVER, 9, 8);
 const byte Zenable = 10;
 
+// Pins for the relays
+const byte relayPins[] = {18, 19};
+
+// Temperature control
 const byte CurrentPin = 11;
 const byte VoltagePin = 12;
 
+// Baratron pressure gauges
+const byte pinBaratronX = A2;
+const byte pinBaratronY = A3;
+const byte pinBaratronZ = A4;
+
+// Potentiometers
+const byte pinPotiX = A0;
+const byte pinPotiY = A1;
+
+// Functions for reading out the sensors -------------------------------------------------------
+
+// Do the calibration and zero-ing here!
+
+float readBaratronX() // Reference bellow, 0-10 Torr Baratron
+{
+  constexpr float conversion = 5.0f / 1024.0f;
+  return (analogRead(pinBaratronX) * conversion) - 0.225f;
+}
+
+float readBaratronY() // Sample bellow, 0-10 Torr Baratron
+{
+  constexpr float conversion = 5.0f / 1024.0f;
+  return (analogRead(pinBaratronY) * conversion) - 0.196f;
+}
+
+float readBaratronZ() // Pressure adjust bellow, 0-1000 mBar Baratron
+{
+  constexpr float conversion = 500.0f / 1024.0f;
+  return (analogRead(pinBaratronZ) * conversion) * 0.75f - 1.5f;
+}
+
+// Functions for the potentiometers
+float percentageX_fromPoti()
+{
+  return -0.12453f * analogRead(pinPotiX) + 104.83600f;
+}
+
+float percentageY_fromPoti()
+{
+  return -0.12438f * analogRead(pinPotiY) + 112.72790f;
+}
+
+// Functions for the stepper motors
+float percentageX_fromSteps()
+{
+  constexpr float multiplier = 100.0f / 62438.0f;
+  return Xaxis.currentPosition() * multiplier;
+}
+
+float percentageY_fromSteps()
+{
+  constexpr float multiplier = 100.0f / 62438.0f;
+  return Yaxis.currentPosition() * multiplier;
+}
+
+float percentageZ_fromSteps()
+{
+  constexpr float multiplier = 100.0f / 15960.0f;
+  return Zaxis.currentPosition() * multiplier;
+}
+
+// Setup ---------------------------------------------------------------------------------------
 void setup()
 {
   Serial.begin(115200);
 
   // Wait for serial port to open
-  while (!Serial) {
+  while (!Serial)
+  {
     delay(10);
   }
 
@@ -74,13 +142,13 @@ void setup()
   // DIGITAL PINS
 
   // Pinout for valve control
-  for (int pinNr = 22; pinNr <= 53; pinNr++) {
+  for (int pinNr = 22; pinNr <= 53; pinNr++)
+  {
     pinMode(pinNr, OUTPUT);
     delay(10);
   }
 
   // Pinout for relay control
-  // relayPins[] = {18, 19}, as defined above
   pinMode(relayPins[0], OUTPUT);
   digitalWrite(relayPins[0], HIGH); // Relay off
   pinMode(relayPins[1], OUTPUT);
@@ -107,13 +175,13 @@ void setup()
   // ANALOG PINS
 
   // Potentiometers
-  pinMode(A0, INPUT); // Poti X
-  pinMode(A1, INPUT); // Poti Y
+  pinMode(pinPotiX, INPUT); // Poti X
+  pinMode(pinPotiY, INPUT); // Poti Y
 
   // Baratron pressure gauges
-  pinMode(A2, INPUT); // Baratron X (0-10 Torr)
-  pinMode(A3, INPUT); // Baratron Y (0-10 Torr)
-  pinMode(A4, INPUT); // Baratron A (0-1000 mbar)
+  pinMode(pinBaratronX, INPUT); // Baratron X (0-10 Torr)
+  pinMode(pinBaratronY, INPUT); // Baratron Y (0-10 Torr)
+  pinMode(pinBaratronZ, INPUT); // Baratron Z (0-1000 mbar)
 
   // CALIBRATE STEPPER MOTORS
 
@@ -122,8 +190,8 @@ void setup()
   while (i < 200)
   // Integrate 200 values for better accuracy
   {
-    Xpercentage += -0.12453 * analogRead(A0) + 104.83600;
-    Ypercentage += -0.12438 * analogRead(A1) + 112.72790;
+    Xpercentage += percentageX_fromPoti();
+    Ypercentage += percentageY_fromPoti();
     i++;
   }
   Xpercentage /= 200.00;
@@ -156,6 +224,7 @@ void setup()
   delay(1000);
 }
 
+// Some functions for the program ---------------------------------------------------------------
 void wait(int seconds, String message)
 {
   startMillis = millis();
@@ -187,7 +256,7 @@ void controlT()
 
   // Compute PID Output
   // The structure of the PID control string: fanSpeed = kp * Terror + ki * errSum + kd * dErr;
-  fanSpeed = 390 * Terror + 0.30 * errSum + 0.030 * dErr;
+  fanSpeed = 390 * Terror + 0.30f * errSum + 0.030f * dErr;
 
   if (fanSpeed > 100)
   {
@@ -201,7 +270,8 @@ void controlT()
   // Set the current of the adjustable power supply
   // Each of the two fans can take max 1.86A, and they are connected in parallel
   // 255 = 5V analog out = 8A
-  analogWrite(CurrentPin, fanSpeed / 100 * 40);
+  const float scaling = 0.4f;
+  analogWrite(CurrentPin, fanSpeed * scaling);
 }
 
 void runXP(float percentage)
@@ -217,7 +287,7 @@ void runXP(float percentage)
     percentage = 0;
   }
   XstartPos = Xaxis.currentPosition();
-  long steps = (percentage * 62438.00 / 100) - Xsteps;
+  long steps = (percentage * 62438.0f / 100) - Xsteps;
   sendStatus("MX");
   Xaxis.move(steps);
   while (Xaxis.currentPosition() != XstartPos + steps)
@@ -241,7 +311,7 @@ void runYP(float percentage)
     percentage = 0;
   }
   YstartPos = Yaxis.currentPosition();
-  long steps = percentage * 62438.00 / 100 - Ysteps;
+  long steps = percentage * 62438.0f / 100 - Ysteps;
   sendStatus("MY");
   Yaxis.move(steps);
   while (Yaxis.currentPosition() != YstartPos + steps)
@@ -294,12 +364,12 @@ void startingPosition()
   switchValve("V13O");
   switchValve("V14C");
   switchValve("V15C");
-  switchValve("V16O");
+  switchValve("V16C");
   switchValve("V17O");
   switchValve("V18C");
   switchValve("V19O");
   switchValve("V20C");
-  switchValve("V21C");
+  switchValve("V21O");
   switchValve("V22C");
   switchValve("V27C");
   switchValve("V28C");
@@ -406,7 +476,7 @@ void runIA(float pressureTarget)
 
   unsigned long startTime = millis();
 
-  while (Apressure <= pressureTarget && millis() - startTime <= 120000)
+  while (Zpressure <= pressureTarget && millis() - startTime <= 120000)
   {
     sendStatus("IA");
     delay(10);
@@ -418,27 +488,27 @@ void runIA(float pressureTarget)
 
 void setPressureX(float targetPressure)
 {
-  float V0 = 41.008; // This is a instrument constant for bellows X
-  for ( int a = 0; a < 15; a++ )
+  const float V0 = 41.008f; // This is a instrument constant for bellows X
+  for (byte a = 0; a < 15; a++)
   {
     // Get current pressure
-    int m = 100; // Integration cycles
-    for (int j = 0; j < m; j++)
+    const byte m = 100; // Integration cycles
+    for (byte j = 0; j < m; j++)
     {
       sendStatus("PX");
       delay(10);
     }
     delay(100);
     // Now see what to do
-    if ( abs(Xpressure - targetPressure) <= 0.001 )
+    if (abs(Xpressure - targetPressure) <= 0.001)
     {
       break;
     }
-    else if ( (Xaxis.currentPosition() * 100.0000 / 62438.00 != 100  && Xaxis.currentPosition() * 100.0000 / 62438.00 > 0) || ( (Xpressure - targetPressure) < -0.001 && Xaxis.currentPosition() * 100.0000 / 62438.00 == 100) )
+    else if ((Xaxis.currentPosition() * 100.0f / 62438.0f != 100 && Xaxis.currentPosition() * 100.0f / 62438.0f > 0) || ((Xpressure - targetPressure) < -0.001 && Xaxis.currentPosition() * 100.0f / 62438.0f == 100))
     {
       // p = k / (V + V0)
       // Now calculate the k value for the current filling
-      float k = Xpressure * ( Xaxis.currentPosition() * 100.0000 / 62438.00 + V0 );
+      float k = Xpressure * (Xaxis.currentPosition() * 100.0f / 62438.0f + V0);
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
       // Send the command to the bellows
@@ -446,29 +516,29 @@ void setPressureX(float targetPressure)
       sendStatus("PX");
       delay(100);
     }
-    else if ( Xaxis.currentPosition() * 100.0000 / 62438.00 == 100 && Xaxis.currentPosition() * 100.0000 / 62438.00 > 0 )
+    else if (Xaxis.currentPosition() * 100.0f / 62438.0f == 100 && Xaxis.currentPosition() * 100.0f / 62438.0f > 0)
     {
       // Now decide which route should be evacuated
-      if ( (Xpressure - targetPressure) / Xpressure * 100 > 60 )
+      if ((Xpressure - targetPressure) / Xpressure * 100 > 60)
       {
         // Expand by ~65%
         sendStatus("PX");
-        expandX( 3 );
+        expandX(3);
       }
-      else if ( (Xpressure - targetPressure) / Xpressure * 100 <= 60 && (Xpressure - targetPressure) / Xpressure * 100 > 35 )
+      else if ((Xpressure - targetPressure) / Xpressure * 100 <= 60 && (Xpressure - targetPressure) / Xpressure * 100 > 35)
       {
         // Expand by ~40%
         sendStatus("PX");
-        expandX( 2 );
+        expandX(2);
       }
-      else if ( (Xpressure - targetPressure) / Xpressure * 100 <= 35 )
+      else if ((Xpressure - targetPressure) / Xpressure * 100 <= 35)
       {
         // Expand by ~5.4%
         sendStatus("PX");
-        expandX( 1 );
+        expandX(1);
       }
     }
-    else if ( Xaxis.currentPosition() * 100.0000 / 62438.00 == 0 )
+    else if (Xaxis.currentPosition() * 100.0f / 62438.0f == 0)
     {
       // Too little gas, refill reference gas
       break;
@@ -483,27 +553,27 @@ void setPressureX(float targetPressure)
 void setPressureY(float targetPressure)
 {
   float V0 = 42.337; // This is a instrument constant for bellows Y
-  for ( int a = 0; a < 15; a++ )
+  for (byte a = 0; a < 15; a++)
   {
     // Get current pressure
-    int m = 100; // Integration cycles
-    for (int j = 0; j < m; j++)
+    const byte m = 100; // Integration cycles
+    for (byte j = 0; j < m; j++)
     {
       sendStatus("PY");
       delay(10);
     }
     delay(100);
     // Now decide what to do
-    if ( abs(Ypressure - targetPressure) <= 0.001 )
+    if (abs(Ypressure - targetPressure) <= 0.001)
     {
       break;
     }
-    else if ( Yaxis.currentPosition() * 100.0000 / 62438.00 != 100 || ( Yaxis.currentPosition() * 100.0000 / 62438.00 == 100 && (Ypressure - targetPressure) < -0.001 ) )
+    else if (Yaxis.currentPosition() * 100.0000 / 62438.00 != 100 || (Yaxis.currentPosition() * 100.0000 / 62438.00 == 100 && (Ypressure - targetPressure) < -0.001))
     {
       // Compress bellows
       // p = k / (V + V0)
       // Now calculate the k value for the current filling
-      float k = Ypressure * ( Yaxis.currentPosition() * 100.0000 / 62438.00 + V0 );
+      float k = Ypressure * (Yaxis.currentPosition() * 100.0000 / 62438.00 + V0);
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
       // Send the command to the bellows
@@ -511,22 +581,22 @@ void setPressureY(float targetPressure)
       sendStatus("PY");
       delay(100);
     }
-    else if ( Yaxis.currentPosition() * 100.0000 / 62438.00 == 100 )
+    else if (Yaxis.currentPosition() * 100.0000 / 62438.00 == 100)
     {
       // Expand gas
       // Now decide which route should be evacuated
-      if ( (Ypressure - targetPressure) / Ypressure * 100 > 60 )
+      if ((Ypressure - targetPressure) / Ypressure * 100 > 60)
       {
         // Expand by ~61%
         sendStatus("PY");
-        expandY( 3 );
+        expandY(3);
         delay(100);
       }
-      else if ( (Ypressure - targetPressure) / Ypressure * 100 <= 60 && (Ypressure - targetPressure) / Ypressure * 100 > 33 )
+      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 60 && (Ypressure - targetPressure) / Ypressure * 100 > 33)
       {
         // Expand by ~37% steps
         sendStatus("PY");
-        expandY( 2 );
+        expandY(2);
         delay(100);
       }
       else if ((Ypressure - targetPressure) / Ypressure * 100 <= 33)
@@ -549,25 +619,25 @@ void setN2Pressure(float targetPressure)
 {
   if (targetPressure > 10)
   {
-    for (int a = 0; a < 10; a++)
+    for (byte a = 0; a < 10; a++)
     {
       // Get current pressure
-      int m = 100; // Integration cycles
-      for (int j = 0; j < m; j++)
+      const byte m = 100; // Integration cycles
+      for (byte j = 0; j < m; j++)
       {
         sendStatus("SN");
         delay(10);
       }
       delay(100);
       // Now decide what to do
-      if (abs(Apressure - targetPressure) <= 0.1)
+      if (abs(Zpressure - targetPressure) <= 0.1)
       {
         break;
       }
       else
       {
         // Compress/open bellows
-        targetPercent = Zaxis.currentPosition() * 100.0000 / 15960.00 + (Apressure - targetPressure) / 0.1044;
+        targetPercent = Zaxis.currentPosition() * 100.0f / 15960.0f + (Zpressure - targetPressure) / 0.1044f;
         // Send the command to the bellows
         runZP(targetPercent);
         delay(100);
@@ -622,16 +692,16 @@ void switchRelay(String param)
   int v = param.substring(1, 3).toInt();
   if (param.substring(3, 4) == "O")
   {
-    digitalWrite(relayPins[v-1], LOW); // Open relay
+    digitalWrite(relayPins[v - 1], LOW); // Open relay
   }
   else if (param.substring(3, 4) == "C")
   {
-    digitalWrite(relayPins[v-1], HIGH); // Close relay
+    digitalWrite(relayPins[v - 1], HIGH); // Close relay
   }
   delay(50);
 }
 
-void sendStatus( String param )
+void sendStatus(String param)
 {
 
   // Control the housing temperature
@@ -641,70 +711,66 @@ void sendStatus( String param )
   boxHum = humidity.relative_humidity;
   controlT();
 
-  // Get all the current settings
-  Xpressure = analogRead(A2) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
-  Ypressure = analogRead(A3) * 5.00 * 1.333224 / 1024.00; // 0-10 Torr Baratron
-  Apressure = analogRead(A4) * 500.00 / 1024;             // 0-1000 mbar Baratron
-  Xpercentage = -0.12453 * analogRead(A0) + 104.83600;
-  Ypercentage = -0.12438 * analogRead(A1) + 112.72790;
+  // Read out the Baratrons
+  Xpressure = readBaratronX();
+  Ypressure = readBaratronY();
+  Zpressure = readBaratronZ();
 
-  // Integrate temperatures and pressures
-  int n = 50; // Integration cycles
-  for (int i = 0; i < n; i++)
-  {
-    // Move elements up in the array
-    XpressureArray[i] = XpressureArray[i + 1];
-    YpressureArray[i] = YpressureArray[i + 1];
-    ApressureArray[i] = ApressureArray[i + 1];
-    XpercentageArray[i] = XpercentageArray[i + 1];
-    YpercentageArray[i] = YpercentageArray[i + 1];
-    boxTempArray[i] = boxTempArray[i + 1];
-  }
-  XpressureArray[n - 1] = Xpressure;
-  YpressureArray[n - 1] = Ypressure;
-  ApressureArray[n - 1] = Apressure;
-  XpercentageArray[n - 1] = Xpercentage;
-  YpercentageArray[n - 1] = Ypercentage;
-  boxTempArray[n - 1] = boxTemp;
+  // Get percentages from the potentiometers
+  Xpercentage = percentageX_fromPoti();
+  Ypercentage = percentageY_fromPoti();
 
-  Xpressure = 0;
-  Ypressure = 0;
-  Apressure = 0;
-  Xpercentage = 0;
-  Ypercentage = 0;
-  boxTemp = 0;
+  // Integrate sensor readings for better accuracy
+  const byte n = 50; // Integration cycles
+  static byte head = 0; // Head pointer for circular buffer
 
-  for (int i = 0; i < n; i++)
-  {
-    // Add all elements of the array
-    Xpressure = Xpressure + XpressureArray[i];
-    Ypressure = Ypressure + YpressureArray[i];
-    Apressure = Apressure + ApressureArray[i];
-    Xpercentage = Xpercentage + XpercentageArray[i];
-    Ypercentage = Ypercentage + YpercentageArray[i];
-    boxTemp = boxTemp + boxTempArray[i];
+  // Update circular buffer with new data
+  XpressureArray[head] = Xpressure;
+  YpressureArray[head] = Ypressure;
+  ZpressureArray[head] = Zpressure;
+  XpercentageArray[head] = Xpercentage;
+  YpercentageArray[head] = Ypercentage;
+  boxTempArray[head] = boxTemp;
+
+  // Initialize sums
+  float XpressureSum = 0;
+  float YpressureSum = 0;
+  float ZpressureSum = 0;
+  float XpercentageSum = 0;
+  float YpercentageSum = 0;
+  float boxTempSum = 0;
+
+  // Sum the elements in the array
+  for (byte i = 0; i < n; i++) {
+    XpressureSum += XpressureArray[i];
+    YpressureSum += YpressureArray[i];
+    ZpressureSum += ZpressureArray[i];
+    XpercentageSum += XpercentageArray[i];
+    YpercentageSum += YpercentageArray[i];
+    boxTempSum += boxTempArray[i];
   }
 
-  // The baratrons and pressure sensors are calibrated and zeroed here
-  // Preferably adjust the reference bellow
-  // Divide Xpressure by pCO2Sam/pCO2Ref
-  // If divided <1, then the reference pCO2 decreases
-  Xpressure = (Xpressure / n - 0.300) / 0.970942 * 0.952011 / 1.001206 / 1.001642 / 0.99888 / 0.997630; // Reference gas bellow
-  Ypressure = (Ypressure / n - 0.265);  // Gauge Y, sample bellow
-  Apressure = Apressure / n - 5.0;      // Gauge A
+  // Get the average of the array
+  Xpressure = XpressureSum / n;
+  Ypressure = YpressureSum / n;
+  Zpressure = ZpressureSum / n;
+  Xpercentage = XpercentageSum / n;
+  Ypercentage = YpercentageSum / n;
+  boxTemp = boxTempSum / n;
 
-  Xpercentage = Xpercentage / n;
-  Ypercentage = Ypercentage / n;
-  boxTemp = boxTemp / n;
+  // Update the head pointer for circular buffer
+  head = (head + 1) % n;
 
   // Get valve states
   valveStatus = "";
-  for (byte pinNr = 22; pinNr <= 53; pinNr++) {
+  for (byte pinNr = 22; pinNr <= 53; pinNr++)
+  {
     valveStatus += digitalRead(pinNr) == LOW ? "0" : "1";
   }
   // Get relay states
   relayStatus = "";
-  for (byte relayPinNr = 0; relayPinNr <= 1; relayPinNr++) {
+  for (byte relayPinNr = 0; relayPinNr <= 1; relayPinNr++)
+  {
     relayStatus += digitalRead(relayPins[relayPinNr]) == LOW ? "1" : "0";
   }
 
@@ -713,20 +779,20 @@ void sendStatus( String param )
 
   // Create a JSON string with keys
   doc["moveStatus"] = param;
-  doc["X_position"] = String(Xaxis.currentPosition() * 100.0000 / 62438.00, 2);
-  doc["X_percentage"] = String(Xpercentage,1);
-  doc["Y_position"] = String(Yaxis.currentPosition() * 100.0000 / 62438.00, 2);
-  doc["Y_percentage"] = String(Ypercentage,1);
+  doc["X_position"] = String(percentageX_fromSteps(), 2);
+  doc["X_percentage"] = String(Xpercentage, 1);
+  doc["Y_position"] = String(percentageY_fromSteps(), 2);
+  doc["Y_percentage"] = String(Ypercentage, 1);
   doc["Z_position"] = String(Zaxis.currentPosition());
-  doc["Z_percentage"] = String(Zaxis.currentPosition() * 100 / 15960.00, 2);
+  doc["Z_percentage"] = String(percentageZ_fromSteps(), 2);
   doc["X_pressure"] = String(Xpressure, 3);
   doc["Y_pressure"] = String(Ypressure, 3);
-  doc["A_pressure"] = String(Apressure, 1);
+  doc["A_pressure"] = String(Zpressure, 1);
   doc["valves"] = valveStatus;
   doc["relays"] = relayStatus;
   doc["boxHumidity"] = String(boxHum, 2);
   doc["boxTemperature"] = String(boxTemp, 2);
-  doc["boxSetpoint"] = String(SPT,2);
+  doc["boxSetpoint"] = String(SPT, 2);
   doc["fanSpeed"] = String(fanSpeed);
 
   // Serialize the JSON document
@@ -735,7 +801,6 @@ void sendStatus( String param )
   Serial.println(jsonString);
   Serial.flush();
 }
-
 
 // Here comes the main program loop ----------------------------------------------------------------
 
@@ -856,5 +921,4 @@ void loop()
   sendStatus("-");
 
   delay(20);
-
 }

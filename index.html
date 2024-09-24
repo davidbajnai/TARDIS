@@ -22,7 +22,6 @@
 			<p class="label" style="top:39px;left:1030px;">N<sub>2</sub> purging</p>
 			<p class="label" style="top:155px;left:1030px;">Turbo</p>
 			<p class="label" style="top:230px;left:1030px;">Scroll</p>
-			<p class="label" style="top:700px;left:1030px;">Vent</p>	
 
 			<!-- Display the valves -->
 			<div style="top:125px;left:775px;">
@@ -95,7 +94,7 @@
 				<img id="V14" src="" class="small" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" />
 				<span id="V14_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:703px;left:622px;">
+			<!-- <div style="top:703px;left:622px;">
 				<span class="valveNumberLabel">V15</span>
 				<img id="V15" src="" class="small" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" />
 				<span id="V15_label" style="display:none;">undefined</span>
@@ -104,7 +103,7 @@
 				<span class="valveNumberLabel">V16</span>
 				<img id="V16" src="" class="small" onclick="var status=$('#V16_label').html();toggleValve('V16',status);" />
 				<span id="V16_label" style="display:none;">undefined</span>
-			</div>
+			</div> -->
 			<div style="top:158px;left:843px;">
 				<span class="valveNumberLabel">V17</span>
 				<img id="V17" src="" class="small" onclick="var status=$('#V17_label').html();toggleValve('V17',status);" />
@@ -125,7 +124,7 @@
 				<img id="V20" src="" class="small" onclick="var status=$('#V20_label').html();toggleValve('V20',status);" />
 				<span id="V20_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:794px;left:622px;">
+			<div style="top:595px;left:775px;">
 				<span class="valveNumberLabel">V21</span>
 				<img id="V21" src="" class="small" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" />
 				<span id="V21_label" style="display:none;">undefined</span>
@@ -160,7 +159,9 @@
 				<img id="V27" src="" class="small" onclick="var status=$('#V27_label').html();toggleValve('V27',status);" />
 				<span id="V27_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:595px;left:775px;">
+
+			<!-- Not in use -->
+			<!-- <div style="top:595px;left:775px;">
 				<span class="valveNumberLabel">V28</span>
 				<img id="V28" src="" class="small" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" />
 				<span id="V28_label" style="display:none;">undefined</span>
@@ -181,23 +182,21 @@
 				<img id="V31" src="" class="small" onclick="var status=$('#V31_label').html();toggleValve('V31',status);" />
 				<span id="V31_label" style="display:none;">undefined</span>
 			</div>
-
-			<!-- Not in use -->
-			<!-- <div style="top:794px;left:240px;">
+			<div style="top:794px;left:240px;">
 				<span class="valveNumberLabel">V32</span>
 				<img id="V32" src="" class="small" onclick="var status=$('#V32_label').html();toggleValve('V32',status);" />
 				<span id="V32_label" style="display:none;">undefined</span>
 			</div> -->
 
 			<!-- Display the relays -->
-			<p class="label" style="top:752px;left:1070px;">Pump</p>
+			 <!-- Not in use -->
+			<!-- <p class="label" style="top:752px;left:1070px;">Pump</p>
 			<div style="top:794px;left:1040px;">
 				<span class="valveNumberLabel">U01</span>
 				<img id="U01" src="" class="small" onclick="var status=$('#U01_label').html();toggleRelay('U01',status);"/>
 				<span id="U01_label" style="display:none;">undefined</span>
 			</div>
-			<!-- Not in use -->
-			<!-- <div style="top:794px;left:411px;">
+			<div style="top:794px;left:411px;">
 				<span class="valveNumberLabel">U02</span>
 				<img id="U02" src="" class="small" onclick="var status=$('#U02_label').html();toggleRelay('U02',status);"/>
 				<span id="U02_label" style="display:none;">undefined</span>
@@ -206,6 +205,8 @@
 			<!-- TILDAS control -->
 			<button onclick="startWritingData();" class="button medium" style="top:36px;left:645px;height:30px;">WD on</button>
 			<button onclick="stopWritingData();" class="button medium" style="top:66px;left:645px;height:30px;">WD off</button>
+			<button onclick="enableFit();" class="button medium" style="top:36px;left:585px;height:30px;">BG on</button>
+			<button onclick="suspendFit();" class="button medium" style="top:66px;left:585px;height:30px;">BG off</button>
 			<div id="baratron" class="box medium" style="top:55px;left:720px;">CellP </div>
 			<p class="label" style="top:39px;left:790px;color:white;">Torr (cell)</p>
 
@@ -215,13 +216,13 @@
 			<img id="bellowsZ" src="controller/images/bellows.png" class="bellows" style="top:320px;left:688px;" />
 			
 			<span id="pressureX" class="box small" style="top:353px;left:319px;">NaN</span>
-			<p class="label" style="top:312px;left:319px;">X (mbar)</p>
+			<p class="label" style="top:312px;left:319px;">X (Torr)</p>
 			
 			<span id="pressureY" class="box small" style="top:353px;left:1128px;">NaN</span>
-			<p class="label" style="top:312px;left:1128px;">Y (mbar)</p>
+			<p class="label" style="top:312px;left:1128px;">Y (Torr)</p>
 
 			<div id='pressureA' class="box small" style="top:555px;left:645px;"><em>NaN</em></div>
-			<p class="label" style="top:517px;left:645px;">A (mbar)</p>
+			<p class="label" style="top:517px;left:645px;">Z (Torr)</p>
 			<img id="loadingA" src="" class="icon" style="top:585px;left:645px;" />
 
 			<img id="motorX" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
@@ -338,7 +339,7 @@
 				<li>Reload the front panel webpage (http://localhost).</li>
 				<li>Attach the manifold to the inlet system and plug in the corresponding yellow tubes.</li>
 				<li>Pump the vented volume between the green valve on the manifold and V22. First use the scroll pump then the turbo.</li>
-				<li>Once the vacuum reaches 0.0001 mbar, open the green valve manually.</li>
+				<li>Once the vacuum reaches 0.0001 Torr, open the green valve manually.</li>
 				<li>Click the <b><span style="color: #9A6CA6">violet</span></b> <em>Starting position</em> button.</li>
 				<li>To choose the measurement sequence, click the <em>Sequence: Choose File</em> button.</li>
 				<ul>
@@ -391,8 +392,8 @@
 				<li>BY,25.3,12, &lt;--- Move bellows Y to 25.3%.</li>
 				<li>BY,+4.5,12, &lt;--- Move bellows Y by 4.5% relative to the current position.</li>
 				<li>BZ,25.3,12, &lt;--- Move bellows Z to 25.3%. If the parameter has a sign, the bellows are moved by an increment relative to the current position.</li>
-				<li>PX,1.653,10, &lt;--- Move bellows X or expand the gas so that the pressure is 1.653 mbar in bellows X. <b>The starting situation should be V05C, V07C, V06O.</b></li>
-				<li>PY,1.653,10, &lt;--- Move bellows Y so that the pressure is 1.653 mbar in bellows Y. <b>The starting situation should be V11C, V13C, V12O.</b></li></li>
+				<li>PX,1.653,10, &lt;--- Move bellows X or expand the gas so that the pressure is 1.653 Torr in bellows X. <b>The starting situation should be V05C, V07C, V06O.</b></li>
+				<li>PY,1.653,10, &lt;--- Move bellows Y so that the pressure is 1.653 Torr in bellows Y. <b>The starting situation should be V11C, V13C, V12O.</b></li></li>
 				<li>QC,39.387,10, &lt;--- Set the cell pressure by moving bellows Z to the pressure written by command WC on the front panel. The parameter 39.387 is only used in case that there is no value given on the frontpanel.</li>
 				<li>SN,366,10, &lt;--- Set the pressure at gauge A by moving bellows Z. The parameter (e.g., 366) is used, unless it is 0. Otherwise the value written by command WA on the front panel is used.</li>
 			</ul>

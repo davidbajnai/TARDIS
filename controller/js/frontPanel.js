@@ -91,15 +91,15 @@ function sendCommand(cmd) {
                 $("#warningZ").attr("src", "");
             }
 
-            // X baratron in mbar (max. 5 mbar)
+            // X baratron in Torr (max. 5 Torr)
             var pressureX = parseFloat(statusArr[8]);
             $("#pressureX").html(pressureX.toFixed(3));
 
-            // Y baratron in mbar (max. 5 mbar)
+            // Y baratron in Torr (max. 5 Torr)
             var pressureY = parseFloat(statusArr[9]);
             $("#pressureY").html(pressureY.toFixed(3));
 
-            // A baratron in mbar (max. 500 mbar)
+            // A baratron in Torr (max. 500 Torr)
             var pressureA = parseFloat(statusArr[10]);
             $("#pressureA").html(pressureA.toFixed(1));
 
@@ -126,7 +126,7 @@ function sendCommand(cmd) {
                 "horizontal", // V18
                 "horizontal", // V19
                 "horizontal", // V20
-                "horizontal", // V21
+                "vertical", // V21
                 "horizontal", // V22
                 "vertical", // V23
                 "vertical", // V24
@@ -196,8 +196,7 @@ function sendCommand(cmd) {
 
             // Cell pressure from the TILDAS in Torr
             // The cell's baratron is zeroed here
-            var baratronTorr =
-                parseFloat(statusArr[17]) * 1 + (0.406 + 0.223) / 1.33322;
+            var baratronTorr = parseFloat(statusArr[17]);
             $("#baratron").html(baratronTorr.toFixed(3));
 
             // CO2 mixing ratios from the TILDAS
@@ -1007,7 +1006,7 @@ setInterval(function () {
                 `${new Date().toLocaleTimeString()}, ` +
                 "Target pressure is " +
                 pTarget.toFixed(3) +
-                " mbar"
+                " Torr"
             );
 
             // Here we correct pTarget by the correction_pCO2 factor
@@ -1029,7 +1028,7 @@ setInterval(function () {
                     `${new Date().toLocaleTimeString()}, ` +
                     "Adjusted target pressure is " +
                     pTarget.toFixed(3)+
-                    " mbar"
+                    " Torr"
                 );
 
             }
@@ -1052,7 +1051,7 @@ setInterval(function () {
                     `${new Date().toLocaleTimeString()}, ` +
                     "Collison gas target pressure from front panel is " +
                     pTarget.toFixed(1) +
-                    " mbar"
+                    " Torr"
                 );
             }
             else {
@@ -1063,7 +1062,7 @@ setInterval(function () {
                     `${new Date().toLocaleTimeString()}, ` +
                     "Collison gas target pressure from parameter is " +
                     pTarget.toFixed(1) +
-                    " mbar"
+                    " Torr"
                 );
             }
 
