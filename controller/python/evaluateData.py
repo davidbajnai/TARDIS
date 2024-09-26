@@ -132,7 +132,9 @@ if "SPEFile" in df.columns:
 
 dfLogFile = pd.read_csv(folder + "logFile.csv")
 
-# Drop empty rows
+
+# Drop empty columns and rows with missing values
+dfLogFile = dfLogFile.dropna(how='all', axis=1)
 dfLogFile = dfLogFile.dropna(how='any', axis=0)
 
 # Rename the columns

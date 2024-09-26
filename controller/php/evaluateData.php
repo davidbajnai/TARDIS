@@ -96,6 +96,7 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
                 }
             }
         }
+        exec("rm " . $csvFile);
     } else {
         echo("<br>SPE files not copied<br>");
     }
@@ -106,7 +107,6 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
 
     $filesToUpload = array(
         "FitPlot.png",
-        // "bracketingResults.png",
         "rawData.png",
         "$sampleName.zip"
     );
