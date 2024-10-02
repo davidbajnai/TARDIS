@@ -100,8 +100,8 @@ function sendCommand(cmd) {
             $("#pressureY").html(pressureY.toFixed(3));
 
             // A baratron in Torr (max. 500 Torr)
-            var pressureA = parseFloat(statusArr[10]);
-            $("#pressureA").html(pressureA.toFixed(1));
+            var pressureZ = parseFloat(statusArr[10]);
+            $("#pressureZ").html(pressureZ.toFixed(1));
 
             // Valve status
             var valveArray = statusArr[11];
@@ -195,7 +195,6 @@ function sendCommand(cmd) {
             $("#fanSpeed").html(fanSpeed);
 
             // Cell pressure from the TILDAS in Torr
-            // The cell's baratron is zeroed here
             var baratronTorr = parseFloat(statusArr[17]);
             $("#baratron").html(baratronTorr.toFixed(3));
 
@@ -211,7 +210,7 @@ function sendCommand(cmd) {
 
             // vacuum vacuum gauge
             var vacuum = statusArr[22];
-            $("#vacuum").html(parseFloat(vacuum).toFixed(4));
+            $("#vacuum").html(parseFloat(vacuum).toFixed(5));
 
             // Reset the command string
             cmd = "";
@@ -743,7 +742,7 @@ setInterval(function () {
                 "percentageZ": $("#percentageZ").html(),
                 "pressureX": $("#pressureX").html(),
                 "pressureY": $("#pressureY").html(),
-                "pressureA": $("#pressureA").html(),
+                "pressureZ": $("#pressureZ").html(),
                 "vacuum": $("#vacuum").html().trim(),
                 "fanSpeed": parseFloat($("#fanSpeed").html())
             };
@@ -819,7 +818,7 @@ setInterval(function () {
         else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "A" && executed == "yes" && moving == "no" && waiting == "no") {
             doThisBeforeEveryCommand();
 
-            $("#nitrogenTargetPressure").html((parseFloat($("#pressureA").html())).toFixed(1));
+            $("#nitrogenTargetPressure").html((parseFloat($("#pressureZ").html())).toFixed(1));
 
             doThisAfterEveryCommand("executed");
         }

@@ -20,7 +20,8 @@ MAX_ATTEMPTS = 10
 EXPECTED_MESSAGE_LENGTH = 9
 try:
     # Connect to 'something' over USB1
-    edwards_gauge = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=0)
+    EDWARDS_PORT = '/dev/ttyUSB1'
+    edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=0)
     time.sleep(2)
     attempts = 1
     success = False
@@ -33,17 +34,18 @@ try:
             test_message = ""
         if len(test_message) == EXPECTED_MESSAGE_LENGTH:
             # The response was the expected length, so this is the Edwards gauge
-            print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB0")
-            TILDAS_PORT = '/dev/ttyUSB1'
+            print(" ✓ Connection to Edwards gauge established over " + EDWARDS_PORT)
+            TILDAS_PORT = '/dev/ttyUSB0'
             success = True
         else:
             time.sleep(1)
             print("    Trying to connect to the Edwards gauge. Attempt #" + str(attempts), end="\r")
             attempts += 1
     if success is False:
+        EDWARDS_PORT = '/dev/ttyUSB0'
         edwards_gauge.close() # close previous connection
         # Connect to 'something' over USB0
-        edwards_gauge = serial.Serial('/dev/ttyUSB1', baudrate=9600, timeout=0)
+        edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=0)
         time.sleep(1)
         attempts = 0
         while attempts < MAX_ATTEMPTS and success is False:
@@ -54,10 +56,10 @@ try:
             except UnicodeDecodeError:
                 test_message = ""
             if len(test_message) == EXPECTED_MESSAGE_LENGTH:
-                print(" ✓ Connection to Edwards gauge established over /dev/ttyUSB1")
+                print(" ✓ Connection to Edwards gauge established over " + EDWARDS_PORT)
                 time.sleep(1)
                 success = True
-                TILDAS_PORT = '/dev/ttyUSB0'
+                TILDAS_PORT = '/dev/ttyUSB1'
             else:
                 time.sleep(1)
                 attempts += 1
@@ -155,7 +157,7 @@ try:
             try:
                 edwards_gauge.write( bytes('?GA1\r','utf-8') )
                 edwards_response = edwards_gauge.readline().decode('utf-8').strip()
-                vacuum = str(round(float(edwards_response), 4))
+                vacuum = str(round(float(edwards_response), 5))
             except (UnicodeDecodeError, ValueError):
                 pass # broken response from the Edwards gauge -> do nothing
 
