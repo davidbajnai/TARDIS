@@ -731,6 +731,7 @@ void sendStatus(String param)
   XpercentageArray[head] = Xpercentage;
   YpercentageArray[head] = Ypercentage;
   boxTempArray[head] = boxTemp;
+  boxHumArray[head] = boxHum;
 
   // Initialize sums
   float XpressureSum = 0;
@@ -739,6 +740,7 @@ void sendStatus(String param)
   float XpercentageSum = 0;
   float YpercentageSum = 0;
   float boxTempSum = 0;
+  float boxHumSum = 0;
 
   // Sum the elements in the array
   for (byte i = 0; i < n; i++) {
@@ -748,6 +750,7 @@ void sendStatus(String param)
     XpercentageSum += XpercentageArray[i];
     YpercentageSum += YpercentageArray[i];
     boxTempSum += boxTempArray[i];
+    boxHumSum += boxHumArray[i];
   }
 
   // Get the average of the array
@@ -757,6 +760,7 @@ void sendStatus(String param)
   Xpercentage = XpercentageSum / n;
   Ypercentage = YpercentageSum / n;
   boxTemp = boxTempSum / n;
+  boxHum = boxHumSum / n;
 
   // Update the head pointer for circular buffer
   head = (head + 1) % n;
@@ -787,7 +791,7 @@ void sendStatus(String param)
   doc["Z_percentage"] = String(percentageZ_fromSteps(), 2);
   doc["X_pressure"] = String(Xpressure, 3);
   doc["Y_pressure"] = String(Ypressure, 3);
-  doc["A_pressure"] = String(Zpressure, 1);
+  doc["Z_pressure"] = String(Zpressure, 1);
   doc["valves"] = valveStatus;
   doc["relays"] = relayStatus;
   doc["boxHumidity"] = String(boxHum, 2);

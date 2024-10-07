@@ -3,6 +3,8 @@
 // This script is used to:
 // evaluation data and send the results to the isolabor server
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 date_default_timezone_set('Europe/Berlin');
 $timestamp = time();
 $DateTimeAdded = date("Y-m-d H:i:s", $timestamp);
@@ -13,7 +15,7 @@ if (isset($_POST['sampleName'])) {
     echo "Parameters are recieved from JavaScript<br><br>";
 } else {
     $sampleName = urldecode($_GET['sampleName']);
-    $userName = urldecode($GET['userName']);
+    // $userName = urldecode($GET['userName']);
     echo "Parameters are recieved via URL<br><br>";
 }
 
@@ -71,9 +73,8 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
     // Copy SPE files from the TILDAS PC to the local directory
     $csvFile = $localDirectory . "/list_of_SPE_files.csv";
     $localSPEDirectory = $localDirectory . "/SPE_files";
-    if (!is_dir($localSPEDirectory) && file_exists($csvFile)) {
+    if (file_exists($csvFile) && !is_dir($localSPEDirectory)) {
         mkdir($localSPEDirectory, 0777, true);
-
         $csv = fopen($csvFile, "r");
         $speFiles = array();
         while (!feof($csv)) {
@@ -81,11 +82,9 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
         }
         fclose($csv);
 
-        exec("rm " . $csvFile);
-
-        if (count(scandir('/mnt/TILDAS_PC')) <= 2) {
-            echo("<br>TILDAS PC not mounted.<br>");
-        } else {
+        if (!is_dir('/mnt/TILDAS_PC')) {
+            echo("<br><span style='color:red;'>TILDAS PC not mounted</span><br>");
+            } else {
             $speFiles = array_diff($speFiles, array(''));
             foreach ($speFiles as $speFile) {
                 $localFilePath = $localDirectory . "/SPE_files/" . basename($speFile);
@@ -97,9 +96,18 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
             }
         }
         exec("rm " . $csvFile);
+    } elseif (is_dir($localSPEDirectory) && count(scandir($localSPEDirectory)) > 2) {
+        echo("<br>SPE files already there<br>");
     } else {
-        echo("<br>SPE files not copied<br>");
+        echo("<br><span style='color:red;'>SPE files not copied</span><br>");
     }
+
+    // Clean up
+    exec("rm " . $csvFile);
+    if (count(scandir($localSPEDirectory)) <= 2){
+        rmdir($localSPEDirectory);
+    }
+
     echo "</br>";
 
     // Create a ZIP archive of all files and upload that too the isolaborserver
@@ -115,28 +123,28 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
 
     $connection = ssh2_connect($server_IP);
     if (!$connection) {
-        die("Failed to connect to the SSH server.</br>");
+        die("<span style='color:red;'>Failed to connect to the SSH server</span></br>");
     }
 
     // Authenticate with the SSH server
     if (!ssh2_auth_password($connection, $server_user, $server_passwd)) {
-        die("Failed to authenticate with the SSH server.</br>");
+        die("<span style='color:red;'>Failed to authenticate with the SSH server</span></br>");
     }
 
     // Initialize SFTP subsystem
     $sftp = ssh2_sftp($connection);
     if (!$sftp) {
-        die("Failed to initialize SFTP subsystem.</br>");
+        die("<span style='color:red;'>Failed to initialize SFTP subsystem</span></br>");
     }
 
     // Check if remote directory exists
     $stat = ssh2_sftp_stat($sftp, $remoteDirectory);
     if ($stat !== false && $stat['mode'] & 0040000) {
-        echo "Remote directory exists.</br>";
+        echo "Remote directory exists</br>";
     } else {
         // Create remote directory if it doesn't exist
         if (!ssh2_sftp_mkdir($sftp, $remoteDirectory)) {
-            die("Failed to create remote directory.</br>");
+            die("<span style='color:red;'>Failed to create remote directory</span></br>");
         }
         echo "Remote directory created.</br>";
     }
@@ -149,14 +157,14 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
         // Upload the file via SFTP
         $stream = fopen($localFilePath, 'r');
         if (!$stream) {
-            echo "Failed to open local file for reading: $localFilePath</br>";
+            echo "<span style='color:red;'>Failed to open local file for reading: $localFilePath</span></br>";
             continue;
         }
 
-        $upload = ssh2_scp_send($connection, $localFilePath, $remoteFilePath, 0644);
+        $upload = ssh2_scp_send($connection, $localFilePath, $remoteFilePath, 0777);
 
         if (!$upload) {
-            echo "Failed to upload file: $localFilePath</br>";
+            echo "<span style='color:red;'>Failed to upload file: $localFilePath</span></br>";
         } else {
             echo "File uploaded successfully: $localFilePath</br>";
         }
@@ -166,6 +174,4 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
 
     // Delete some of the local files to save space on the Raspberry
     exec("rm /var/www/html/data/Results/$sampleName/$sampleName.zip");
-    // exec("rm Results/$sampleName/*.png");
-    exec("rm /var/www/html/data/Results/$sampleName/bracketingResults.xlsx");
 }
