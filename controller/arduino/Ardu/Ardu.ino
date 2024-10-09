@@ -17,12 +17,13 @@ float Zpercentage = 0.0f;
 float Xpressure = 0.0f;
 float Ypressure = 0.0f;
 float Zpressure = 0.0f;
-float XpressureArray[200];
-float YpressureArray[200];
-float ZpressureArray[200];
-float XpercentageArray[200];
-float YpercentageArray[200];
-float boxTempArray[200];
+float XpressureArray[130];
+float YpressureArray[130];
+float ZpressureArray[130];
+float XpercentageArray[130];
+float YpercentageArray[130];
+float boxTempArray[130];
+float boxHumArray[130];
 float fanSpeed = 0.0f;
 float boxTemp = 0.0f;
 const float SPT = 32.5f; // Set the housing temperature here
@@ -704,19 +705,14 @@ void switchRelay(String param)
 void sendStatus(String param)
 {
 
-  // Control the housing temperature
+  // Get sensor readings
   sensors_event_t humidity, temp;
   shtc3.getEvent(&humidity, &temp);
   boxTemp = temp.temperature;
   boxHum = humidity.relative_humidity;
-  controlT();
-
-  // Read out the Baratrons
   Xpressure = readBaratronX();
   Ypressure = readBaratronY();
   Zpressure = readBaratronZ();
-
-  // Get percentages from the potentiometers
   Xpercentage = percentageX_fromPoti();
   Ypercentage = percentageY_fromPoti();
 
@@ -734,13 +730,13 @@ void sendStatus(String param)
   boxHumArray[head] = boxHum;
 
   // Initialize sums
-  float XpressureSum = 0;
-  float YpressureSum = 0;
-  float ZpressureSum = 0;
-  float XpercentageSum = 0;
-  float YpercentageSum = 0;
-  float boxTempSum = 0;
-  float boxHumSum = 0;
+  float XpressureSum = 0.0f;
+  float YpressureSum = 0.0f;
+  float ZpressureSum = 0.0f;
+  float XpercentageSum = 0.0f;
+  float YpercentageSum = 0.0f;
+  float boxTempSum = 0.0f;
+  float boxHumSum = 0.0f;
 
   // Sum the elements in the array
   for (byte i = 0; i < n; i++) {
@@ -764,6 +760,9 @@ void sendStatus(String param)
 
   // Update the head pointer for circular buffer
   head = (head + 1) % n;
+
+  // Control the fan speed
+  controlT();
 
   // Get valve states
   valveStatus = "";

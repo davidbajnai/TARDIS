@@ -1,10 +1,16 @@
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>> IMPORT PACKAGES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 from pymemcache.client import base
 import time
 import serial
 import datetime
 import ujson
+import threading
 
-# Arduino serial communication
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>> SERIAL COMMUNICATION <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Connect to the Arduino via serial
 try:
     arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0.2)
     print(" ✓ Connection to Arduino established")
@@ -13,15 +19,17 @@ except serial.SerialException:
     print(" x Connection to Arduino could not be established. Stopping the script.")
     quit()
 
-# Edwards pressure gauge serial communication
+# Connect to the Edwards pressure gauge via serial
 # NOTE: There are two USB serial ports conneted: USB1 and USB0
 #       Here we test which is the Edwards. The other one has to be the TILDAS.
 MAX_ATTEMPTS = 10
 EXPECTED_MESSAGE_LENGTH = 9
+PORT_PREFIX = '/dev/ttyUSB'
 try:
-    # Connect to 'something' over USB1
-    EDWARDS_PORT = '/dev/ttyUSB1'
-    edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=0)
+    # Connect to 'something' over one of the USB ports
+    EDWARDS_SUFFIX = '1' # USB1 or USB0
+    EDWARDS_PORT = PORT_PREFIX + EDWARDS_SUFFIX
+    edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=1)
     time.sleep(2)
     attempts = 1
     success = False
@@ -35,17 +43,18 @@ try:
         if len(test_message) == EXPECTED_MESSAGE_LENGTH:
             # The response was the expected length, so this is the Edwards gauge
             print(" ✓ Connection to Edwards gauge established over " + EDWARDS_PORT)
-            TILDAS_PORT = '/dev/ttyUSB0'
+            TILDAS_PORT = PORT_PREFIX + ('0' if EDWARDS_SUFFIX == '1' else '1')
             success = True
         else:
             time.sleep(1)
             print("    Trying to connect to the Edwards gauge. Attempt #" + str(attempts), end="\r")
             attempts += 1
     if success is False:
-        EDWARDS_PORT = '/dev/ttyUSB0'
+        # Try connecting to the Edwards gauge over the other USB port
         edwards_gauge.close() # close previous connection
-        # Connect to 'something' over USB0
-        edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=0)
+        EDWARDS_SUFFIX = '0' # USB1 or USB0
+        EDWARDS_PORT = PORT_PREFIX + EDWARDS_SUFFIX
+        edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=1)
         time.sleep(1)
         attempts = 0
         while attempts < MAX_ATTEMPTS and success is False:
@@ -59,7 +68,7 @@ try:
                 print(" ✓ Connection to Edwards gauge established over " + EDWARDS_PORT)
                 time.sleep(1)
                 success = True
-                TILDAS_PORT = '/dev/ttyUSB1'
+                TILDAS_PORT = PORT_PREFIX + ('0' if EDWARDS_SUFFIX == '1' else '1')
             else:
                 time.sleep(1)
                 attempts += 1
@@ -71,7 +80,7 @@ except FileNotFoundError:
     print(" x The Edwards gauge's USB cable is not plugged in. Stopping the script.")
     quit()
 
-# Laser spectrometer serial communication
+# Connect to the TILDAS via serial
 try:
     laser = serial.Serial(TILDAS_PORT, baudrate=57600, timeout=1)
     print(" ✓ Connection to TILDAS established over " + TILDAS_PORT)
@@ -82,22 +91,54 @@ except FileNotFoundError:
     edwards_gauge.close() # close open connections
     quit()
 
-# Set initial values, that are obviously fake
-vacuum = '9.999'
-arduinoStatus = ""
-laserStatus = "0,0,0,0,0"
-ArduinoError = 0
 
 # Connect to the shared variable
 m = base.Client(('127.0.0.1', 11211))
 m.set('key2', "")
 
+# Serial connections are established
 print("Transmitting to and recieving data from sendCommand.php...")
 
-try:
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>> DEFINE LOOPS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# NOTE:
+# We need to put the Edwards gauge reading in a separate loop
+# because reading the gauge is slow, but we want the other loop
+# to run as fast as possible.
+
+lock = threading.Lock()
+
+def loop_1():
+
+    # Initialize the global variable also used by loop_2
+    global vacuum
+    vacuum = "0.0000"
+
+    while True:
+        # Read Edwards pressure gauge and temperature sensor
+        try:
+            edwards_gauge.write( bytes('?GA1\r','utf-8') )
+            edwards_response = edwards_gauge.readline().decode('utf-8').strip()
+            vacuum_new = round(float(edwards_response), 4)
+            if vacuum_new >= 0:
+                with lock:
+                    vacuum = str(vacuum_new)
+            else:
+                pass
+        except (UnicodeDecodeError, ValueError):
+            pass # broken response from the Edwards gauge -> do nothing
+
+def loop_2():
+
+    # Initialize variables used in the loop
+    ArduinoError = 0
+    arduinoStatus = ""
+    laserStatus = "0,0,0,0,0"
     start_time_elapsed = time.time()
     start_time_speed = time.time()
     elapsed_time = 0
+
     while True:
 
         # Read the data stream from the laser spectrometer
@@ -152,16 +193,6 @@ try:
         
         # print(arduinoStatus) # Show the formatted serial output of the Arduino in the Terminal - for debugging
 
-        # Read Edwards pressure gauge and temperature sensor every 5 seconds
-        if(int(time.time()) % 5 == 0):
-            try:
-                edwards_gauge.write( bytes('?GA1\r','utf-8') )
-                edwards_response = edwards_gauge.readline().decode('utf-8').strip()
-                vacuum = str(round(float(edwards_response), 5))
-            except (UnicodeDecodeError, ValueError):
-                pass # broken response from the Edwards gauge -> do nothing
-
-
         # Create a status string from the information from Arduino, TILDAS, Edwards gauge, and room sensor and store it for PHP in the shared variable 'key'
         if( arduinoStatus != "" ):
 
@@ -173,7 +204,6 @@ try:
             m.set('key', status)
 
             # print(status) # Show the status string in the Terminal - for debugging
-
             # time.sleep(0.05)
 
         # Receive commands for Arduino from PHP via shared variable #2, defined in sendCommand.php
@@ -200,9 +230,23 @@ try:
         print(f"  Elapsed: {days:.0f} d, {hours:.0f} h, {minutes:.0f} m, {seconds:.0f} s | Speed: {speed:.1f}Hz | Arduino errors: {ArduinoError:.0f}      ", end="\r")
         start_time_speed = time.time()
 
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> THREADS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+thread_1 = threading.Thread(target=loop_1, daemon=True)
+thread_2 = threading.Thread(target=loop_2, daemon=True)
+thread_1.start()
+thread_2.start()
+
+try:
+    thread_1.join()
+    thread_2.join()
 except KeyboardInterrupt:
-    m.close()
-    edwards_gauge.close()
-    arduino.close()
-    # laser.close() # if you close the TILDAS's serial port you have to re-open it on the TILDAS's PC
-    print("\nLoop stopped by user")
+    print("\nThreads stopped by user")
+finally:
+    if edwards_gauge:
+        edwards_gauge.close()
+    if m:
+        m.close()
+    if arduino:
+        arduino.close()
