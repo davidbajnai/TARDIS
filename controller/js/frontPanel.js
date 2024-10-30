@@ -24,14 +24,14 @@ function sendCommand(cmd) {
             $("#moveStatus").html(statusArr[1]);
 
             // Display some images based on moveStatus
-            if (
-                statusArr[1] == "IA" &&
-                $("#loadingA").attr("src") != "controller/images/loading.gif"
-            ) {
-                $("#loadingA").attr("src", "controller/images/loading.gif");
-            } else if (statusArr[1] != "IA") {
-                $("#loadingA").attr("src", "");
-            }
+            // if (
+            //     statusArr[1] == "IA" &&
+            //     $("#loadingGIF").attr("src") != "controller/images/loading.gif"
+            // ) {
+            //     $("#loadingGIF").attr("src", "controller/images/loading.gif");
+            // } else if (statusArr[1] != "IA") {
+            //     $("#loadingGIF").attr("src", "");
+            // }
 
             if (
                 statusArr[1] == "MX" &&
@@ -126,7 +126,7 @@ function sendCommand(cmd) {
                 "horizontal", // V18
                 "horizontal", // V19
                 "horizontal", // V20
-                "vertical", // V21
+                "horizontal", // V21
                 "horizontal", // V22
                 "vertical", // V23
                 "vertical", // V24
@@ -195,8 +195,8 @@ function sendCommand(cmd) {
             $("#fanSpeed").html(fanSpeed);
 
             // Cell pressure from the TILDAS in Torr
-            var baratronTorr = parseFloat(statusArr[17]);
-            $("#baratron").html(baratronTorr.toFixed(3));
+            var cellPressure = parseFloat(statusArr[17]);
+            $("#cellPressure").html(cellPressure.toFixed(3));
 
             // CO2 mixing ratios from the TILDAS
             var mr1 = statusArr[18];
@@ -804,7 +804,7 @@ setInterval(function () {
         else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "C" && executed == "yes" && moving == "no" && waiting == "no") {
             doThisBeforeEveryCommand();
 
-            $("#cellTargetPressure").html($("#baratron").html());
+            $("#cellTargetPressure").html($("#cellPressure").html());
             console.log(
                 `${new Date().toLocaleTimeString()}, ` +
                 "Cell target pressure: " +
@@ -1086,7 +1086,7 @@ setInterval(function () {
             doThisBeforeEveryCommand();
 
             // Measure the current pressure (in Torr) in the cell
-            let p = parseFloat($("#baratron").text());
+            let p = parseFloat($("#cellPressure").text());
             console.log(
                 `${new Date().toLocaleTimeString()}, ` +
                 "Current pressure in the cell is " +

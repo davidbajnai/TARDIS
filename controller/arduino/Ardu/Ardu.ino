@@ -373,7 +373,7 @@ void startingPosition()
   switchValve("V21O");
   switchValve("V22C");
   switchValve("V27C");
-  switchValve("V28C");
+  switchValve("V28O");
   switchValve("V29C");
   switchValve("V30C");
   switchValve("V31C");
