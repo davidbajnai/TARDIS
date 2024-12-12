@@ -1,6 +1,7 @@
 #include <AccelStepper.h>
 #include "Adafruit_SHTC3.h"
 #include <ArduinoJson.h>
+#include <RunningMedian.h>
 
 // Initialize the variables --------------------------------------------------------------------
 
@@ -17,13 +18,14 @@ float Zpercentage = 0.0f;
 float Xpressure = 0.0f;
 float Ypressure = 0.0f;
 float Zpressure = 0.0f;
-float XpressureArray[130];
-float YpressureArray[130];
-float ZpressureArray[130];
-float XpercentageArray[130];
-float YpercentageArray[130];
-float boxTempArray[130];
-float boxHumArray[130];
+const byte n = 50; // Integration cycles (4 seconds at 12.4 Hz)
+RunningMedian XpressureArray = RunningMedian(n);
+RunningMedian YpressureArray = RunningMedian(n);
+RunningMedian ZpressureArray = RunningMedian(n);
+RunningMedian XpercentageArray = RunningMedian(n);
+RunningMedian YpercentageArray = RunningMedian(n);
+RunningMedian boxTempArray = RunningMedian(n);
+RunningMedian boxHumArray = RunningMedian(n);
 float fanSpeed = 0.0f;
 float boxTemp = 0.0f;
 const float SPT = 32.5f; // Set the housing temperature here
@@ -45,6 +47,13 @@ String valveStatus;
 String relayStatus;
 StaticJsonDocument<350> doc;
 String jsonString;
+
+// Variables to measure loop speed
+unsigned long loopStartTime;
+unsigned long loopEndTime;
+unsigned long loopDuration; 
+float loopFrequency;
+
 
 // Define the pinout ---------------------------------------------------------------------------
 
@@ -168,8 +177,13 @@ void setup()
   // Fan control
   pinMode(CurrentPin, OUTPUT); // Power supply analog in (I)
   pinMode(VoltagePin, OUTPUT); // Power supply analog in (U)
-  analogWrite(CurrentPin, 0);  // Set the current - this is changed by the PID controller
-  analogWrite(VoltagePin, 45); // Set the maximum voltage (255 = 5V analog out = 60V)
+  // Set the current to 0
+  // This is changed by the PID controller in controlT()
+  analogWrite(CurrentPin, 0);
+  // Set the maximum voltage
+  // 255 on PWM pin = 5V analog out = 60V
+  // 30 on PWM pin = 0.583V analog out = 7V
+  analogWrite(VoltagePin, 30); // Set the maximum voltage
 
   delay(100);
 
@@ -269,9 +283,10 @@ void controlT()
   }
 
   // Set the current of the adjustable power supply
-  // Each of the two fans can take max 1.86A, and they are connected in parallel
-  // 255 = 5V analog out = 8A
-  const float scaling = 0.4f;
+  // 255 on PWM pin = 5V analog out = 8A
+  // 64 on PWM pin = 1.25V analog out = 2A (max current)
+  // when the fanSpeed is 100, the PWM pin should be 64
+  const float scaling = 0.64f;
   analogWrite(CurrentPin, fanSpeed * scaling);
 }
 
@@ -716,50 +731,23 @@ void sendStatus(String param)
   Xpercentage = percentageX_fromPoti();
   Ypercentage = percentageY_fromPoti();
 
-  // Integrate sensor readings for better accuracy
-  const byte n = 50; // Integration cycles
-  static byte head = 0; // Head pointer for circular buffer
+  // Add the values to arrays
+  XpressureArray.add(Xpressure);
+  YpressureArray.add(Ypressure);
+  ZpressureArray.add(Zpressure);
+  XpercentageArray.add(Xpercentage);
+  YpercentageArray.add(Ypercentage);
+  boxTempArray.add(boxTemp);
+  boxHumArray.add(boxHum);
 
-  // Update circular buffer with new data
-  XpressureArray[head] = Xpressure;
-  YpressureArray[head] = Ypressure;
-  ZpressureArray[head] = Zpressure;
-  XpercentageArray[head] = Xpercentage;
-  YpercentageArray[head] = Ypercentage;
-  boxTempArray[head] = boxTemp;
-  boxHumArray[head] = boxHum;
-
-  // Initialize sums
-  float XpressureSum = 0.0f;
-  float YpressureSum = 0.0f;
-  float ZpressureSum = 0.0f;
-  float XpercentageSum = 0.0f;
-  float YpercentageSum = 0.0f;
-  float boxTempSum = 0.0f;
-  float boxHumSum = 0.0f;
-
-  // Sum the elements in the array
-  for (byte i = 0; i < n; i++) {
-    XpressureSum += XpressureArray[i];
-    YpressureSum += YpressureArray[i];
-    ZpressureSum += ZpressureArray[i];
-    XpercentageSum += XpercentageArray[i];
-    YpercentageSum += YpercentageArray[i];
-    boxTempSum += boxTempArray[i];
-    boxHumSum += boxHumArray[i];
-  }
-
-  // Get the average of the array
-  Xpressure = XpressureSum / n;
-  Ypressure = YpressureSum / n;
-  Zpressure = ZpressureSum / n;
-  Xpercentage = XpercentageSum / n;
-  Ypercentage = YpercentageSum / n;
-  boxTemp = boxTempSum / n;
-  boxHum = boxHumSum / n;
-
-  // Update the head pointer for circular buffer
-  head = (head + 1) % n;
+  // Get the averages
+  Xpressure = XpressureArray.getAverage();
+  Ypressure = YpressureArray.getAverage();
+  Zpressure = ZpressureArray.getAverage();
+  Xpercentage = XpercentageArray.getAverage();
+  Ypercentage = YpercentageArray.getAverage();
+  boxTemp = boxTempArray.getAverage();
+  boxHum = boxHumArray.getAverage();
 
   // Control the fan speed
   controlT();
@@ -796,7 +784,7 @@ void sendStatus(String param)
   doc["boxHumidity"] = String(boxHum, 2);
   doc["boxTemperature"] = String(boxTemp, 2);
   doc["boxSetpoint"] = String(SPT, 2);
-  doc["fanSpeed"] = String(fanSpeed);
+  doc["fanSpeed"] = String(fanSpeed, 2);
 
   // Serialize the JSON document
   doc.shrinkToFit();
@@ -809,6 +797,9 @@ void sendStatus(String param)
 
 void loop()
 {
+
+  loopStartTime = micros();  // Record the start time
+
   // Monitor the serial port
   while (Serial.available())
   {
@@ -924,4 +915,15 @@ void loop()
   sendStatus("-");
 
   delay(20);
+
+  loopEndTime = micros();  // Record the end time
+  loopDuration = loopEndTime - loopStartTime;  // Calculate the loop duration in microseconds
+
+  // Calculate loop frequency in Hz (1 second = 1,000,000 microseconds)
+  if (loopDuration > 0) { // Avoid division by zero
+    loopFrequency = 1.0 / (loopDuration / 1000000.0); // Convert duration to seconds
+  } else {
+    loopFrequency = 0; // Handle edge case where duration is too small
+  }
+
 }
