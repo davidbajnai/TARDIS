@@ -75,7 +75,7 @@ const byte VoltagePin = 12;
 // Baratron pressure gauges
 const byte pinBaratronX = A2;
 const byte pinBaratronY = A3;
-const byte pinBaratronZ = A4;
+const byte pinBaratronZ = A7;
 
 // Potentiometers
 const byte pinPotiX = A0;
@@ -85,22 +85,22 @@ const byte pinPotiY = A1;
 
 // Do the calibration and zero-ing here!
 
-float readBaratronX() // Reference bellow, 0-10 Torr Baratron
+float readBaratronX() // Reference bellow, 0-10 Torr, 10V Baratron
 {
-  constexpr float conversion = 5.0f / 1024.0f;
+  constexpr float conversion = 5.0f / 1023.0f;
   return (analogRead(pinBaratronX) * conversion) - 0.225f;
 }
 
-float readBaratronY() // Sample bellow, 0-10 Torr Baratron
+float readBaratronY() // Sample bellow, 0-10 Torr, 10V Baratron
 {
-  constexpr float conversion = 5.0f / 1024.0f;
+  constexpr float conversion = 5.0f / 1023.0f;
   return (analogRead(pinBaratronY) * conversion) - 0.196f;
 }
 
-float readBaratronZ() // Pressure adjust bellow, 0-1000 mBar Baratron
+float readBaratronZ() // Pressure adjust bellow, 0-500 mBar, 5V Baratron
 {
-  constexpr float conversion = 500.0f / 1024.0f;
-  return (analogRead(pinBaratronZ) * conversion) * 0.75f - 1.5f;
+  constexpr float conversion = 500.0f / 1023.0f;
+  return (analogRead(pinBaratronZ) * conversion) * 0.750062f - 0.0f;
 }
 
 // Functions for the potentiometers
@@ -273,7 +273,7 @@ void controlT()
   // The structure of the PID control string: fanSpeed = kp * Terror + ki * errSum + kd * dErr;
   fanSpeed = 390 * Terror + 0.30f * errSum + 0.030f * dErr;
 
-  if (fanSpeed > 100)
+  if (fanSpeed > 100 || boxTemp > SPT + 1)
   {
     fanSpeed = 100;
   }
@@ -507,8 +507,8 @@ void setPressureX(float targetPressure)
   const float V0 = 41.008f; // This is a instrument constant for bellows X
   for (byte a = 0; a < 15; a++)
   {
-    // Get current pressure
-    const byte m = 100; // Integration cycles
+    // Wait a little and get pressure
+    const byte m = 100;
     for (byte j = 0; j < m; j++)
     {
       sendStatus("PX");
@@ -516,15 +516,16 @@ void setPressureX(float targetPressure)
     }
     delay(100);
     // Now see what to do
-    if (abs(Xpressure - targetPressure) <= 0.001)
+    if (abs(Xpressure - targetPressure) <= 0.001 || percentageX_fromSteps() == 0)
     {
       break;
     }
-    else if ((Xaxis.currentPosition() * 100.0f / 62438.0f != 100 && Xaxis.currentPosition() * 100.0f / 62438.0f > 0) || ((Xpressure - targetPressure) < -0.001 && Xaxis.currentPosition() * 100.0f / 62438.0f == 100))
+    else if (percentageX_fromSteps() != 100 || ((Xpressure - targetPressure) < -0.001 && percentageX_fromSteps() == 100))
     {
+      // Adjust the bellow
       // p = k / (V + V0)
       // Now calculate the k value for the current filling
-      float k = Xpressure * (Xaxis.currentPosition() * 100.0f / 62438.0f + V0);
+      float k = Xpressure * (percentageX_fromSteps() + V0);
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
       // Send the command to the bellows
@@ -532,7 +533,7 @@ void setPressureX(float targetPressure)
       sendStatus("PX");
       delay(100);
     }
-    else if (Xaxis.currentPosition() * 100.0f / 62438.0f == 100 && Xaxis.currentPosition() * 100.0f / 62438.0f > 0)
+    else if (percentageX_fromSteps() == 100)
     {
       // Now decide which route should be evacuated
       if ((Xpressure - targetPressure) / Xpressure * 100 > 60)
@@ -554,11 +555,6 @@ void setPressureX(float targetPressure)
         expandX(1);
       }
     }
-    else if (Xaxis.currentPosition() * 100.0f / 62438.0f == 0)
-    {
-      // Too little gas, refill reference gas
-      break;
-    }
     else
     {
       break;
@@ -571,25 +567,26 @@ void setPressureY(float targetPressure)
   float V0 = 42.337; // This is a instrument constant for bellows Y
   for (byte a = 0; a < 15; a++)
   {
-    // Get current pressure
-    const byte m = 100; // Integration cycles
+    // Wait a little and get pressure
+    const byte m = 100;
     for (byte j = 0; j < m; j++)
     {
       sendStatus("PY");
       delay(10);
     }
     delay(100);
+
     // Now decide what to do
-    if (abs(Ypressure - targetPressure) <= 0.001)
+    if (abs(Ypressure - targetPressure) <= 0.001 || percentageY_fromSteps() == 0)
     {
       break;
     }
-    else if (Yaxis.currentPosition() * 100.0000 / 62438.00 != 100 || (Yaxis.currentPosition() * 100.0000 / 62438.00 == 100 && (Ypressure - targetPressure) < -0.001))
+    else if (percentageY_fromSteps() != 100 || (percentageY_fromSteps() == 100 && (Ypressure - targetPressure) < -0.001))
     {
-      // Compress bellows
+      // Adjust the bellow
       // p = k / (V + V0)
       // Now calculate the k value for the current filling
-      float k = Ypressure * (Yaxis.currentPosition() * 100.0000 / 62438.00 + V0);
+      float k = Ypressure * (percentageY_fromSteps() + V0);
       // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
       // Send the command to the bellows
@@ -597,9 +594,9 @@ void setPressureY(float targetPressure)
       sendStatus("PY");
       delay(100);
     }
-    else if (Yaxis.currentPosition() * 100.0000 / 62438.00 == 100)
+    else if (percentageY_fromSteps() == 100)
     {
-      // Expand gas
+      // Expand gas. This is only relevant when refilling the bellows
       // Now decide which route should be evacuated
       if ((Ypressure - targetPressure) / Ypressure * 100 > 60)
       {
@@ -623,9 +620,8 @@ void setPressureY(float targetPressure)
         delay(100);
       }
     }
-    else if (Yaxis.currentPosition() * 100.0000 / 62438.00 == 0)
+    else
     {
-      // Too little gas
       break;
     }
   }

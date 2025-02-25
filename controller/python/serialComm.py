@@ -73,23 +73,21 @@ try:
                 time.sleep(1)
                 attempts += 1
         if success is False:
-            print(" x Connection to Edwards gauge could not be established. Stopping the script.")
-            arduino.close() # close open connections
-            quit()
+            print(" x Edwards gauge offline.")
+
 except FileNotFoundError:
     print(" x The Edwards gauge's USB cable is not plugged in. Stopping the script.")
     quit()
 
 # Connect to the TILDAS via serial
+if 'TILDAS_PORT' not in locals():
+    TILDAS_PORT = '/dev/ttyUSB0'
 try:
     laser = serial.Serial(TILDAS_PORT, baudrate=57600, timeout=1)
     print(" ✓ Connection to TILDAS established over " + TILDAS_PORT)
     time.sleep(1)
 except FileNotFoundError:
-    print(" x The TILDAS's USB cable is not plugged in. Stopping the script.")
-    arduino.close() # close open connections
-    edwards_gauge.close() # close open connections
-    quit()
+    print(" x The TILDAS is offline.")
 
 
 # Connect to the shared variable

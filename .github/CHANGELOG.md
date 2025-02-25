@@ -5,6 +5,7 @@
     - This change did not significantly enhance performance but did improve security and the reliability of the hard drive
 * Removed the room temperature and humidity sensors
 * Optimized the tubing to reduce dead volume
+* Exchanged the PID controlled fans
 
 ## Software
 * Restructured the html folder to follow the model–view–controller pattern
