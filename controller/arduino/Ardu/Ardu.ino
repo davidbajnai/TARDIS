@@ -369,26 +369,26 @@ void startingPosition()
   switchValve("V02C");
   switchValve("V03C");
   switchValve("V04C");
-  switchValve("V05O");
+  switchValve("V05O"); // Open
   switchValve("V06C");
-  switchValve("V07O");
+  switchValve("V07O"); // Open
   switchValve("V08C");
   switchValve("V09C");
   switchValve("V10C");
-  switchValve("V11O");
+  switchValve("V11O"); // Open
   switchValve("V12C");
-  switchValve("V13O");
+  switchValve("V13O"); // Open
   switchValve("V14C");
   switchValve("V15C");
   switchValve("V16C");
-  switchValve("V17O");
+  switchValve("V17O"); // Open
   switchValve("V18C");
-  switchValve("V19O");
+  switchValve("V19O"); // Open
   switchValve("V20C");
-  switchValve("V21O");
+  switchValve("V21O"); // Open
   switchValve("V22C");
   switchValve("V27C");
-  switchValve("V28O");
+  switchValve("V28O"); // Open
   switchValve("V29C");
   switchValve("V30C");
   switchValve("V31C");
@@ -398,7 +398,7 @@ void startingPosition()
 
 void expandX(int number)
 {
-  if (number == 1) // 1.5% reduction
+  if (number == 1) // 6% reduction
   {
     switchValve("V06C");
     switchValve("V07O");
@@ -407,33 +407,33 @@ void expandX(int number)
     switchValve("V06O");
     wait(5, "EX");
   }
-  else if (number == 2) // 14% reduction
+  else if (number == 2) // 35% reduction
   {
     switchValve("V11C");
-    switchValve("V16C");
+    switchValve("V28C");
     switchValve("V07O");
     wait(10, "EX");
     switchValve("V07C");
-    switchValve("V16O");
+    switchValve("V28O");
     switchValve("V11O");
     wait(20, "EX");
   }
-  else if (number == 3) // 32% reduction
+  else if (number == 3) // 60% reduction
   {
-    switchValve("V16C");
+    switchValve("V28C");
     switchValve("V05O");
     switchValve("V07O");
     wait(15, "EX");
     switchValve("V07C");
     switchValve("V05C");
-    switchValve("V16O");
+    switchValve("V28O");
     wait(20, "EX");
   }
 }
 
 void expandY(int number)
 {
-  if (number == 1) // 5.3% reduction
+  if (number == 1) // 6% reduction
   {
     switchValve("V12C");
     switchValve("V13O");
@@ -442,26 +442,26 @@ void expandY(int number)
     switchValve("V12O");
     wait(5, "EY");
   }
-  else if (number == 2) // 37% reduction
+  else if (number == 2) // 35% reduction
   {
     switchValve("V05C");
-    switchValve("V16C");
+    switchValve("V28C");
     switchValve("V13O");
     wait(10, "EY");
     switchValve("V13C");
-    switchValve("V16O");
+    switchValve("V28O");
     switchValve("V05O");
     wait(20, "EY");
   }
-  else if (number == 3) // 61% reduction
+  else if (number == 3) // 60% reduction
   {
-    switchValve("V16C");
+    switchValve("V28C");
     switchValve("V11O");
     switchValve("V13O");
     wait(15, "EY");
     switchValve("V13C");
     switchValve("V11C");
-    switchValve("V16O");
+    switchValve("V28O");
     wait(20, "EY");
   }
 }
@@ -483,24 +483,25 @@ void refillSample(float tPress)
   }
 }
 
-void runIA(float pressureTarget)
-{
+// Function that was used to introduce air into the cell
+// void runIA(float pressureTarget)
+// {
 
-  sendStatus("IA");
-  switchValve("V21O");
-  delay(10);
+//   sendStatus("IA");
+//   switchValve("V21O");
+//   delay(10);
 
-  unsigned long startTime = millis();
+//   unsigned long startTime = millis();
 
-  while (Zpressure <= pressureTarget && millis() - startTime <= 120000)
-  {
-    sendStatus("IA");
-    delay(10);
-  }
+//   while (Zpressure <= pressureTarget && millis() - startTime <= 120000)
+//   {
+//     sendStatus("IA");
+//     delay(10);
+//   }
 
-  switchValve("V15C");
-  switchValve("V21C");
-}
+//   switchValve("V15C");
+//   switchValve("V21C");
+// }
 
 void setPressureX(float targetPressure)
 {
@@ -515,19 +516,17 @@ void setPressureX(float targetPressure)
       delay(10);
     }
     delay(100);
-    // Now see what to do
+    // Decide what to do
     if (abs(Xpressure - targetPressure) <= 0.001 || percentageX_fromSteps() == 0)
     {
       break;
     }
     else if (percentageX_fromSteps() != 100 || ((Xpressure - targetPressure) < -0.001 && percentageX_fromSteps() == 100))
     {
-      // Adjust the bellow
-      // p = k / (V + V0)
-      // Now calculate the k value for the current filling
+      // Adjust the bellow; p = k / (V + V0)
       float k = Xpressure * (percentageX_fromSteps() + V0);
-      // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
+      
       // Send the command to the bellows
       runXP(targetPercent);
       sendStatus("PX");
@@ -535,22 +534,20 @@ void setPressureX(float targetPressure)
     }
     else if (percentageX_fromSteps() == 100)
     {
+      // Expand gas. This is only relevant when refilling the bellows
       // Now decide which route should be evacuated
       if ((Xpressure - targetPressure) / Xpressure * 100 > 60)
       {
-        // Expand by ~65%
         sendStatus("PX");
         expandX(3);
       }
       else if ((Xpressure - targetPressure) / Xpressure * 100 <= 60 && (Xpressure - targetPressure) / Xpressure * 100 > 35)
       {
-        // Expand by ~40%
         sendStatus("PX");
         expandX(2);
       }
       else if ((Xpressure - targetPressure) / Xpressure * 100 <= 35)
       {
-        // Expand by ~5.4%
         sendStatus("PX");
         expandX(1);
       }
@@ -583,12 +580,10 @@ void setPressureY(float targetPressure)
     }
     else if (percentageY_fromSteps() != 100 || (percentageY_fromSteps() == 100 && (Ypressure - targetPressure) < -0.001))
     {
-      // Adjust the bellow
-      // p = k / (V + V0)
-      // Now calculate the k value for the current filling
+      // Adjust the bellow; p = k / (V + V0)
       float k = Ypressure * (percentageY_fromSteps() + V0);
-      // Now calculate the target V (% bellows)
       targetPercent = k / targetPressure - V0;
+
       // Send the command to the bellows
       runYP(targetPercent);
       sendStatus("PY");
@@ -600,21 +595,18 @@ void setPressureY(float targetPressure)
       // Now decide which route should be evacuated
       if ((Ypressure - targetPressure) / Ypressure * 100 > 60)
       {
-        // Expand by ~61%
         sendStatus("PY");
         expandY(3);
         delay(100);
       }
-      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 60 && (Ypressure - targetPressure) / Ypressure * 100 > 33)
+      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 60 && (Ypressure - targetPressure) / Ypressure * 100 > 35)
       {
-        // Expand by ~37% steps
         sendStatus("PY");
         expandY(2);
         delay(100);
       }
-      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 33)
+      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 35)
       {
-        // Expand by ~5.3% steps
         sendStatus("PY");
         expandY(1);
         delay(100);
@@ -649,7 +641,7 @@ void setN2Pressure(float targetPressure)
       else
       {
         // Compress/open bellows
-        targetPercent = Zaxis.currentPosition() * 100.0f / 15960.0f + (Zpressure - targetPressure) / 0.1044f;
+        targetPercent = percentageZ_fromSteps() + (Zpressure - targetPressure) / 0.1044f;
         // Send the command to the bellows
         runZP(targetPercent);
         delay(100);
@@ -851,14 +843,14 @@ void loop()
     sendStatus("-");
   }
 
-  else if (string.substring(0, 2) == "IA")
-  {
-    // Wait until gauge A reaches the required pressure - for air refill
-    runIA(string.substring(2, 9).toFloat());
-    string = "";
-    command = ' ';
-    sendStatus("-");
-  }
+  // else if (string.substring(0, 2) == "IA")
+  // {
+  //   // Wait until gauge A reaches the required pressure - for air refill
+  //   runIA(string.substring(2, 9).toFloat());
+  //   string = "";
+  //   command = ' ';
+  //   sendStatus("-");
+  // }
 
   else if (string.substring(0, 2) == "YS")
   {

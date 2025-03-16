@@ -55,10 +55,18 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
     $encodedData = urlencode(json_encode($postData));
 
     // URL to send the data
-    $uploadURL = "http://". $server_IP . "/controller/php/dataInputTILDAS.php" . "?jsonstring=" . $encodedData;
+    $uploadURL = "https://isolabor.geo.uni-goettingen.de/controller/php/dataInputTILDAS.php?jsonstring=" . $encodedData;
 
-    $response = file_get_contents($uploadURL);
-
+    // Create a stream context to disable SSL verification
+    $context = stream_context_create([
+        "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ]
+    ]);
+    
+    $response = file_get_contents($uploadURL, false, $context);
+    
     echo $response;
 
 

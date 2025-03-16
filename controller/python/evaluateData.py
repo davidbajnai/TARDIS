@@ -20,6 +20,7 @@ from datetime import datetime
 
 from scipy import stats
 from scipy.stats import sem
+from scipy.stats import norm
 
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
@@ -52,6 +53,89 @@ def Dp17O(d17O, d18O):
     return (prime(d17O) - 0.528 * prime(d18O)) * 1000
 
 
+def confidence_interval(data, confidence=68):
+    confidence = confidence/100
+    z_score = norm.ppf(1 - (1 - confidence) / 2)
+    return (z_score * data.std() / data.count()**0.5).round(3)
+
+
+def calc_stats(df, column, samID, offset=0, scale=1, rounding=4):
+    """
+    Calculate mean, standard deviation, and number of data points for a given column.
+    
+    Parameters:
+    df (pd.DataFrame): The dataframe containing the data.
+    column (str): The column to calculate statistics for.
+    samID (str): The sample ID to determine the measurement type.
+    offset (float, optional): Value to subtract from the mean (e.g., 273.15 for temperature). Default is 0.
+    scale (float, optional): Value to multiply the result by (e.g., 1000 for pCO2). Default is 1.
+    rounding (int, optional): Number of decimal places to round to. Default is 4.
+    
+    Returns:
+    tuple: (Sample mean, Sample std, Reference mean, Reference std, nSam, nRef)
+    """
+    # Define cycle masks based on sample ID
+    if "air" in samID.lower():
+        sample_mask = df["Cycle"].gt(2) & df["Cycle"].mod(2).eq(0)
+        ref_mask = df["Cycle"].gt(1) & df["Cycle"].mod(2).ne(0)
+    else:
+        sample_mask = df["Cycle"].gt(0) & df["Cycle"].mod(2).eq(0)
+        ref_mask = df["Cycle"].gt(0) & df["Cycle"].mod(2).ne(0)
+
+    # Compute the number of points using shape[0]
+    nSam = df.loc[sample_mask].shape[0]
+    nRef = df.loc[ref_mask].shape[0]
+
+    # Compute mean and standard deviation with offset and scaling
+    sample_mean = ((df.loc[sample_mask, column].mean() - offset) * scale).round(rounding)
+    sample_std = (df.loc[sample_mask, column].std() * scale).round(rounding)
+    ref_mean = ((df.loc[ref_mask, column].mean() - offset) * scale).round(rounding)
+    ref_std = (df.loc[ref_mask, column].std() * scale).round(rounding)
+
+    return sample_mean, sample_std, ref_mean, ref_std, nSam, nRef
+
+
+def calculate_mismatch(df, param):
+    """
+    This function calculates the mean and standard deviation of mismatches 
+    between sample cycles and their neighboring reference cycles for a given parameter.
+
+    The dataset is structured in cycles, where:
+    - Sample cycles have even-numbered indices starting from 2 (2, 4, 6, ...).
+    - Reference cycles have odd-numbered indices starting from 1 (1, 3, 5, ...).
+    - Cycle 0 is a dummy cycle and is ignored.
+
+    For each sample cycle:
+    - The function finds the reference cycles immediately before and after it.
+    - It calculates the arithmetic mean of these two reference cycles.
+    - The mismatch is computed as the difference between the sample cycle value 
+      and this reference average.
+
+    Finally, it returns both the mean and standard deviation of the mismatches.
+
+    Parameters:
+    - df (DataFrame): The input DataFrame containing cycle data.
+    - param (str): The column name of the parameter to analyze.
+
+    Returns:
+    - tuple: (mean mismatch, standard deviation of mismatches)
+    """
+
+    mismatches = []
+
+    for i in range(2, df["Cycle"].max() + 1, 2):  # Loop through sample cycles (even numbers, starting from 2)
+        prev_ref = df[df["Cycle"] == i - 1]  # Get previous reference cycle
+        next_ref = df[df["Cycle"] == i + 1]  # Get next reference cycle
+        sam = df[df["Cycle"] == i]  # Get current sample cycle
+
+        if not prev_ref.empty and not next_ref.empty and not sam.empty:
+            avg_ref = (prev_ref[param].mean() + next_ref[param].mean()) / 2  # Compute mean of reference cycles
+            mismatch = sam[param].mean() - avg_ref  # Compute mismatch
+            mismatches.append(mismatch)  # Store mismatch
+
+    # Compute and return the mean and standard deviation of mismatches
+    return np.nanmean(mismatches), np.nanstd(mismatches)
+
 #################################################################
 ####################### Import TILDAS data ######################
 #################################################################
@@ -79,12 +163,13 @@ else:
     # Regular measurements start with a single Ref dummy (cy 0)
     pattern = ["Dummy"] + ["Ref", "Sam"] * 20
 
+
 # Read all data files and combine them into one dataframe
 i = 0
 for file in strFiles:
     baseName = file[:-4]
     # The .str files contain the isotopologue mixing ratios
-    dfstr = pd.read_csv(os.path.join(folder, baseName + ".str"), names=["Time(abs)", "I627", "I628", "I626", "CO2"], delimiter=" ", skiprows=1, index_col=False)
+    dfstr = pd.read_csv(os.path.join(folder, baseName + ".str"), names=["Time(abs)", "Xp627", "Xp628", "Xp626", "CO2"], delimiter=" ", skiprows=1, index_col=False)
     
     # The .stc files contain the cell temperature, pressure, etc. data
     dfstc = pd.read_csv(os.path.join(folder, baseName + ".stc"), delimiter=",", skiprows=1)
@@ -96,8 +181,8 @@ for file in strFiles:
     df['Time(rel)'] = df['Time(abs)'] - measurementStarted
     df['Type'] = pattern[i]
     df['Cycle'] = i
-    df['d17O_cy'] = ((df['I627'] / df['I626']) / np.mean(df['I627'] / df['I626']) - 1) * 1000
-    df['d18O_cy'] = ((df['I628'] / df['I626']) / np.mean(df['I628'] / df['I626']) - 1) * 1000
+    df['d17O_cy'] = ((df['Xp627'] / df['Xp626']) / np.mean(df['Xp627'] / df['Xp626']) - 1) * 1000
+    df['d18O_cy'] = ((df['Xp628'] / df['Xp626']) / np.mean(df['Xp628'] / df['Xp626']) - 1) * 1000
     df['Dp17O_cy'] = Dp17O(df['d17O_cy'], df['d18O_cy'])
     df['z_score'] = stats.zscore(df['Dp17O_cy'])
     if i == 0:
@@ -108,8 +193,8 @@ for file in strFiles:
 df = dfAll
 
 # Calculate the isotope ratios normalized to all data avarege
-df["d17O_raw"] = ((df['I627'] / df['I626']) / np.mean(df['I627'] / df['I626']) - 1) * 1000
-df["d18O_raw"] = ((df['I628'] / df['I626']) / np.mean(df['I628'] / df['I626']) - 1) * 1000
+df["d17O_raw"] = ((df['Xp627'] / df['Xp626']) / np.mean(df['Xp627'] / df['Xp626']) - 1) * 1000
+df["d18O_raw"] = ((df['Xp628'] / df['Xp626']) / np.mean(df['Xp628'] / df['Xp626']) - 1) * 1000
 df["Dp17O_raw"] = Dp17O(df["d17O_raw"], df["d18O_raw"])
 
 # Compensate for summer time / winter time, if necessary
@@ -181,6 +266,10 @@ dfLogFile.to_csv(os.path.join(folder, "logFile.csv"), index=False)
 seconds = dfLogFile["Time(rel)"].iat[-1]
 measurement_duration = str("%d:%02d:%02d" % (seconds % (24 * 3600) // 3600, seconds % 3600 // 60, seconds % 3600 % 60))
 
+# Calculate the mismatch between sample and reference cycles for pCO2, cellT, and cellP
+pCO2_mismatch, pCO2_mismatch_error = np.round(np.array(calculate_mismatch(df, "Xp626")) / 1000, 2)
+TCell_mismatch, TCell_mismatch_error = np.round(calculate_mismatch(df, "Traw"), 5)
+PCell_mismatch, PCell_mismatch_error = np.round(calculate_mismatch(df, "Praw"), 5)
 
 #################################################################
 ###################### Figure 1 – Raw data ######################
@@ -203,73 +292,66 @@ data_names = ['Dummy', 'Reference', 'Sample']
 fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10) = plt.subplots(10, 1, sharex=True)
 ax1.set_title(f"{samID}\nMeasurement duration: {measurement_duration}")
 
+for ax in fig.get_axes():
+    i = fig.get_axes().index(ax)
+    ax.text(0.99, 0.98, chr(65 + i),
+            size=14, weight="bold", ha="right", va="top",
+            bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
+            transform=ax.transAxes)
+
 # Subplot A: d18O vs time
 TILDAS_time = df["Time(rel)"]
-y = df["d18O_raw"]
-scat = ax1.scatter(TILDAS_time, y, marker = ".", c = df.Type.astype('category').cat.codes, cmap=cmap)
-ax1.text(0.99, 0.98, 'A',
-         size=14, ha='right', va='top', transform=ax1.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
+scat = ax1.scatter(TILDAS_time, df["d18O_raw"],
+                   marker=".", c=df.Type.astype('category').cat.codes, cmap=cmap)
 ax1.legend(handles=scat.legend_elements()[0], labels=data_names, markerscale = 0.5)
 ax1.set_ylabel("$\delta^{18}$O (‰, raw)")
 
 # Subplot B: D17O vs time
 y = df['Dp17O_raw']
-ax2.scatter(TILDAS_time, y, marker=".", color = df['Type'].map(data_colors))
+ax2.scatter(TILDAS_time, df['Dp17O_raw'],
+            marker=".", color=df['Type'].map(data_colors))
 ax2.set_ylabel("$\Delta\prime^{17}$O (ppm, raw)")
-ax2.text(0.99, 0.98, 'B',
-         size=14, ha='right', va='top', transform=ax2.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot C: mixing ratios (pCO2) vs time
-pCO2 = df['I626'] / 1000
-ax3.scatter(TILDAS_time, pCO2, marker=".", color = df['Type'].map(data_colors))
+ax3.scatter(TILDAS_time, df['Xp626'] / 1000, marker=".", color = df['Type'].map(data_colors))
 
-if "air" in samID.lower():
-    # Air measurements start with two Ref dummy (cy 0 and 1) and a sample dummy (cy 2)
-    pCO2Sam = df.loc[(df["Cycle"] > 2) & (df["Cycle"] % 2 == 0), ['I626']]/1000
-    pCO2Ref = df.loc[(df["Cycle"] > 1) & (df["Cycle"] % 2 != 0), ['I626']]/1000
-else:
-    # Regular measurements start with a single Ref dummy (cy 0)
-    pCO2Sam = df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 == 0), ['I626']]/1000
-    pCO2Ref = df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 != 0), ['I626']]/1000
+pCO2Sam, pCO2Sam_error, pCO2Ref, pCO2Ref_error, nSam, nRef = calc_stats(df, "Xp626", samID, scale = 0.001)
 
-pCO2Sam_error = float(np.round(np.std(pCO2Sam), 1))
-pCO2Sam = float(np.round(np.mean(pCO2Sam), 1))
-pCO2Ref_error = float(np.round(np.std(pCO2Ref), 1))
-pCO2Ref = float(np.round(np.mean(pCO2Ref), 1))
-
-ax3.text(0.01, 0.02, f"{pCO2Sam}±{pCO2Sam_error} ppmv", size = 8, color = colSample, ha = 'left', va = 'bottom', transform = ax3.transAxes, bbox = dict(fc = 'white', ec = "none", pad = 1, alpha = 0.5))
-ax3.text(0.01, 0.12, f"{pCO2Ref}±{pCO2Ref_error} ppmv", size = 8, color = colReference, ha = 'left', va = 'bottom', transform = ax3.transAxes, bbox = dict(fc = 'white', ec = "none", pad = 1, alpha = 0.5))
-ax3.set_ylabel("$\mathit{p}$CO$_2$ (ppmv, cell)")
-ax3.text(0.99, 0.98, 'C',
-         size=14, ha='right', va='top', transform=ax3.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
+ax3.text(0.01, 0.02, f"{pCO2Sam:.1f}±{pCO2Sam_error:.1f} ppmv",
+         size=8, color=colSample, ha='left', va='bottom',
+         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
+         transform=ax3.transAxes)
+ax3.text(0.01, 0.12, f"{pCO2Ref:.1f}±{pCO2Ref_error:.1f} ppmv",
+         size=8, color=colReference, ha='left', va='bottom',
+         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
+         transform=ax3.transAxes)
+ax3.set_ylabel('$\chi\prime_{626}$ (µmol mol$^{-1}$)')
 
 # Subplot D: Cell pressure vs time
-y = df['Praw']
-ax4.scatter(TILDAS_time, y, marker=".", color = df['Type'].map(data_colors))
-PCellSam = float(df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 == 0), ['Praw']].mean().round(3))
-PCellSam_error = float(df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 == 0), ['Praw']].std().round(3))
-PCellRef = float(df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 != 0) ,['Praw']].mean().round(3))
-PCellRef_error = float(df.loc[(df["Cycle"] > 0) & (df["Cycle"] % 2 != 0) ,['Praw']].std().round(3))
-ax4.text(0.01, 0.02, f"{PCellSam}±{PCellSam_error} Torr", size = 8, color = colSample, ha = 'left', va = 'bottom', transform = ax4.transAxes, bbox = dict(fc = 'white', ec = "none", pad = 1, alpha = 0.5))
-ax4.text(0.01, 0.12, f"{PCellRef}±{PCellRef_error} Torr", size = 8, color = colReference, ha = 'left', va = 'bottom', transform = ax4.transAxes, bbox = dict(fc = 'white', ec = "none", pad = 1, alpha = 0.5))
+ax4.scatter(TILDAS_time, df['Praw'], marker=".", color = df['Type'].map(data_colors))
+
+PCellSam, PCellSam_error, PCellRef, PCellRef_error, _, _ = calc_stats(df, "Praw", samID)
+
+ax4.text(0.01, 0.02, f"{PCellSam:.3f}±{PCellSam_error:.3f} Torr",
+         size=8, color=colSample, ha='left', va='bottom',
+         transform=ax4.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
+ax4.text(0.01, 0.12, f"{PCellRef:.3f}±{PCellRef_error:.3f} Torr",
+         size=8, color=colReference, ha='left', va='bottom',
+         transform=ax4.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 ax4.set_ylabel("Pressure (Torr, cell)")
-ax4.text(0.99, 0.98, 'D',
-         size=14, ha='right', va='top', transform=ax4.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot E: Cell temperature
-TCell = df['Traw'] - 273.15
-ax5.scatter(TILDAS_time, TCell, marker=".",color = df['Type'].map(data_colors))
+ax5.scatter(TILDAS_time, df['Traw'] - 273.15, marker=".", color = df['Type'].map(data_colors))
+
+TCellSam, TCellSam_error, TCellRef, TCellRef_error, _, _ = calc_stats(df, "Traw", samID, offset=273.15)
+
+ax5.text(0.01, 0.02, f"{TCellSam:.3f}±{TCellSam_error:.3f} °C",
+         size=8, color=colSample, ha='left', va='bottom',
+         transform=ax5.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
+ax5.text(0.01, 0.12, f"{TCellRef:.3f}±{TCellRef_error:.3f} °C",
+         size=8, color=colReference, ha='left', va='bottom',
+         transform=ax5.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 ax5.set_ylabel("Temperature (°C, cell)")
-TCell_error = np.round(np.std(TCell), 3)
-TCell = np.round(np.mean(TCell), 3)
-ax5.text(0.01, 0.02, f"{TCell}±{TCell_error} °C", size=8, color="black", ha = 'left', va = 'bottom', transform=ax5.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
-ax5.text(0.99, 0.98, 'E',
-         size=14, ha='right', va='top', transform=ax5.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot F: Coolant temperature and room temperature
 TCoolant = df['Tref'] - 273.15
@@ -291,9 +373,6 @@ if ('roomTemperature' in dfLogFile.columns):
     ax6b.text(1 - 0.01, 0.02, labelRoomT, size=8, color="C1", ha = 'right', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
 
 ax6.text(0.01, 0.02, f"{TCoolant:.3f}±{TCoolant_error:.3f} °C", size=8, color="black", ha = 'left', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
-ax6.text(0.99, 0.98, 'F',
-         size=14, ha='right', va='top', transform=ax6.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot G: Box temperature vs time
 if ('boxTemperature' in dfLogFile.columns):
@@ -318,9 +397,6 @@ if ('boxTemperature' in dfLogFile.columns):
         ax7b.set_ylabel("Fan speed (%)")
         ax7.text(0.01, 0.11, labelSP, size = 8, color = "C2", ha = 'left', va = 'bottom', transform = ax7.transAxes, bbox=dict(fc = 'white', ec = "none", pad = 1, alpha=0.5))
     ax7.text(0.01, 0.02, labelTemp, size = 8, color = "C0", ha = 'left', va = 'bottom', transform = ax7.transAxes, bbox=dict(fc = 'white', ec = "none", pad = 1, alpha=0.5))
-ax7.text(0.99, 0.98, 'G',
-         size=14, ha='right', va='top', transform=ax7.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot H: X (reference) bellow expansion and pressure
 if ('pressureX' in dfLogFile.columns):
@@ -333,9 +409,6 @@ if ('pressureX' in dfLogFile.columns):
     y = dfLogFile['percentageX']
     ax8b.plot(x, y, color="C1")
     ax8b.set_ylabel("Bellow expansion (%, X)")
-ax8.text(0.99, 0.98, 'H',
-         size=14, ha='right', va='top',
-         transform=ax8.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot J: Y (sample) bellow expansion and pressure
 if ('pressureY' in dfLogFile.columns):
@@ -348,9 +421,6 @@ if ('pressureY' in dfLogFile.columns):
     y = dfLogFile['percentageY']
     ax9b.plot(x, y, color="C1")
     ax9b.set_ylabel("Bellow expansion (%, Y)")
-ax9.text(0.99, 0.98, 'I',
-         size=14, ha='right', va='top',
-         transform=ax9.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot K: Z bellow
 if all(col in dfLogFile.columns for col in ['pressureZ', 'percentageZ', 'Time(rel)']):
@@ -363,9 +433,7 @@ if all(col in dfLogFile.columns for col in ['pressureZ', 'percentageZ', 'Time(re
     y = dfLogFile['percentageZ']
     ax10b.plot(x, y, color = "C1")
     ax10b.set_ylabel("Bellow expansion (%, Z)")
-ax10.text(0.99, 0.98, 'J',
-          size=14, ha='right', va='top',
-          transform=ax10.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
+
 ax10.set_xlabel("Relative time (s)")
 
 plt.tight_layout()
@@ -387,6 +455,13 @@ df = df.loc[df['z_score'].abs() <= 3]
 # Plot properties
 plt.rcParams["figure.figsize"] = (6, 6)
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
+
+for ax in fig.get_axes():
+    i = fig.get_axes().index(ax)
+    ax.text(0.99, 0.98, chr(65 + i),
+            size=14, weight="bold", ha="right", va="top",
+            bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
+            transform=ax.transAxes)
 
 
 # Reference gas composition
@@ -466,9 +541,6 @@ dfBracketingResults['Time(rel)'] = bracketingTime
 dfBracketingResults['d17O'] = bracketingResults
 
 ax1.legend(loc="center left")
-ax1.text(0.99, 0.99, 'A',
-         size=14, ha='right', va='top', transform=ax1.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 ax1.set_ylabel("$\delta^{17}$O (‰, raw)")
 
 
@@ -526,9 +598,6 @@ while cy < df['Cycle'].max():
 
 dfBracketingResults['d18O'] = bracketingResults
 
-ax2.text(0.99, 0.99, 'B',
-         size=14, ha='right', va='top', transform=ax2.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 ax2.set_ylabel("$\delta^{18}$O (‰, raw)")
 
 ######################## Plot C – Dp17O #########################
@@ -536,12 +605,12 @@ ax2.set_ylabel("$\delta^{18}$O (‰, raw)")
 dfBracketingResults['Dp17O'] = Dp17O(dfBracketingResults['d17O'], dfBracketingResults['d18O'])
 
 # Final bracketing results
-d18O_SRB = round(np.mean(dfBracketingResults['d18O']), 3)
-d18O_SRB_error = round(sem(dfBracketingResults['d18O']), 3)
-d17O_SRB = round(np.mean(dfBracketingResults['d17O']), 3)
-d17O_SRB_error = round(sem(dfBracketingResults['d17O']), 3)
-D17Op_SRB = round(np.mean(dfBracketingResults['Dp17O']), 1)
-D17Op_SRB_error = round(sem(dfBracketingResults['Dp17O']), 1)
+d18O_SRB = dfBracketingResults["d18O"].mean().round(3)
+d18O_SRB_error = confidence_interval(dfBracketingResults["d18O"])
+d17O_SRB = dfBracketingResults["d17O"].mean().round(3)
+d17O_SRB_error = confidence_interval(dfBracketingResults["d17O"])
+D17Op_SRB = dfBracketingResults["Dp17O"].mean().round(1)
+D17Op_SRB_error = round(confidence_interval(dfBracketingResults["Dp17O"]), 1)
 
 ax3.scatter(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
             marker="*", s=20, c=colSample, label="Cycle avg", zorder=5)
@@ -550,7 +619,7 @@ ax3.plot(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
 ax3.axhline(D17Op_SRB,
             c=colBracketing, zorder=-1, linewidth=1.2, label="mean")
 ax3.axhline(D17Op_SRB-D17Op_SRB_error,
-            c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2, label="sem")
+            c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2, label="±68% CI")
 ax3.axhline(D17Op_SRB+D17Op_SRB_error,
             c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2)
 
@@ -558,9 +627,6 @@ ax3.axhline(D17Op_SRB+D17Op_SRB_error,
 ax1.set_title(f"{samID}\nEvaluated results: $\\delta^{{17}}$O = {d17O_SRB}±{d17O_SRB_error}‰, $\delta^{{18}}$O = {d18O_SRB}±{d18O_SRB_error}‰, $\\Delta\\prime^{{17}}$O = {D17Op_SRB}±{D17Op_SRB_error} ppm\nWorking reference gas: $\\delta^{{17}}$O = {d17OWorkingGas}‰, $\\delta^{{18}}$O = {d18OWorkingGas}‰, $\\Delta\\prime^{{17}}$O = {Dp17OWorkingGas:.1f} ppm")
 
 ax3.legend()
-ax3.text(0.99, 0.99, 'C',
-         size=14, ha='right', va='top', transform=ax3.transAxes,
-         bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 ax3.set_ylabel("$\Delta\prime^{17}$O (ppm, rel. working gas)")
 ax3.set_xlabel("Relative time (s)")
 
@@ -590,7 +656,18 @@ output_data = {
     "PCellRef_error": PCellRef_error,
     "PCellSam": PCellSam,
     "PCellSam_error": PCellSam_error,
-    "TCell": TCell,
-    "TCell_error": TCell_error,
+    "TCellSam": TCellSam,
+    "TCellSam_error": TCellSam_error,
+    "TCellRef": TCellSam,
+    "TCellRef_error": TCellSam_error,
+    "nSamCycles": len(dfBracketingResults),
+    "nSamPoints": nSam,
+    "nRefPoints": nRef,
+    "pCO2Mismatch": pCO2_mismatch,
+    "pCO2Mismatch_error": pCO2_mismatch_error,
+    "TCellMismatch": TCell_mismatch,
+    "TCellMismatch_error": TCell_mismatch_error,
+    "PCellMismatch": PCell_mismatch,
+    "PCellMismatch_error": PCell_mismatch_error,
 }
 print(json.dumps(output_data))

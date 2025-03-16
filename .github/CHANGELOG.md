@@ -1,11 +1,12 @@
 # version 3.0.9000
 
 ## Hardware
-* Replaced the Raspberry Pi 4 with a mini computer running Ubuntu
+* Replaced the Raspberry Pi 4 with an Intel i5 computer running Ubuntu
     - This change did not significantly enhance performance but did improve security and the reliability of the hard drive
 * Removed the room temperature and humidity sensors
 * Optimized the tubing to reduce dead volume
 * Exchanged the PID controlled fans
+* Replaced the "A" Baratron with a mini-Baratron
 
 ## Software
 * Restructured the html folder to follow the model–view–controller pattern
@@ -14,6 +15,7 @@
     - New variables are now calculated and exported, including cell temperature and some uncertainties
     - Removed the `bracketingResults.png` file. The bracketing results are now included in the `FitPlot.png` file.
     - The evaluated data is now exported as a JSON string
+    - Additional information on mismatch is exproted to the database
 * Updated the evaluateData.php
     - It now uses SSH to transfer files
     - The data is sent to the server as a JSON string
