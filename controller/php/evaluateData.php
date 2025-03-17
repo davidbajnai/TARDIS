@@ -85,8 +85,10 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
         mkdir($localSPEDirectory, 0777, true);
         $csv = fopen($csvFile, "r");
         $speFiles = array();
-        while (!feof($csv)) {
-            $speFiles[] = fgetcsv($csv)[0];
+        while (($row = fgetcsv($csv)) !== false) {
+            if (!empty($row) && is_array($row) && isset($row[0])) { 
+                $speFiles[] = trim($row[0]); 
+            }
         }
         fclose($csv);
 

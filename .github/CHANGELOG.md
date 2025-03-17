@@ -15,7 +15,8 @@
     - New variables are now calculated and exported, including cell temperature and some uncertainties
     - Removed the `bracketingResults.png` file. The bracketing results are now included in the `FitPlot.png` file.
     - The evaluated data is now exported as a JSON string
-    - Additional information on mismatch is exproted to the database
+    - Information on mismatch in the analytical parameters is exported to the database
+    - Measurement duration is calculated based on the  total length of the TILDAS measurements instead based on the logfile
 * Updated the evaluateData.php
     - It now uses SSH to transfer files
     - The data is sent to the server as a JSON string
@@ -28,4 +29,4 @@
 * Removed room temperature and room humidity values from front panel and logFile
 * Relative humidity is shown on the front panel
 * Additional minor improvements and bug fixes
-* Background fitting suspended before evacuating the cell (2024-08-08, BD)
+* Background fitting suspended before evacuating the cell

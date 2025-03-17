@@ -6,22 +6,17 @@
 import os
 os.environ['MPLCONFIGDIR'] = "/var/www/html/controller/python"
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-from os.path import exists
 
 import warnings
 warnings.filterwarnings('ignore')
-
+import traceback
 import sys
 import json
 import numpy as np
 import pandas as pd
-
 from datetime import datetime
-
 from scipy import stats
-from scipy.stats import sem
 from scipy.stats import norm
-
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -59,7 +54,7 @@ def confidence_interval(data, confidence=68):
     return (z_score * data.std() / data.count()**0.5).round(3)
 
 
-def calc_stats(df, column, samID, offset=0, scale=1, rounding=4):
+def calc_stats(df, column, samID, offset=0, scale=1, rounding=5):
     """
     Calculate mean, standard deviation, and number of data points for a given column.
     
@@ -69,7 +64,7 @@ def calc_stats(df, column, samID, offset=0, scale=1, rounding=4):
     samID (str): The sample ID to determine the measurement type.
     offset (float, optional): Value to subtract from the mean (e.g., 273.15 for temperature). Default is 0.
     scale (float, optional): Value to multiply the result by (e.g., 1000 for pCO2). Default is 1.
-    rounding (int, optional): Number of decimal places to round to. Default is 4.
+    rounding (int, optional): Number of decimal places to round to. Default is 5.
     
     Returns:
     tuple: (Sample mean, Sample std, Reference mean, Reference std, nSam, nRef)
@@ -201,6 +196,10 @@ df["Dp17O_raw"] = Dp17O(df["d17O_raw"], df["d18O_raw"])
 if (df["Time(rel)"].iat[0] > 3500):
     df["Time(rel)"] = df["Time(rel)"] - 3600
 
+# Calculate the measurement duration
+seconds = df["Time(rel)"].iat[-1]
+measurement_duration = str("%d:%02d:%02d" % (seconds % (24 * 3600) // 3600, seconds % 3600 // 60, seconds % 3600 % 60))
+
 # Export all data into an Excel file
 df.to_excel(os.path.join(folder, "allData.xlsx"), index=False)
 
@@ -262,12 +261,8 @@ if "Time(abs)" in dfLogFile.columns:
 # overwrite the original CSV file with the updated version
 dfLogFile.to_csv(os.path.join(folder, "logFile.csv"), index=False)
 
-# Calculate the measurement duration
-seconds = dfLogFile["Time(rel)"].iat[-1]
-measurement_duration = str("%d:%02d:%02d" % (seconds % (24 * 3600) // 3600, seconds % 3600 // 60, seconds % 3600 % 60))
-
 # Calculate the mismatch between sample and reference cycles for pCO2, cellT, and cellP
-pCO2_mismatch, pCO2_mismatch_error = np.round(np.array(calculate_mismatch(df, "Xp626")) / 1000, 2)
+pCO2_mismatch, pCO2_mismatch_error = np.round(np.array(calculate_mismatch(df, "Xp626")) / 1000, 5)
 TCell_mismatch, TCell_mismatch_error = np.round(calculate_mismatch(df, "Traw"), 5)
 PCell_mismatch, PCell_mismatch_error = np.round(calculate_mismatch(df, "Praw"), 5)
 
@@ -295,7 +290,7 @@ ax1.set_title(f"{samID}\nMeasurement duration: {measurement_duration}")
 for ax in fig.get_axes():
     i = fig.get_axes().index(ax)
     ax.text(0.99, 0.98, chr(65 + i),
-            size=14, weight="bold", ha="right", va="top",
+            size=12, weight="bold", ha="right", va="top",
             bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
             transform=ax.transAxes)
 
@@ -307,9 +302,19 @@ ax1.legend(handles=scat.legend_elements()[0], labels=data_names, markerscale = 0
 ax1.set_ylabel("$\delta^{18}$O (‰, raw)")
 
 # Subplot B: D17O vs time
-y = df['Dp17O_raw']
-ax2.scatter(TILDAS_time, df['Dp17O_raw'],
-            marker=".", color=df['Type'].map(data_colors))
+high_zscore = df[df['z_score'].abs() > 3]
+low_zscore = df[df['z_score'].abs() <= 3]
+ax2.scatter(TILDAS_time[low_zscore.index], low_zscore['Dp17O_raw'],
+            marker=".", color=low_zscore['Type'].map(data_colors))
+ax2.scatter(TILDAS_time[high_zscore.index], high_zscore['Dp17O_raw'],
+            marker="o", fc='none', s=5, ec=high_zscore['Type'].map(data_colors))
+
+legend_handles = [
+    plt.Line2D([0], [0], marker=".", color="black", ls="None", label="z-score ≤ 3"),
+    plt.Line2D([0], [0], marker="o", markersize=3, mfc="none", mec="black", ls="None", label="z-score > 3")
+]
+ax2.legend(handles=legend_handles)
+
 ax2.set_ylabel("$\Delta\prime^{17}$O (ppm, raw)")
 
 # Subplot C: mixing ratios (pCO2) vs time
@@ -439,235 +444,262 @@ ax10.set_xlabel("Relative time (s)")
 plt.tight_layout()
 plt.savefig(os.path.join(folder, "rawData.png"))
 
+try: 
+    #################################################################
+    ########################## Filter data ##########################
+    #################################################################
 
-#################################################################
-########################## Filter data ##########################
-#################################################################
+    # Now filter data using the z-score (3-sigma criterion)
+    # The excel file includes all data, but only filtered data is used for the calculations and plots
+    df = df.loc[df['z_score'].abs() <= 3]
 
-# Now filter data using the z-score (3-sigma criterion)
-# The excel file includes all data, but only filtered data is used for the calculations and plots
-df = df.loc[df['z_score'].abs() <= 3]
+    #################################################################
+    ###################### Figure 2 – Fit data ######################
+    #################################################################
 
-#################################################################
-###################### Figure 2 – Fit data ######################
-#################################################################
+    # Plot properties
+    plt.rcParams["figure.figsize"] = (6, 6)
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
-# Plot properties
-plt.rcParams["figure.figsize"] = (6, 6)
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
-
-for ax in fig.get_axes():
-    i = fig.get_axes().index(ax)
-    ax.text(0.99, 0.98, chr(65 + i),
-            size=14, weight="bold", ha="right", va="top",
-            bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
-            transform=ax.transAxes)
-
-
-# Reference gas composition
-d18OWorkingGas = 28.048
-d17OWorkingGas = 14.621  # D'17O = -90 ppm
-Dp17OWorkingGas = Dp17O(d17OWorkingGas, d18OWorkingGas)
-
-# Make separate dataframes for Dummy, Reference, and Sample
-dfRef = df.loc[df['Type'] == "Ref"]
-dfSam = df.loc[df['Type'] == "Sam"]
-dfDummy = df.loc[df['Type'] == "Dummy"]
-
-######################### Plot A – d17O #########################
-
-ax1.scatter(dfDummy["Time(rel)"], dfDummy["d17O_raw"],
-            color=colDummy, marker=".", label="Dummy")
-
-ax1.scatter(dfRef["Time(rel)"], dfRef["d17O_raw"],
-            color=colReference, marker=".", label="Reference")
-
-ax1.scatter(dfSam['Time(rel)'], dfSam["d17O_raw"],
-            color=colSample, marker=".", label="Sample")
-
-bracketingResults = []
-bracketingCycles = []
-bracketingTime = []
-
-# New dataframe without the dummy cycles
-if "air" in samID.lower():
-    dfm = df.loc[df['Cycle'] > 2]
-    cy = 4 # the number of the first proper reference cycle
-else:
-    dfm = df.loc[df['Cycle'] > 0]
-    cy = 2 # the number of the first proper reference cycle
-
-dfm = dfm.groupby(['Cycle'])[['Time(rel)', "d17O_raw", "d18O_raw", "Dp17O_raw"]].mean()
-ax1.scatter(dfm.iloc[:, 0], dfm.iloc[:, 1],
-            marker="*", s=20, c=colBracketing, label="Cycle avg")
-
-while cy < df['Cycle'].max():
-    if (cy % 2) == 0:
-
-        # Previous (reference) cycle
-        x1 = dfm.loc[cy - 1]["Time(rel)"]
-        y1 = dfm.loc[cy - 1]["d17O_raw"]
-
-        # Following (reference) cycle
-        x2 = dfm.loc[cy + 1]["Time(rel)"]
-        y2 = dfm.loc[cy + 1]["d17O_raw"]
-
-        # Interpolation based on the neighbouring reference cycles
-        m = (y2 - y1) / (x2 - x1)
-        b = y1 - m * x1
-
-        # Values for the sample cycle
-        xs = dfm.loc[cy]["Time(rel)"]
-        ys = dfm.loc[cy]["d17O_raw"]
-
-        ysRef = m * xs + b
-
-        a17Bracketing = (ys + 1000) / (ysRef + 1000)
-        d17OBracketing = (d17OWorkingGas + 1000 ) * a17Bracketing - 1000
-        bracketingResults.append(d17OBracketing)
-        bracketingCycles.append(cy)
-
-        bracketingTime.append(xs)
-
-        ax1.plot([x1, x2], [y1, y2],
-                 linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
-        ax1.plot([xs, xs], [ys, ysRef],
-                 color=colBracketing, linewidth=1.2)
-    cy = cy + 1
-
-# We create the dfBracketingResults dataframe here
-dfBracketingResults = pd.DataFrame(bracketingCycles, columns = ["Cycle"])
-dfBracketingResults['Time(rel)'] = bracketingTime
-dfBracketingResults['d17O'] = bracketingResults
-
-ax1.legend(loc="center left")
-ax1.set_ylabel("$\delta^{17}$O (‰, raw)")
+    for ax in fig.get_axes():
+        i = fig.get_axes().index(ax)
+        ax.text(0.99, 0.98, chr(65 + i),
+                size=12, weight="bold", ha="right", va="top",
+                bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
+                transform=ax.transAxes)
 
 
-######################### Plot B – d18O #########################
+    # Reference gas composition
+    d18OWorkingGas = 28.048
+    d17OWorkingGas = 14.621  # D'17O = -90 ppm
+    Dp17OWorkingGas = Dp17O(d17OWorkingGas, d18OWorkingGas)
 
-ax2.scatter(dfDummy["Time(rel)"], dfDummy["d18O_raw"],
-            color=colDummy, marker=".", label="Dummy")
+    # Make separate dataframes for Dummy, Reference, and Sample
+    dfRef = df.loc[df['Type'] == "Ref"]
+    dfSam = df.loc[df['Type'] == "Sam"]
+    dfDummy = df.loc[df['Type'] == "Dummy"]
 
-ax2.scatter(dfRef["Time(rel)"], dfRef["d18O_raw"],
-            color=colReference, marker=".", label="Reference")
+    ######################### Plot A – d17O #########################
 
-ax2.scatter(dfSam['Time(rel)'], dfSam["d18O_raw"],
-            color=colSample, marker=".", label="Sample")
+    ax1.scatter(dfDummy["Time(rel)"], dfDummy["d17O_raw"],
+                color=colDummy, marker=".", label="Dummy")
 
-bracketingResults = []
+    ax1.scatter(dfRef["Time(rel)"], dfRef["d17O_raw"],
+                color=colReference, marker=".", label="Reference")
 
-ax2.scatter(dfm.iloc[:, 0], dfm.iloc[:, 2],
-            marker="*", s=20, c=colBracketing, label="Cycle avg")
+    ax1.scatter(dfSam['Time(rel)'], dfSam["d17O_raw"],
+                color=colSample, marker=".", label="Sample")
 
-if "air" in samID.lower():
-    cy = 4
-else:
-    cy = 2
+    bracketingResults = []
+    bracketingCycles = []
+    bracketingTime = []
 
-while cy < df['Cycle'].max():
-    if (cy % 2) == 0:
+    # New dataframe without the dummy cycles
+    if "air" in samID.lower():
+        dfm = df.loc[df['Cycle'] > 2]
+        cy = 4 # the number of the first proper reference cycle
+    else:
+        dfm = df.loc[df['Cycle'] > 0]
+        cy = 2 # the number of the first proper reference cycle
 
-        # Previous (reference) cycle
-        x1 = dfm.loc[cy - 1]["Time(rel)"]
-        y1 = dfm.loc[cy - 1]["d18O_raw"]
+    dfm = dfm.groupby(['Cycle'])[['Time(rel)', "d17O_raw", "d18O_raw", "Dp17O_raw"]].mean()
+    ax1.scatter(dfm.iloc[:, 0], dfm.iloc[:, 1],
+                marker="*", s=20, c=colBracketing, label="Cycle avg")
 
-        # Following (reference) cycle
-        x2 = dfm.loc[cy + 1]["Time(rel)"]
-        y2 = dfm.loc[cy + 1]["d18O_raw"]
+    while cy < df['Cycle'].max():
+        if (cy % 2) == 0:
 
-        # Interpolation based on the neighbouring reference cycles
-        m = (y2 - y1) / (x2 - x1)
-        b = y1 - m * x1
+            # Previous (reference) cycle
+            x1 = dfm.loc[cy - 1]["Time(rel)"]
+            y1 = dfm.loc[cy - 1]["d17O_raw"]
 
-        # Values for the sample cycle
-        xs = dfm.loc[cy]["Time(rel)"]
-        ys = dfm.loc[cy]["d18O_raw"]
+            # Following (reference) cycle
+            x2 = dfm.loc[cy + 1]["Time(rel)"]
+            y2 = dfm.loc[cy + 1]["d17O_raw"]
 
-        ysRef = m * xs + b
-        
-        a18Bracketing = (ys + 1000) / (ysRef + 1000)
-        d18OBracketing = (d18OWorkingGas + 1000 ) * a18Bracketing - 1000
-        bracketingResults.append(d18OBracketing)
+            # Interpolation based on the neighbouring reference cycles
+            m = (y2 - y1) / (x2 - x1)
+            b = y1 - m * x1
 
-        ax2.plot([x1, x2], [y1, y2],
-                 linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
-        ax2.plot([xs, xs], [ys, ysRef],
-                 color=colBracketing, linewidth=1.2)
-    cy = cy + 1
+            # Values for the sample cycle
+            xs = dfm.loc[cy]["Time(rel)"]
+            ys = dfm.loc[cy]["d17O_raw"]
 
-dfBracketingResults['d18O'] = bracketingResults
+            ysRef = m * xs + b
 
-ax2.set_ylabel("$\delta^{18}$O (‰, raw)")
+            a17Bracketing = (ys + 1000) / (ysRef + 1000)
+            d17OBracketing = (d17OWorkingGas + 1000 ) * a17Bracketing - 1000
+            bracketingResults.append(d17OBracketing)
+            bracketingCycles.append(cy)
 
-######################## Plot C – Dp17O #########################
+            bracketingTime.append(xs)
 
-dfBracketingResults['Dp17O'] = Dp17O(dfBracketingResults['d17O'], dfBracketingResults['d18O'])
+            ax1.plot([x1, x2], [y1, y2],
+                    linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
+            ax1.plot([xs, xs], [ys, ysRef],
+                    color=colBracketing, linewidth=1.2)
+        cy = cy + 1
 
-# Final bracketing results
-d18O_SRB = dfBracketingResults["d18O"].mean().round(3)
-d18O_SRB_error = confidence_interval(dfBracketingResults["d18O"])
-d17O_SRB = dfBracketingResults["d17O"].mean().round(3)
-d17O_SRB_error = confidence_interval(dfBracketingResults["d17O"])
-D17Op_SRB = dfBracketingResults["Dp17O"].mean().round(1)
-D17Op_SRB_error = round(confidence_interval(dfBracketingResults["Dp17O"]), 1)
+    # We create the dfBracketingResults dataframe here
+    dfBracketingResults = pd.DataFrame(bracketingCycles, columns = ["Cycle"])
+    dfBracketingResults['Time(rel)'] = bracketingTime
+    dfBracketingResults['d17O'] = bracketingResults
 
-ax3.scatter(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
-            marker="*", s=20, c=colSample, label="Cycle avg", zorder=5)
-ax3.plot(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
-         color=colSample, linewidth=1)
-ax3.axhline(D17Op_SRB,
-            c=colBracketing, zorder=-1, linewidth=1.2, label="mean")
-ax3.axhline(D17Op_SRB-D17Op_SRB_error,
-            c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2, label="±68% CI")
-ax3.axhline(D17Op_SRB+D17Op_SRB_error,
-            c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2)
+    ax1.legend(loc="center left")
+    ax1.set_ylabel("$\delta^{17}$O (‰, raw)")
 
-# Write evaluated data into the figure title
-ax1.set_title(f"{samID}\nEvaluated results: $\\delta^{{17}}$O = {d17O_SRB}±{d17O_SRB_error}‰, $\delta^{{18}}$O = {d18O_SRB}±{d18O_SRB_error}‰, $\\Delta\\prime^{{17}}$O = {D17Op_SRB}±{D17Op_SRB_error} ppm\nWorking reference gas: $\\delta^{{17}}$O = {d17OWorkingGas}‰, $\\delta^{{18}}$O = {d18OWorkingGas}‰, $\\Delta\\prime^{{17}}$O = {Dp17OWorkingGas:.1f} ppm")
 
-ax3.legend()
-ax3.set_ylabel("$\Delta\prime^{17}$O (ppm, rel. working gas)")
-ax3.set_xlabel("Relative time (s)")
+    ######################### Plot B – d18O #########################
 
-plt.tight_layout()
-plt.savefig(os.path.join(folder, "FitPlot.png"))
+    ax2.scatter(dfDummy["Time(rel)"], dfDummy["d18O_raw"],
+                color=colDummy, marker=".", label="Dummy")
 
-#####################################################################
-# Send evaluated results to the PHP script
-#####################################################################
+    ax2.scatter(dfRef["Time(rel)"], dfRef["d18O_raw"],
+                color=colReference, marker=".", label="Reference")
 
-output_data = {
-    "SampleName": sys.argv[1],
-    "dateTimeMeasured": dateTimeMeasured,
-    "d17O": d17O_SRB,
-    "d17OError": d17O_SRB_error,
-    "d18O": d18O_SRB,
-    "d18OError": d18O_SRB_error,
-    "CapD17O": D17Op_SRB,
-    "CapD17OError": D17Op_SRB_error,
-    "d17Oreference": d17OWorkingGas,
-    "d18Oreference": d18OWorkingGas,
-    "pCO2Ref": pCO2Ref,
-    "pCO2Ref_error": pCO2Ref_error,
-    "pCO2Sam": pCO2Sam,
-    "pCO2Sam_error": pCO2Sam_error,
-    "PCellRef": PCellRef,
-    "PCellRef_error": PCellRef_error,
-    "PCellSam": PCellSam,
-    "PCellSam_error": PCellSam_error,
-    "TCellSam": TCellSam,
-    "TCellSam_error": TCellSam_error,
-    "TCellRef": TCellSam,
-    "TCellRef_error": TCellSam_error,
-    "nSamCycles": len(dfBracketingResults),
-    "nSamPoints": nSam,
-    "nRefPoints": nRef,
-    "pCO2Mismatch": pCO2_mismatch,
-    "pCO2Mismatch_error": pCO2_mismatch_error,
-    "TCellMismatch": TCell_mismatch,
-    "TCellMismatch_error": TCell_mismatch_error,
-    "PCellMismatch": PCell_mismatch,
-    "PCellMismatch_error": PCell_mismatch_error,
-}
-print(json.dumps(output_data))
+    ax2.scatter(dfSam['Time(rel)'], dfSam["d18O_raw"],
+                color=colSample, marker=".", label="Sample")
+
+    bracketingResults = []
+
+    ax2.scatter(dfm.iloc[:, 0], dfm.iloc[:, 2],
+                marker="*", s=20, c=colBracketing, label="Cycle avg")
+
+    if "air" in samID.lower():
+        cy = 4
+    else:
+        cy = 2
+
+    while cy < df['Cycle'].max():
+        if (cy % 2) == 0:
+
+            # Previous (reference) cycle
+            x1 = dfm.loc[cy - 1]["Time(rel)"]
+            y1 = dfm.loc[cy - 1]["d18O_raw"]
+
+            # Following (reference) cycle
+            x2 = dfm.loc[cy + 1]["Time(rel)"]
+            y2 = dfm.loc[cy + 1]["d18O_raw"]
+
+            # Interpolation based on the neighbouring reference cycles
+            m = (y2 - y1) / (x2 - x1)
+            b = y1 - m * x1
+
+            # Values for the sample cycle
+            xs = dfm.loc[cy]["Time(rel)"]
+            ys = dfm.loc[cy]["d18O_raw"]
+
+            ysRef = m * xs + b
+            
+            a18Bracketing = (ys + 1000) / (ysRef + 1000)
+            d18OBracketing = (d18OWorkingGas + 1000 ) * a18Bracketing - 1000
+            bracketingResults.append(d18OBracketing)
+
+            ax2.plot([x1, x2], [y1, y2],
+                    linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
+            ax2.plot([xs, xs], [ys, ysRef],
+                    color=colBracketing, linewidth=1.2)
+        cy = cy + 1
+
+    dfBracketingResults['d18O'] = bracketingResults
+
+    ax2.set_ylabel("$\delta^{18}$O (‰, raw)")
+
+    ######################## Plot C – Dp17O #########################
+
+    dfBracketingResults['Dp17O'] = Dp17O(dfBracketingResults['d17O'], dfBracketingResults['d18O'])
+
+    # Final bracketing results
+    d18O_SRB = dfBracketingResults["d18O"].mean().round(3)
+    d18O_SRB_error = confidence_interval(dfBracketingResults["d18O"])
+    d17O_SRB = dfBracketingResults["d17O"].mean().round(3)
+    d17O_SRB_error = confidence_interval(dfBracketingResults["d17O"])
+    D17Op_SRB = dfBracketingResults["Dp17O"].mean().round(1)
+    D17Op_SRB_error = round(confidence_interval(dfBracketingResults["Dp17O"]), 1)
+
+    ax3.scatter(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
+                marker="*", s=20, c=colSample, label="Cycle avg", zorder=5)
+    ax3.plot(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
+            color=colSample, linewidth=1)
+    ax3.axhline(D17Op_SRB,
+                c=colBracketing, zorder=-1, linewidth=1.2, label="mean")
+    ax3.axhline(D17Op_SRB-D17Op_SRB_error,
+                c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2, label="±68% CI")
+    ax3.axhline(D17Op_SRB+D17Op_SRB_error,
+                c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2)
+
+    # Write evaluated data into the figure title
+    ax1.set_title(f"{samID}\nEvaluated results: $\\delta^{{17}}$O = {d17O_SRB}±{d17O_SRB_error}‰, $\delta^{{18}}$O = {d18O_SRB}±{d18O_SRB_error}‰, $\\Delta\\prime^{{17}}$O = {D17Op_SRB}±{D17Op_SRB_error} ppm\nWorking reference gas: $\\delta^{{17}}$O = {d17OWorkingGas}‰, $\\delta^{{18}}$O = {d18OWorkingGas}‰, $\\Delta\\prime^{{17}}$O = {Dp17OWorkingGas:.1f} ppm")
+
+    ax3.legend()
+    ax3.set_ylabel("$\Delta\prime^{17}$O (ppm, rel. working gas)")
+    ax3.set_xlabel("Relative time (s)")
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(folder, "FitPlot.png"))
+
+    #####################################################################
+    # Send evaluated results to the PHP script
+    #####################################################################
+
+    output_data = {
+        "SampleName": sys.argv[1],
+        "DateTimeMeasured": dateTimeMeasured,
+        "d17O": d17O_SRB,
+        "d17OError": d17O_SRB_error,
+        "d18O": d18O_SRB,
+        "d18OError": d18O_SRB_error,
+        "CapD17O": D17Op_SRB,
+        "CapD17OError": D17Op_SRB_error,
+        "d17Oreference": d17OWorkingGas,
+        "d18Oreference": d18OWorkingGas,
+        "pCO2Ref": pCO2Ref,
+        "pCO2Ref_error": pCO2Ref_error,
+        "pCO2Sam": pCO2Sam,
+        "pCO2Sam_error": pCO2Sam_error,
+        "PCellRef": PCellRef,
+        "PCellRef_error": PCellRef_error,
+        "PCellSam": PCellSam,
+        "PCellSam_error": PCellSam_error,
+        "TCellSam": TCellSam,
+        "TCellSam_error": TCellSam_error,
+        "TCellRef": TCellSam,
+        "TCellRef_error": TCellSam_error,
+        "nSamCycles": len(dfBracketingResults),
+        "nSamPoints": nSam,
+        "nRefPoints": nRef,
+        "pCO2Mismatch": pCO2_mismatch,
+        "pCO2Mismatch_error": pCO2_mismatch_error,
+        "TCellMismatch": TCell_mismatch,
+        "TCellMismatch_error": TCell_mismatch_error,
+        "PCellMismatch": PCell_mismatch,
+        "PCellMismatch_error": PCell_mismatch_error,
+    }
+    print(json.dumps(output_data))
+
+except Exception as e:
+
+    # If there was a problem with processing the data,
+    # but otherwise all files are there:
+    # - create an empty FitPlot.png
+    # - save the python error into a txt file
+    # - save the replicate in the isolabor database, but mark it 
+    # as discarded
+    
+    # Save an empty figure
+    plt.figure()
+    plt.savefig(os.path.join(folder, "FitPlot.png"))
+
+    # Save the error message to a text file
+    error_message = traceback.format_exc()
+    error_file = os.path.join(folder, "error.txt")
+    with open(error_file, "w") as f:
+        f.write(error_message)
+
+    # Prepare JSON output
+    output_data = {
+        "SampleName": sys.argv[1],
+        "DateTimeMeasured": dateTimeMeasured,
+        "Discard": "Yes"
+    }
+    print(json.dumps(output_data))
