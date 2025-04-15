@@ -11,17 +11,17 @@
 
 	<body style="background-color:#38342F;">
 	
-		<div id="wrap" style="position:relative;border:1.5px solid #F5F4F1;width:2010px;height:860px;border-radius:4px;">
+		<div id="wrap" style="position:relative;border:1.5px solid #F5F4F1;width:2550px;height:710px;border-radius:4px;">
 			
 			<!-- This is the schematic of the inlet system -->
 			<img src="controller/images/schaltbild.png" class="schaltbild" />
 
 			<!-- Some design elements and labels -->
 			<img src="controller/images/GZG_logo_color.png" class="logo" style="top:19px;" />
-			<img src="controller/images/GOE_logo_color.png" class="logo" style="top:790px;" />
 			<p class="label" style="top:39px;left:1030px;">N<sub>2</sub> purging</p>
 			<p class="label" style="top:155px;left:1030px;">Turbo</p>
 			<p class="label" style="top:230px;left:1030px;">Scroll</p>
+			<p class="label" style="top:274px;left:1423px;">Kiel IV</p>
 
 			<!-- Display the valves -->
 			<div style="top:125px;left:775px;">
@@ -89,12 +89,12 @@
 				<img id="V13" src="" class="small" onclick="var status=$('#V13_label').html();toggleValve('V13',status);" />
 				<span id="V13_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:472px;left:1190px;">
+			<div style="top:472px;left:1214px;">
 				<span class="valveNumberLabel">V14</span>
 				<img id="V14" src="" class="small" onclick="var status=$('#V14_label').html();toggleValve('V14',status);" />
 				<span id="V14_label" style="display:none;">undefined</span>
 			</div>
-			<!-- <div style="top:703px;left:622px;">
+			<!-- <div style="top:470px;left:622px;">
 				<span class="valveNumberLabel">V15</span>
 				<img id="V15" src="" class="small" onclick="var status=$('#V15_label').html();toggleValve('V15',status);" />
 				<span id="V15_label" style="display:none;">undefined</span>
@@ -129,27 +129,27 @@
 				<img id="V21" src="" class="small" onclick="var status=$('#V21_label').html();toggleValve('V21',status);" />
 				<span id="V21_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:410px;left:1235px;">
+			<div style="top:410px;left:1275px;">
 				<span class="valveNumberLabel">V22</span>
 				<img id="V22" src="" class="small" onclick="var status=$('#V22_label').html();toggleValve('V22',status);" />
 				<span id="V22_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:703px;left:1319px;">
+			<div style="top:470px;left:1364px;">
 				<span class="valveNumberLabel">V23</span>
 				<img id="V23" src="" class="small" onclick="var status=$('#V23_label').html();toggleValve('V23',status);" />
 				<span id="V23_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:703px;left:1409px;">
+			<div style="top:470px;left:1454px;">
 				<span class="valveNumberLabel">V24</span>
 				<img id="V24" src="" class="small" onclick="var status=$('#V24_label').html();toggleValve('V24',status);" />
 				<span id="V24_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:703px;left:1499px;">
+			<div style="top:470px;left:1544px;">
 				<span class="valveNumberLabel">V25</span>
 				<img id="V25" src="" class="small" onclick="var status=$('#V25_label').html();toggleValve('V25',status);" />
 				<span id="V25_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:703px;left:1589px;">
+			<div style="top:470px;left:1634px;">
 				<span class="valveNumberLabel">V26</span>
 				<img id="V26" src="" class="small" onclick="var status=$('#V26_label').html();toggleValve('V26',status);" />
 				<span id="V26_label" style="display:none;">undefined</span>
@@ -164,11 +164,11 @@
 				<img id="V28" src="" class="small" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" />
 				<span id="V28_label" style="display:none;">undefined</span>
 			</div>
-			<!-- <div style="top:703px;left:905px;">
+			<div style="top:345px;left:1214px;">
 				<span class="valveNumberLabel">V29</span>
 				<img id="V29" src="" class="small" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" />
 				<span id="V29_label" style="display:none;">undefined</span>
-			</div> -->
+			</div>
 			<!-- <div style="top:231px;left:470px;">
 				<span class="valveNumberLabel">V30</span>
 				<img id="V30" src="" class="small" onclick="var status=$('#V30_label').html();toggleValve('V30',status);" />
@@ -209,17 +209,20 @@
 
 			<!-- Bellows control -->
 			<img id="bellowsX" src="controller/images/bellows.png" class="bellows" style="top:510px;left:295px;" />
-			<img id="bellowsY" src="controller/images/bellows.png" class="bellows" style="top:510px;left:1100px;" />
+			<img id="bellowsY" src="controller/images/bellows.png" class="bellows" style="top:510px;left:1092px;" />
 			<img id="bellowsZ" src="controller/images/bellows.png" class="bellows" style="top:320px;left:688px;" />
 			
 			<span id="pressureX" class="box small" style="top:353px;left:319px;">NaN</span>
 			<p class="label" style="top:312px;left:319px;">X (Torr)</p>
 			
-			<span id="pressureY" class="box small" style="top:353px;left:1128px;">NaN</span>
-			<p class="label" style="top:312px;left:1128px;">Y (Torr)</p>
+			<span id="pressureY" class="box small" style="top:353px;left:1120px;">NaN</span>
+			<p class="label" style="top:312px;left:1120px;">Y (Torr)</p>
 
 			<div id='pressureZ' class="box small" style="top:555px;left:710px;"><em>NaN</em></div>
 			<p class="label" style="top:517px;left:710px;">Z (Torr)</p>
+
+			<span id="DeltaPlusGauge" class="box small" style="top:353px;left:1328px;">NaN</span>
+			<p class="label" style="top:312px;left:1345px;">D (Torr)</p>
 
 			<img id="motorX" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
 			<span id="percentageX" class="box small" style="top:625px;left:315px;">NaN</span>
@@ -238,35 +241,35 @@
 			<img id="warningZ" src="" class="icon" style="top:450px;left:650px;" />
 
 			<!-- Bellow parameters only necessary for the script to work -->
-			<span id="percentageX_Poti" class="box unimportant" style="top:653px;left:1700px;">NaN</span>
-			<span id="percentageY_Poti" class="box unimportant" style="top:653px;left:1750px;">NaN</span>
-			<span id="stepsZ" class="box unimportant" style="top:653px;left:1800px;">NaN</span>
+			<span id="percentageX_Poti" class="box unimportant" style="top:653px;left:2240px;">NaN</span>
+			<span id="percentageY_Poti" class="box unimportant" style="top:653px;left:2290px;">NaN</span>
+			<span id="stepsZ" class="box unimportant" style="top:653px;left:2340px;">NaN</span>
 			
 			<!-- Mixing ratio indicators -->
-			<p class="label" style="top:170px;left:1700px;">Mixing ratios  <span class="decorative" >_________</span></p>
-			<span id="mr1" class="box medium" style="top:215px;left:1700px;">mr1</span>
-				<p class="label" style="top:200px;left:1770px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr2" class="box medium" style="top:245px;left:1700px;">mr2</span>
-				<p class="label" style="top:230px;left:1770px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr3" class="box medium" style="top:275px;left:1700px;">mr3</span>
-				<p class="label" style="top:260px;left:1770px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
-			<span id="mr4" class="box medium" style="top:305px;left:1700px;">mr4</span>
-				<p class="label" style="top:290px;left:1770px;">free-path CO<sub>2</sub> (ppmv)</p>
+			<p class="label" style="top:170px;left:2240px;">Mixing ratios  <span class="decorative" >_________</span></p>
+			<span id="chi_627" class="box medium" style="top:215px;left:2240px;">chi_627</span>
+				<p class="label" style="top:200px;left:2310px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="chi_628" class="box medium" style="top:245px;left:2240px;">chi_628</span>
+				<p class="label" style="top:230px;left:2310px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="chi_626" class="box medium" style="top:275px;left:2240px;">chi_626</span>
+				<p class="label" style="top:260px;left:2310px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+			<span id="free_path_CO2" class="box medium" style="top:305px;left:2240px;">free_path_CO2</span>
+				<p class="label" style="top:290px;left:2310px;">free-path CO<sub>2</sub> (ppmv)</p>
 			
 			<!-- Edwards gauge -->
 			<span id="vacuum" class="box medium" style="top:353px;left:858px;">vacuum</span>
 			<p class="label" style="top:312px;left:858px;">Vacuum (Torr)</p>
 			
 			<!-- Sequence and method parameters -->
-			<div style="top:19px;left:1370px;">
+			<div style="top:19px;left:1800px;">
 				Sequence: <input type="file" id="uploadSequence">
 			</div>
 			
-			<div style="top:50px;left:1370px;">
+			<div style="top:50px;left:1800px;">
 				Method: <input type="file" id="uploadMethod">
 			</div>
 
-			<div style="top:81px;left:1370px;">
+			<div style="top:81px;left:1800px;">
 				User:
 				<select name='userName' id='userName'>
 					<option value='David Bajnai'>Bajnai, David</option>
@@ -281,42 +284,46 @@
 				</select>
 			</div>
 
-			<div id="sequence" class="scroll" style="top:190px;left:1370px;width:300px;height:150px;"></div>
-			<div id="method" class="scroll" style="top:353px;left:1370px;width:300px;height:318px;"></div>
+			<div id="sequence" class="scroll" style="top:173px;left:1800px;width:300px;height:100px;"></div>
+			<div id="method" class="scroll" style="top:283px;left:1800px;width:300px;height:318px;"></div>
 
-			<div id='progressBar' style='top:140px;left:1370px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
-			<div id='progress' style='top:140px;left:1370px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
-			<div id="moveStatus" class="info" style="width:307px;top:120px;left:1370px;text-align: right;">-</div>
-			<div id='methodStatus' class="info" style='top:120px;left:1370px;'>Standby</div>
+			<div id='progressBar' style='top:140px;left:1800px; border:1px #63A615; border-radius: 2px; width:0px; height:27px; background-color: #63A615;'></div>
+			<div id='progress' style='top:140px;left:1800px; border-radius: 2px; border:1px solid black; padding:3px;width:300px;height:20px;'>0%</div>
+			<div id="moveStatus" class="info" style="top:120px;left:1800px;width:307px;text-align: right;">-</div>
+			<div id='methodStatus' class="info" style='top:120px;left:1800px;'>Standby</div>
 			
 			<!-- Environment -->
-			<p class="label" style="top:170px;left:30px;">Environment <span class="decorative">_________</span></p>
-			<div id='boxHumidity' class="box medium" style="top:215px;left:30px;">99</div>
-			<p class="label" style="top:200px;left:100px;">% rH</p>
-			<div id='boxSetpoint' class="box medium" style="top:245px;left:30px;">99</div>
-			<p class="label" style="top:230px;left:100px;">°C (SP)</p>
-			<div id='boxTemperature' class="box medium" style="top:275px;left:30px;">99</div>
-			<p class="label" style="top:260px;left:100px;">°C (box)</p>
-			<div id='fanSpeed' class="box medium" style="top:305px;left:30px;">99</div>
-			<p class="label" style="top:290px;left:100px;">fan speed</p>
+			<p class="label" style="top:35px;left:1260px;">Environment <span class="decorative">_________</span></p>
+
+			<div id='boxHumidity' class="box medium" style="top:80px;left:1260px;">99</div>
+			<p class="label" style="top:65px;left:1330px;">% rH</p>
+
+			<canvas id="temperatureGauge" width="110" height="60" style="position:absolute; top:120px; left:1260px;"></canvas>
+			<div id='boxSetpoint' class="box medium" style="top:120px;left:1390px;">99</div>
+			<p class="label" style="top:105px;left:1460px;">°C (SP)</p>
+			<div id='boxTemperature' class="box medium" style="top:150px;left:1390px;">99</div>
+			<p class="label" style="top:135px;left:1460px;">°C (box)</p>
+
+			<canvas id="fanSpeedGauge" width="110" height="60" style="position:absolute; top:190px; left:1260px;"></canvas>
+			<div id='fanSpeed' class="box medium" style="top:210px;left:1390px;">99</div>
+			<p class="label" style="top:195px;left:1460px;">fan speed (%)</p>
 
 			<!-- Script variables -->
-			<p class="label" style="top:335px;left:1700px;">Script variables <span class="decorative">_________</span></p>
-			<div id="sampleName"			  class="info" style="top:380px;left:1700px;">Sample name</div>
-			<div id="timeMeasurementStarted"  class="info" style="top:400px;left:1700px;">Time measurement started</div>
-			<div id="folderName"			  class="info" style="top:420px;left:1700px;">Folder name</div>
-			<div id="cellTargetPressure"	  class="info" style="top:440px;left:1700px;">Cell target pressure</div>
-			<div id="nitrogenTargetPressure"  class="info" style="top:460px;left:1700px;">Collision gas target pressure</div>
-			<div id="refgasTargetPressure"	  class="info" style="top:480px;left:1700px;">Reference target pressure</div>
-			<div id="samgasTargetPressure"	  class="info" style="top:500px;left:1700px;">Sample target pressure</div>
-			<div id="sample_pCO2"			  class="info" style="top:520px;left:1700px;">Sample pCO<sub>2</sub></div>
-			<div id="reference_pCO2"		  class="info" style="top:540px;left:1700px;">Reference pCO<sub>2</sub></div>
-			<div id="correction_pCO2"		  class="info" style="top:560px;left:1700px;">1.000</div>
+			<p class="label" style="top:335px;left:2240px;">Script variables <span class="decorative">_________</span></p>
+			<div id="sampleName"			  class="info" style="top:380px;">Sample name</div>
+			<div id="timeMeasurementStarted"  class="info" style="top:400px;">Time measurement started</div>
+			<div id="folderName"			  class="info" style="top:420px;">Folder name</div>
+			<div id="cellTargetPressure"	  class="info" style="top:440px;">Cell target pressure</div>
+			<div id="nitrogenTargetPressure"  class="info" style="top:460px;">Collision gas target pressure</div>
+			<div id="refgasTargetPressure"	  class="info" style="top:480px;">Reference target pressure</div>
+			<div id="samgasTargetPressure"	  class="info" style="top:500px;">Sample target pressure</div>
+			<div id="sample_pCO2"			  class="info" style="top:520px;">Sample pCO<sub>2</sub></div>
+			<div id="reference_pCO2"		  class="info" style="top:540px;">Reference pCO<sub>2</sub></div>
+			<div id="correction_pCO2"		  class="info" style="top:560px;">1.000</div>
 
 			<!-- The main buttons -->
-			<button onclick="startSequenceButton();" class="button big" style="top:140px;left:1240px;background-color:#63A615;">Start sequence</button>
-			<button onclick="startingPosition();" class="button big" style="top:190px;left:1240px;background-color:#9A6CA6;">Starting position</button>
-			<button onclick="showResultsButton();" class="button big" style="top:230px;left:1240px;">See results</button>
+			<button onclick="startSequenceButton();" class="button big" style="top:660px;left:1800px;background-color:#63A615;">Start sequence</button>
+			<button onclick="startingPosition();" class="button big" style="top:660px;left:1340px;background-color:#9A6CA6;">Starting position</button>
 
 			<!-- Zugzielanzeiger -->
 			<span id="infoJS" class="Zugzielanzeiger" style="top:35px;left:150px;">NaN</span>

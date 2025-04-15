@@ -3,107 +3,97 @@
 from pymemcache.client import base
 import time
 import serial
-import datetime
+import serial.tools.list_ports
+from datetime import datetime
 import ujson
 import threading
-
+import csv
+import os
+import sys
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>> SERIAL COMMUNICATION <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# Connect to the Arduino via serial
+# Get available devices connected to the computer
+devices = {p.serial_number: p.device for p in serial.tools.list_ports.comports()}
+
+# Assign the serial ports to the devices
+
 try:
-    arduino = serial.Serial('/dev/ttyACM0', baudrate=115200, timeout=0.2)
-    print(" ✓ Connection to Arduino established")
+    TILDAS_PORT = devices["ETBQi19C116"]
+    print(f" ✓ TILDAS is connected at {TILDAS_PORT}")
+except KeyError:
+    print(" x The TILDAS is not connected. Stopping the script.")
+    sys.exit(1)
+
+try:
+    EDWARDS_PORT = devices["CHAAb131R01"]
+    print(f" ✓ The Edwards gauge is connected at {EDWARDS_PORT}")
+except KeyError:
+    print(" x The Edwards gauge is not connected")
+    sys.exit(1)
+
+try:
+    ARDUINO_PORT = devices["8503631363035151D102"]
+    print(f" ✓ The Arduino is connected at {ARDUINO_PORT}")
+except KeyError:
+    print(" x The Arduino is not connected")
+    sys.exit(1)
+print("")
+
+# Establish the serial connections
+
+try:
+    arduino = serial.Serial(ARDUINO_PORT, baudrate=115200, timeout=0.2)
+    print(" ✓ Serial communication with the Arduino is established")
     time.sleep(1)
 except serial.SerialException:
-    print(" x Connection to Arduino could not be established. Stopping the script.")
-    quit()
+    print(" x Failed to establsih serial communication with the Arduino")
+    sys.exit(1)
 
-# Connect to the Edwards pressure gauge via serial
-# NOTE: There are two USB serial ports conneted: USB1 and USB0
-#       Here we test which is the Edwards. The other one has to be the TILDAS.
-MAX_ATTEMPTS = 10
-EXPECTED_MESSAGE_LENGTH = 9
-PORT_PREFIX = '/dev/ttyUSB'
-try:
-    # Connect to 'something' over one of the USB ports
-    EDWARDS_SUFFIX = '1' # USB1 or USB0
-    EDWARDS_PORT = PORT_PREFIX + EDWARDS_SUFFIX
-    edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=1)
-    time.sleep(2)
-    attempts = 1
-    success = False
-    while attempts < MAX_ATTEMPTS and success is False:
-        # Send a query and listen for a response
-        edwards_gauge.write(bytes('?GA1\r', 'utf-8'))
-        try:
-            test_message = edwards_gauge.readline().decode('utf-8')
-        except UnicodeDecodeError:
-            test_message = ""
-        if len(test_message) == EXPECTED_MESSAGE_LENGTH:
-            # The response was the expected length, so this is the Edwards gauge
-            print(" ✓ Connection to Edwards gauge established over " + EDWARDS_PORT)
-            TILDAS_PORT = PORT_PREFIX + ('0' if EDWARDS_SUFFIX == '1' else '1')
-            success = True
-        else:
-            time.sleep(1)
-            print("    Trying to connect to the Edwards gauge. Attempt #" + str(attempts), end="\r")
-            attempts += 1
-    if success is False:
-        # Try connecting to the Edwards gauge over the other USB port
-        edwards_gauge.close() # close previous connection
-        EDWARDS_SUFFIX = '0' # USB1 or USB0
-        EDWARDS_PORT = PORT_PREFIX + EDWARDS_SUFFIX
-        edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=1)
-        time.sleep(1)
-        attempts = 0
-        while attempts < MAX_ATTEMPTS and success is False:
-            # Send a query and listen for a response
-            edwards_gauge.write(bytes('?GA1\r', 'utf-8'))
-            try:
-                test_message = edwards_gauge.readline().decode('utf-8')
-            except UnicodeDecodeError:
-                test_message = ""
-            if len(test_message) == EXPECTED_MESSAGE_LENGTH:
-                print(" ✓ Connection to Edwards gauge established over " + EDWARDS_PORT)
-                time.sleep(1)
-                success = True
-                TILDAS_PORT = PORT_PREFIX + ('0' if EDWARDS_SUFFIX == '1' else '1')
-            else:
-                time.sleep(1)
-                attempts += 1
-        if success is False:
-            print(" x Edwards gauge offline.")
-
-except FileNotFoundError:
-    print(" x The Edwards gauge's USB cable is not plugged in. Stopping the script.")
-    quit()
-
-# Connect to the TILDAS via serial
-if 'TILDAS_PORT' not in locals():
-    TILDAS_PORT = '/dev/ttyUSB0'
 try:
     laser = serial.Serial(TILDAS_PORT, baudrate=57600, timeout=1)
-    print(" ✓ Connection to TILDAS established over " + TILDAS_PORT)
+    print(" ✓ Serial communication with the TILDAS established")
     time.sleep(1)
-except FileNotFoundError:
-    print(" x The TILDAS is offline.")
+except serial.SerialException:
+    print(" x Failed to establish serial communication with the TILDAS")
+    sys.exit(1)
 
+MAX_ATTEMPTS = 2
+EXPECTED_MESSAGE_LENGTH = 9
+try:
+    edwards_gauge = serial.Serial(EDWARDS_PORT, baudrate=9600, timeout=1)
+    time.sleep(2)
+    for attempt in range(MAX_ATTEMPTS):
+        edwards_gauge.write(b'?GA1\r')
+        try:
+            response = edwards_gauge.readline().decode('utf-8')
+        except UnicodeDecodeError:
+            response = ""
+        if len(response) == EXPECTED_MESSAGE_LENGTH:
+            print(" ✓ Serial communication with the Edwards gauge established")
+            break
+        time.sleep(1)
+    else:
+        raise serial.SerialException("Invalid response length")
+
+except serial.SerialException:
+    print(" x Failed to establish serial communication with the Edwards gauge")
+    sys.exit(1)
 
 # Connect to the shared variable
 m = base.Client(('127.0.0.1', 11211))
 m.set('key2', "")
 
 # Serial connections are established
-print("Transmitting to and recieving data from sendCommand.php...")
+print("\nTransmitting to and recieving data from sendCommand.php...")
 
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>> DEFINE LOOPS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# NOTE:
-# We need to put the Edwards gauge reading in a separate loop
-# because reading the gauge is slow, but we want the other loop
-# to run as fast as possible.
+""" NOTE
+Reading the Edwards gauge has to be in a separate loop
+othwerwise the it slows down the communication with the Arduino and TILDAS
+"""
 
 lock = threading.Lock()
 
@@ -136,14 +126,19 @@ def loop_2():
     start_time_elapsed = time.time()
     start_time_speed = time.time()
     elapsed_time = 0
+    temperature_log = os.path.join(
+        "/var/www/html/data/Logfiles", f"tempControl{datetime.now().strftime('_%y%m%d_%H%M%S')}.csv")
 
     while True:
 
-        # Read the data stream from the laser spectrometer
-        # NOTE: This data is only used by the inlet system to show the status of the measurements
-        #       The final measurement results are evaluated using the .str and .stc files
+        """ NOTE
+        Here we read the data stream from the TILDAS.
+        This data is only used by the inlet system to show the status of the measurements,
+        and to adjust the cell pressure, and the 626 mixing ratio.
+        The measurement results are evaluated using the .str and .stc files.
+        """
 
-        if( laser.inWaiting() > 10 ):
+        if laser.in_waiting > 10:
             # Read the serial output of the TILDAS if there is something to read (at least 11 bytes)
             try:
                 laserStatus = laser.readline().decode('utf-8').strip()
@@ -151,13 +146,13 @@ def loop_2():
 
                 laserStatusArray = laserStatus.split(',')
 
-                mr1 = str(round(float(laserStatusArray[1]) / 1000,3)) # 627
-                mr2 = str(round(float(laserStatusArray[2]) / 1000,3)) # 628
-                mr3 = str(round(float(laserStatusArray[3]) / 1000,3)) # 626
-                mr4 = str(round(float(laserStatusArray[4]) / 1000,3)) # free-path CO2
-                cellP = str(round(float(laserStatusArray[10]),3)) # cell pressure (Torr)
+                chi_627 = str(round(float(laserStatusArray[1]) / 1000,3)) # 627
+                chi_628 = str(round(float(laserStatusArray[2]) / 1000,3)) # 628
+                chi_626 = str(round(float(laserStatusArray[3]) / 1000,3)) # 626
+                free_path_CO2 = str(round(float(laserStatusArray[4]) / 1000,3)) # free-path CO2
+                cellPressure = str(round(float(laserStatusArray[10]),3)) # cell pressure (Torr)
 
-                laserStatus = cellP + ',' + mr1 + ',' + mr2 + ',' + mr3 + ',' + mr4
+                laserStatus = cellPressure + ',' + chi_627 + ',' + chi_628 + ',' + chi_626 + ',' + free_path_CO2
                 # print(laserStatus) # Show laser status string in the Terminal - for debugging
             except (ValueError, UnicodeDecodeError, IndexError):
                 # If the string is broken, just ignore it
@@ -172,7 +167,7 @@ def loop_2():
             # print(arduinoStatusNew) # Show the raw serial output of the Arduino in the Terminal - for debugging
 
             # Check if the JSON string is correct lenght
-            if len(arduinoStatusNew) != 16:
+            if len(arduinoStatusNew) != 17:
                 raise ValueError("Invalid number of values in the JSON string")
 
             # Check if some of the values make sense
@@ -181,6 +176,19 @@ def loop_2():
             y_pressure = float(arduinoStatusNew.get('Y_pressure', 0))
             if not (0 <= z_percentage <= 100 and -1 <= x_pressure <= 7 and -1 <= y_pressure <= 7):
                 raise ValueError("Invalid values in the JSON string")
+
+            # Save the temperatre control data to a CSV file for PID tuning
+            if elapsed_time < 2700:
+                write_header = not os.path.exists(temperature_log)
+                with open(temperature_log, mode='a', newline='') as file:
+                    writer = csv.writer(file)
+                    if write_header:
+                        writer.writerow(["Time", "boxTemperature", "boxSetpoint", "fanSpeed"])
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    box_temp = arduinoStatusNew.get('boxTemperature', '')
+                    fanspeed = arduinoStatusNew.get('fanSpeed', '')
+                    boxSetpoint = arduinoStatusNew.get('boxSetpoint', '')
+                    writer.writerow([timestamp, box_temp, boxSetpoint, fanspeed])
 
             # Convert JSON data to comma-separated string without keys
             arduinoStatus = ""
@@ -195,7 +203,7 @@ def loop_2():
         if( arduinoStatus != "" ):
 
             # Create the status string
-            timeNow = datetime.datetime.now().strftime("%H:%M:%S")
+            timeNow = datetime.now().strftime("%H:%M:%S")
             status = timeNow + ',' + arduinoStatus + ',' + laserStatus + ',' + vacuum
 
             # Set shared variable #1: this is what the sendCommand.php files recieves

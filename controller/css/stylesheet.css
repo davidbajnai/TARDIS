@@ -68,6 +68,7 @@ div {
 
 .info {
     position: absolute;
+    left: 2240px;;
     color: black;
 }
 
@@ -111,7 +112,7 @@ div {
 
 .logo {
     position: absolute;
-    left: 1700px;
+    left: 2240px;
     width: 290px;
 }
 
@@ -173,13 +174,13 @@ summary {
     border-radius: 4px;
     font-weight: bold;
     font-size: 18px;
-    width: 2005px;
+    width: 2540px;
     cursor: pointer;
 }
 
 details[open]{
     background-color: #F5F4F1;
-    width: 2005px !important;
+    width: 2540px !important;
     padding: 5px;
     border-radius: 4px;
 }

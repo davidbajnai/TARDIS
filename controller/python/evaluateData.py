@@ -90,7 +90,7 @@ def calc_stats(df, column, samID, offset=0, scale=1, rounding=5):
     return sample_mean, sample_std, ref_mean, ref_std, nSam, nRef
 
 
-def calculate_mismatch(df, param):
+def calculate_mismatch(df, param, samID = None):
     """
     This function calculates the mean and standard deviation of mismatches 
     between sample cycles and their neighboring reference cycles for a given parameter.
@@ -111,6 +111,7 @@ def calculate_mismatch(df, param):
     Parameters:
     - df (DataFrame): The input DataFrame containing cycle data.
     - param (str): The column name of the parameter to analyze.
+    - samID: Global variable
 
     Returns:
     - tuple: (mean mismatch, standard deviation of mismatches)
@@ -118,7 +119,13 @@ def calculate_mismatch(df, param):
 
     mismatches = []
 
-    for i in range(2, df["Cycle"].max() + 1, 2):  # Loop through sample cycles (even numbers, starting from 2)
+    if samID is None:  # If no local samID is provided, use the global one
+        samID = globals().get("samID")  # Get samID from the global scope
+    if samID is None:
+        raise NameError("Global variable 'samID' is not defined")  
+    start_cycle = 4 if "air" in samID.lower() else 2  # Start at 4 if "air" in samID
+
+    for i in range(start_cycle, df["Cycle"].max() + 1, 2):  # Loop through sample cycles (even numbers, starting from 2)
         prev_ref = df[df["Cycle"] == i - 1]  # Get previous reference cycle
         next_ref = df[df["Cycle"] == i + 1]  # Get next reference cycle
         sam = df[df["Cycle"] == i]  # Get current sample cycle
@@ -153,7 +160,7 @@ strFiles.sort()
 # Pattern for the measurements
 if "air" in samID.lower():
     # Air measurements start with two Ref dummies (cy 0 and 3) and two air dummies (cy 1, 3 and, 4)
-    pattern = ["Dummy"] * 5 + ["Ref", "Sam"] * 20
+    pattern = ["Dummy"] * 3 + ["Ref", "Sam"] * 20
 else:
     # Regular measurements start with a single Ref dummy (cy 0)
     pattern = ["Dummy"] + ["Ref", "Sam"] * 20
@@ -308,6 +315,13 @@ ax2.scatter(TILDAS_time[low_zscore.index], low_zscore['Dp17O_raw'],
             marker=".", color=low_zscore['Type'].map(data_colors))
 ax2.scatter(TILDAS_time[high_zscore.index], high_zscore['Dp17O_raw'],
             marker="o", fc='none', s=5, ec=high_zscore['Type'].map(data_colors))
+
+# Annotate each cycle number at its computed mean position
+cycle_means = df.groupby("Cycle", as_index=False).agg({"Time(rel)": "mean", "Dp17O_raw": "mean"})
+for time, d18O, cycle in cycle_means[["Time(rel)", "Dp17O_raw", "Cycle"]].to_numpy():
+    ax2.text(time, d18O, str(int(cycle)),
+             color="white", fontweight="bold",
+             ha="center", va="center")
 
 legend_handles = [
     plt.Line2D([0], [0], marker=".", color="black", ls="None", label="z-score ≤ 3"),

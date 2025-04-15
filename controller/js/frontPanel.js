@@ -23,16 +23,6 @@ function sendCommand(cmd) {
 
             $("#moveStatus").html(statusArr[1]);
 
-            // Display some images based on moveStatus
-            // if (
-            //     statusArr[1] == "IA" &&
-            //     $("#loadingGIF").attr("src") != "controller/images/loading.gif"
-            // ) {
-            //     $("#loadingGIF").attr("src", "controller/images/loading.gif");
-            // } else if (statusArr[1] != "IA") {
-            //     $("#loadingGIF").attr("src", "");
-            // }
-
             if (
                 statusArr[1] == "MX" &&
                 $("#motorX").attr("src") == "controller/images/standing_motor.gif"
@@ -134,7 +124,7 @@ function sendCommand(cmd) {
                 "vertical", // V26
                 "horizontal", // V27
                 "vertical", // V28
-                "horizontal", // V29
+                "vertical", // V29
                 "horizontal", // V30
                 "horizontal", // V31
                 "horizontal", // V32
@@ -189,27 +179,33 @@ function sendCommand(cmd) {
             // Box setpoint temperature
             var SPT = parseFloat(statusArr[15]);
             $("#boxSetpoint").html(SPT.toFixed(1));
+            drawTemperatureGauge(SPT, boxTemperature);  // pass the live value
 
             // Fan speed
             var fanSpeed = statusArr[16];
             $("#fanSpeed").html(fanSpeed);
-
+            drawFanGauge(fanSpeed);
+            
+            // DeltaPlus gauge (towards the KIEl)
+            var DeltaPlusGauge = statusArr[17];
+            $("#DeltaPlusGauge").html(DeltaPlusGauge);
+            
             // Cell pressure from the TILDAS in Torr
-            var cellPressure = parseFloat(statusArr[17]);
+            var cellPressure = parseFloat(statusArr[18]);
             $("#cellPressure").html(cellPressure.toFixed(3));
 
             // CO2 mixing ratios from the TILDAS
-            var mr1 = statusArr[18];
-            $("#mr1").html(parseFloat(mr1).toFixed(3));
-            var mr2 = statusArr[19];
-            $("#mr2").html(parseFloat(mr2).toFixed(3));
-            var mr3 = statusArr[20];
-            $("#mr3").html(parseFloat(mr3).toFixed(3));
-            var mr4 = statusArr[21];
-            $("#mr4").html(parseFloat(mr4).toFixed(3));
+            var chi_627 = statusArr[19];
+            $("#chi_627").html(parseFloat(chi_627).toFixed(3));
+            var chi_628 = statusArr[20];
+            $("#chi_628").html(parseFloat(chi_628).toFixed(3));
+            var chi_626 = statusArr[21];
+            $("#chi_626").html(parseFloat(chi_626).toFixed(3));
+            var free_path_CO2 = statusArr[22];
+            $("#free_path_CO2").html(parseFloat(free_path_CO2).toFixed(3));
 
             // vacuum vacuum gauge
-            var vacuum = statusArr[22];
+            var vacuum = statusArr[23];
             $("#vacuum").html(parseFloat(vacuum).toFixed(5));
 
             // Reset the command string
@@ -511,14 +507,6 @@ function evaluateData(sampleNameDate, userName) {
     });
 }
 
-// Show results button
-function showResultsButton() {
-    window.open(
-        "http://10.132.1.101/viewer",
-        "_blank"
-    );
-}
-
 // Start sequence button
 function startSequenceButton() {
     const timeMeasurementStarted = parseInt(new Date().getTime() / 1000);
@@ -628,28 +616,44 @@ function timeIsPassing()
 
     // Draw circle
     ctx.beginPath();
-    ctx.lineWidth = 2.8;
+    ctx.lineWidth = 3;
     ctx.arc(50, 50, 48, 0, 2 * Math.PI);
     ctx.stroke();
 
     // Draw minute tickmarks
     ctx.beginPath();
-    for (let i = 0; i < 60; i++)
-    { 
+    for (let i = 0; i < 60; i++) {
         const ticksAngle = i * 2 * Math.PI / 60;
-        ctx.moveTo( 50 + 43 * Math.cos( ticksAngle ), 50 + 43 * Math.sin( ticksAngle ) );
-        ctx.lineTo( 50 + 48 * Math.cos( ticksAngle ), 50 + 48 * Math.sin( ticksAngle ) );
+      
+        const outerRadius = 48;
+        const innerRadius = outerRadius - 5; // length
+      
+        const x1 = 50 + innerRadius * Math.cos(ticksAngle);
+        const y1 = 50 + innerRadius * Math.sin(ticksAngle);
+        const x2 = 50 + outerRadius * Math.cos(ticksAngle);
+        const y2 = 50 + outerRadius * Math.sin(ticksAngle);
+      
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
     }
-    ctx.lineWidth = 2.2;
+    ctx.lineWidth = 2;
     ctx.stroke();
 
     // Draw hour tickmarks
     ctx.beginPath();
-    for (let i = 0; i < 12; i++)
-    { 
+    for (let i = 0; i < 12; i++) {
         const ticksAngle = i * 2 * Math.PI / 12;
-        ctx.moveTo( 50 + 38 * Math.cos( ticksAngle ), 50 + 38 * Math.sin( ticksAngle ) );
-        ctx.lineTo( 50 + 48 * Math.cos( ticksAngle ), 50 + 48 * Math.sin( ticksAngle ) );
+      
+        const outerRadius = 48;
+        const innerRadius = outerRadius - 10; // length
+      
+        const x1 = 50 + innerRadius * Math.cos(ticksAngle);
+        const y1 = 50 + innerRadius * Math.sin(ticksAngle);
+        const x2 = 50 + outerRadius * Math.cos(ticksAngle);
+        const y2 = 50 + outerRadius * Math.sin(ticksAngle);
+      
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
     }
     ctx.lineWidth = 3;
     ctx.stroke();
@@ -693,6 +697,207 @@ function timeIsPassing()
     ctx.fillStyle = "#0A1E6E";
     ctx.moveTo(50, 50);
     ctx.arc(50, 50, 4, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+}
+
+/* ############################################################################
+############################ The awesome fan gauge ############################
+############################################################################ */
+
+function drawFanGauge(value) {
+    const canvas = document.getElementById('fanSpeedGauge');
+    if (!canvas) return;
+  
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const centerX = width / 2;
+    const centerY = height - 10;
+    const radius = 50;
+  
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 3;
+  
+    // Background arc
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius - 2, Math.PI, 0, false);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(centerX - (radius - 2), centerY);
+    ctx.lineTo(centerX + (radius - 2), centerY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    const tickCount = 11;
+    for (let i = 0; i < tickCount; i++) {
+      const ratio = i / (tickCount - 1);
+      const angle = Math.PI + ratio * Math.PI;
+    
+      const innerRadius = radius - 10;
+      const outerRadius = radius - 2;
+    
+      const x1 = centerX + innerRadius * Math.cos(angle);
+      const y1 = centerY + innerRadius * Math.sin(angle);
+      const x2 = centerX + outerRadius * Math.cos(angle);
+      const y2 = centerY + outerRadius * Math.sin(angle);
+    
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+    }
+    ctx.stroke();
+  
+    // Value arc
+    const endAngle = Math.PI + (value / 100) * Math.PI;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius - 2, Math.PI, endAngle, false);
+    ctx.strokeStyle = "#0A1E6E";
+    ctx.stroke();
+  
+    // Needle
+    const angle = Math.PI + (value / 100) * Math.PI;
+    const needleLength = radius - 5;
+    const needleX = centerX + needleLength * Math.cos(angle);
+    const needleY = centerY + needleLength * Math.sin(angle);
+  
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(needleX, needleY);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#EC0016";
+    ctx.stroke();
+
+    // Circle on the needle
+    const circleOffset = needleLength / 1.5;
+    const circleX = centerX + circleOffset * Math.cos(angle);
+    const circleY = centerY + circleOffset * Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.arc(circleX, circleY, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = "#f0ecec";
+    ctx.strokeStyle = "#EC0016";
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+  
+    // Center dot
+    ctx.beginPath();
+    ctx.strokeStyle = "#0A1E6E";
+    ctx.fillStyle = "#0A1E6E";
+    ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+/* ############################################################################
+######################## The awesome temperature gauge ########################
+############################################################################ */
+
+function drawTemperatureGauge(boxSetpoint, boxTemperature) {
+    const canvas = document.getElementById('temperatureGauge');
+    if (!canvas) return;
+  
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+  
+    const centerX = width / 2;
+    const centerY = height - 10;
+    const radius = 50;
+  
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 3;
+  
+    // Clamp boxTemperature to boxSetpoint ± 0.5
+    const minT = boxSetpoint - 0.1;
+    const maxT = boxSetpoint + 0.1;
+    const clamped = Math.max(minT, Math.min(maxT, boxTemperature));
+    const percent = ((clamped - minT) / (maxT - minT)) * 100;
+  
+    // Background arc
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius - 2, Math.PI, 0, false);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(centerX - (radius - 2), centerY);
+    ctx.lineTo(centerX + (radius - 2), centerY);
+    ctx.stroke();
+  
+    // Tick marks
+    const tickCount = 21;
+    for (let i = 0; i < tickCount; i++) {
+      const ratio = i / (tickCount - 1);
+      const angle = Math.PI + ratio * Math.PI;
+    
+      const outerRadius = radius - 2;
+      const tickLength = (i % 2 === 0) ? 10 : 5;
+      const innerRadius = outerRadius - tickLength;
+    
+      const x1 = centerX + innerRadius * Math.cos(angle);
+      const y1 = centerY + innerRadius * Math.sin(angle);
+      const x2 = centerX + outerRadius * Math.cos(angle);
+      const y2 = centerY + outerRadius * Math.sin(angle);
+    
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.lineWidth = (tickLength === 10) ? 3 : 2;
+      ctx.stroke();
+    }
+  
+    // Value arc
+    const midAngle = Math.PI + 0.5 * Math.PI; // 1.5π
+    const ratio = percent / 100;
+    const endAngle = Math.PI + ratio * Math.PI;
+    ctx.beginPath();
+    if (ratio >= 0.5) {
+        // Right side (clockwise from center)
+        ctx.arc(centerX, centerY, radius - 2, midAngle, endAngle, false);
+    } else {
+        // Left side (counterclockwise from center)
+        ctx.arc(centerX, centerY, radius - 2, midAngle, endAngle, true);
+    }
+    ctx.strokeStyle = "#EC0016";
+    ctx.stroke();
+  
+    // Needle
+    const angle = Math.PI + (percent / 100) * Math.PI;
+    const needleLength = radius - 5;
+    const needleX = centerX + needleLength * Math.cos(angle);
+    const needleY = centerY + needleLength * Math.sin(angle);
+  
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(needleX, needleY);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#EC0016";
+    ctx.stroke();
+  
+    // Circle on the needle
+    const circleOffset = needleLength / 1.5;
+    const circleX = centerX + circleOffset * Math.cos(angle);
+    const circleY = centerY + circleOffset * Math.sin(angle);
+  
+    ctx.beginPath();
+    ctx.arc(circleX, circleY, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = "#f0ecec";
+    ctx.strokeStyle = "#EC0016";
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+  
+    // Center dot
+    ctx.beginPath();
+    ctx.strokeStyle = "#0A1E6E";
+    ctx.fillStyle = "#0A1E6E";
+    ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
 }
@@ -859,7 +1064,7 @@ setInterval(function () {
             doThisBeforeEveryCommand();
 
             if (parameterArray[line] == 0) {
-                $("#reference_pCO2").html($("#mr3").html());
+                $("#reference_pCO2").html($("#chi_626").html());
                 console.log(
                     `${new Date().toLocaleTimeString()}, ` +
                     "Reference pCO2 is: " +
@@ -877,7 +1082,7 @@ setInterval(function () {
                 }
             }
             else if (parameterArray[line] == 1) {
-                $("#sample_pCO2").html($("#mr3").html());
+                $("#sample_pCO2").html($("#chi_626").html());
                 console.log(
                     `${new Date().toLocaleTimeString()}, ` +
                     "Sample pCO2 is: " +

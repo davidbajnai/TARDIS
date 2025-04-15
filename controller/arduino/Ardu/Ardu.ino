@@ -18,6 +18,7 @@ float Zpercentage = 0.0f;
 float Xpressure = 0.0f;
 float Ypressure = 0.0f;
 float Zpressure = 0.0f;
+float DeltaPlusGauge = 0.0f;
 const byte n = 50; // Integration cycles (4 seconds at 12.4 Hz)
 RunningMedian XpressureArray = RunningMedian(n);
 RunningMedian YpressureArray = RunningMedian(n);
@@ -26,18 +27,15 @@ RunningMedian XpercentageArray = RunningMedian(n);
 RunningMedian YpercentageArray = RunningMedian(n);
 RunningMedian boxTempArray = RunningMedian(n);
 RunningMedian boxHumArray = RunningMedian(n);
+RunningMedian DeltaPlusGaugeArray = RunningMedian(n);
 float fanSpeed = 0.0f;
-float boxTemp = 0.0f;
+float boxTemperature = 0.0f;
 const float SPT = 32.5f; // Set the housing temperature here
 float boxHum = 0.0f;
-unsigned long now = 0;
 unsigned long lastTime = 0;
-unsigned long timeChange = 0;
-float Terror = 0.0f;
+unsigned long startTime = 0;
 float errSum = 0.0f;
-float dErr = 0.0f;
 float lastErr = 0.0f;
-unsigned long cycl = 0;
 float targetPercent = 0.0f;
 long Xsteps = 0;
 long Ysteps = 0;
@@ -47,12 +45,6 @@ String valveStatus;
 String relayStatus;
 StaticJsonDocument<350> doc;
 String jsonString;
-
-// Variables to measure loop speed
-unsigned long loopStartTime;
-unsigned long loopEndTime;
-unsigned long loopDuration; 
-float loopFrequency;
 
 
 // Define the pinout ---------------------------------------------------------------------------
@@ -77,6 +69,9 @@ const byte pinBaratronX = A2;
 const byte pinBaratronY = A3;
 const byte pinBaratronZ = A7;
 
+// DeltaPlus pressure gauge
+const byte pinDeltaPlus = A6;
+
 // Potentiometers
 const byte pinPotiX = A0;
 const byte pinPotiY = A1;
@@ -88,20 +83,27 @@ const byte pinPotiY = A1;
 float readBaratronX() // Reference bellow, 0-10 Torr, 10V Baratron
 {
   constexpr float conversion = 5.0f / 1023.0f;
-  return (analogRead(pinBaratronX) * conversion) - 0.225f;
+  return (analogRead(pinBaratronX) * conversion) - 0.2294f;
 }
 
 float readBaratronY() // Sample bellow, 0-10 Torr, 10V Baratron
 {
   constexpr float conversion = 5.0f / 1023.0f;
-  return (analogRead(pinBaratronY) * conversion) - 0.196f;
+  return (analogRead(pinBaratronY) * conversion) - 0.203f;
 }
 
 float readBaratronZ() // Pressure adjust bellow, 0-500 mBar, 5V Baratron
 {
   constexpr float conversion = 500.0f / 1023.0f;
-  return (analogRead(pinBaratronZ) * conversion) * 0.750062f - 0.0f;
+  return (analogRead(pinBaratronZ) * conversion) * 0.750062f - 0.15f;
 }
+
+// Function to read the DeltaPlus pressure gauge
+float readDeltaPlus()
+{
+  return analogRead(pinDeltaPlus) * 0.44f - 0.f;
+}
+
 
 // Functions for the potentiometers
 float percentageX_fromPoti()
@@ -132,6 +134,7 @@ float percentageZ_fromSteps()
   constexpr float multiplier = 100.0f / 15960.0f;
   return Zaxis.currentPosition() * multiplier;
 }
+
 
 // Setup ---------------------------------------------------------------------------------------
 void setup()
@@ -198,6 +201,9 @@ void setup()
   pinMode(pinBaratronY, INPUT); // Baratron Y (0-10 Torr)
   pinMode(pinBaratronZ, INPUT); // Baratron Z (0-1000 mbar)
 
+  // DeltaPlus pressure gauge
+  pinMode(pinDeltaPlus, INPUT); // DeltaPlus pressure gauge
+
   // CALIBRATE STEPPER MOTORS
 
   // Calculate X and Y bellow percentages based on the potentiometer
@@ -236,6 +242,8 @@ void setup()
   Zaxis.setMaxSpeed(50 * 16);
   Zaxis.setAcceleration(20 * 16);
 
+  startTime = millis();
+
   delay(1000);
 }
 
@@ -253,34 +261,32 @@ void wait(int seconds, String message)
 // Controlls the housing temperature
 void controlT()
 {
-  now = millis();
-  timeChange = now - lastTime;
+  unsigned long now = millis();
 
-  // Compute all the working error variables after cycle 60
-  Terror = boxTemp - SPT;
+  if (now - startTime < 3000)
+    return;
 
-  if (cycl > 60)
-  {
-    errSum += (Terror * timeChange / 1000);
-    dErr = (Terror + lastErr) / timeChange * 1000;
-    // Remember some variables for next time
-    lastErr = Terror;
-    lastTime = now;
-  }
-  cycl = cycl + 1;
+  unsigned long dt = now - lastTime;
+  float error = boxTemperature - SPT;
 
-  // Compute PID Output
-  // The structure of the PID control string: fanSpeed = kp * Terror + ki * errSum + kd * dErr;
-  fanSpeed = 390 * Terror + 0.30f * errSum + 0.030f * dErr;
+  const float Kp = 370.0f;
+  const float Ki = 0.34f;
+  const float Kd = 0.055f;
 
-  if (fanSpeed > 100 || boxTemp > SPT + 1)
-  {
+  // Convert to seconds only when needed
+  errSum += error * (dt / 1000.0f);
+  float dErr = (error - lastErr) / (dt / 1000.0f);
+
+  fanSpeed = Kp * error + Ki * errSum + Kd * dErr;
+
+  if (fanSpeed > 100 || boxTemperature > (SPT + 0.5f))
     fanSpeed = 100;
-  }
   else if (fanSpeed < 0)
-  {
     fanSpeed = 0;
-  }
+
+  // Update state
+  lastErr = error;
+  lastTime = now;
 
   // Set the current of the adjustable power supply
   // 255 on PWM pin = 5V analog out = 8A
@@ -711,13 +717,14 @@ void sendStatus(String param)
   // Get sensor readings
   sensors_event_t humidity, temp;
   shtc3.getEvent(&humidity, &temp);
-  boxTemp = temp.temperature;
+  boxTemperature = temp.temperature;
   boxHum = humidity.relative_humidity;
   Xpressure = readBaratronX();
   Ypressure = readBaratronY();
   Zpressure = readBaratronZ();
   Xpercentage = percentageX_fromPoti();
   Ypercentage = percentageY_fromPoti();
+  DeltaPlusGauge = readDeltaPlus();
 
   // Add the values to arrays
   XpressureArray.add(Xpressure);
@@ -725,8 +732,9 @@ void sendStatus(String param)
   ZpressureArray.add(Zpressure);
   XpercentageArray.add(Xpercentage);
   YpercentageArray.add(Ypercentage);
-  boxTempArray.add(boxTemp);
+  boxTempArray.add(boxTemperature);
   boxHumArray.add(boxHum);
+  DeltaPlusGaugeArray.add(DeltaPlusGauge);
 
   // Get the averages
   Xpressure = XpressureArray.getAverage();
@@ -734,8 +742,9 @@ void sendStatus(String param)
   Zpressure = ZpressureArray.getAverage();
   Xpercentage = XpercentageArray.getAverage();
   Ypercentage = YpercentageArray.getAverage();
-  boxTemp = boxTempArray.getAverage();
+  boxTemperature = boxTempArray.getAverage();
   boxHum = boxHumArray.getAverage();
+  DeltaPlusGauge = DeltaPlusGaugeArray.getAverage();
 
   // Control the fan speed
   controlT();
@@ -767,12 +776,13 @@ void sendStatus(String param)
   doc["X_pressure"] = String(Xpressure, 3);
   doc["Y_pressure"] = String(Ypressure, 3);
   doc["Z_pressure"] = String(Zpressure, 1);
-  doc["valves"] = valveStatus;
-  doc["relays"] = relayStatus;
+  doc["valveArray"] = valveStatus;
+  doc["relayArray"] = relayStatus;
   doc["boxHumidity"] = String(boxHum, 2);
-  doc["boxTemperature"] = String(boxTemp, 2);
+  doc["boxTemperature"] = String(boxTemperature, 4);
   doc["boxSetpoint"] = String(SPT, 2);
   doc["fanSpeed"] = String(fanSpeed, 2);
+  doc["DeltaPlusGauge"] = String(DeltaPlusGauge, 1);
 
   // Serialize the JSON document
   doc.shrinkToFit();
@@ -785,9 +795,6 @@ void sendStatus(String param)
 
 void loop()
 {
-
-  loopStartTime = micros();  // Record the start time
-
   // Monitor the serial port
   while (Serial.available())
   {
@@ -903,15 +910,4 @@ void loop()
   sendStatus("-");
 
   delay(20);
-
-  loopEndTime = micros();  // Record the end time
-  loopDuration = loopEndTime - loopStartTime;  // Calculate the loop duration in microseconds
-
-  // Calculate loop frequency in Hz (1 second = 1,000,000 microseconds)
-  if (loopDuration > 0) { // Avoid division by zero
-    loopFrequency = 1.0 / (loopDuration / 1000000.0); // Convert duration to seconds
-  } else {
-    loopFrequency = 0; // Handle edge case where duration is too small
-  }
-
 }
