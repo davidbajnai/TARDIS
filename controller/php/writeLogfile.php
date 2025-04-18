@@ -10,6 +10,7 @@ $logDataJSON = json_decode(urldecode($_POST['logDataJSON']), true);
 if (!file_exists($logFileName)) {
     $headerRow = implode(',', array_keys($logDataJSON)) . PHP_EOL;
     file_put_contents($logFileName, $headerRow);
+    chmod($logFileName, 0777);
 }
 
 // Append data to CSV file

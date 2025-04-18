@@ -1242,7 +1242,7 @@ setInterval(function () {
             doThisAfterEveryCommand("started");
         }
 
-        // Set collision gas pressure to target: SN,366,10
+        // Set collision gas pressure to target: SN,237,2
         else if (commandsArray[line][0] == "S" && commandsArray[line][1] == "N" && executed == "yes" && moving == "no" && waiting == "no") {
             doThisBeforeEveryCommand();
 
@@ -1344,7 +1344,7 @@ setInterval(function () {
                 "%"
             );
             
-            let percentTarget = percent + (pTarget - p) / -0.007030;
+            let percentTarget = percent + (pTarget - p) / -0.0073;
             percentTarget = parseFloat(percentTarget).toFixed(1);
             console.log(
                 `${new Date().toLocaleTimeString()}, ` +

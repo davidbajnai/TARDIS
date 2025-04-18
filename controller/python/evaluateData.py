@@ -394,28 +394,25 @@ if ('roomTemperature' in dfLogFile.columns):
 ax6.text(0.01, 0.02, f"{TCoolant:.3f}±{TCoolant_error:.3f} °C", size=8, color="black", ha = 'left', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
 
 # Subplot G: Box temperature vs time
-if ('boxTemperature' in dfLogFile.columns):
+if 'boxTemperature' in dfLogFile.columns:
     x = dfLogFile["Time(rel)"]
     y = dfLogFile['boxTemperature']
     ax7.plot(x, y, color="C0")
     ax7.set_ylabel("Temperature (°C, box)")
-    mean = np.round(np.mean(y), 3)
-    std = np.round(np.std(y), 3)
-    labelTemp = str(mean) + "±" + str(std) + " °C"
-    if ('boxSetpoint' in dfLogFile.columns):
-        x = dfLogFile["Time(rel)"]
-        y = dfLogFile['boxSetpoint']
-        ax7.plot(x, y, color="C2")
-        labelSP = str("SP: ") + str(dfLogFile['boxSetpoint'].iat[0]) + " °C"
-    if ('fanSpeed' in dfLogFile.columns):
-        ax7b = ax7.twinx()
-        ax7b.spines['right'].set_color('C1')
-        x = dfLogFile["Time(rel)"]
-        y = dfLogFile['fanSpeed']
-        ax7b.plot(x, y, color="C1")
-        ax7b.set_ylabel("Fan speed (%)")
-        ax7.text(0.01, 0.11, labelSP, size = 8, color = "C2", ha = 'left', va = 'bottom', transform = ax7.transAxes, bbox=dict(fc = 'white', ec = "none", pad = 1, alpha=0.5))
-    ax7.text(0.01, 0.02, labelTemp, size = 8, color = "C0", ha = 'left', va = 'bottom', transform = ax7.transAxes, bbox=dict(fc = 'white', ec = "none", pad = 1, alpha=0.5))
+    ax7.text(0.01, 0.02, f"{np.mean(y):.3f}±{np.std(y):.3f} °C",
+            size=8, color="C0", ha='left', va='bottom', transform=ax7.transAxes,
+            bbox=dict(fc='white', ec="none", pad=1, alpha=0.5), zorder=10)
+if 'boxSetpoint' in dfLogFile.columns:
+    y_sp = dfLogFile['boxSetpoint']
+    ax7.plot(x, y_sp, color="C2")
+    ax7.text(0.01, 0.11, f"SP: {y_sp.iat[0]} °C",
+            size=8, color="C2", ha='left', va='bottom', transform=ax7.transAxes,
+            bbox=dict(fc='white', ec="none", pad=1, alpha=0.5), zorder=10)
+if 'fanSpeed' in dfLogFile.columns:
+    ax7b = ax7.twinx()
+    ax7b.spines['right'].set_color('C1')
+    ax7b.plot(x, dfLogFile['fanSpeed'], color="C1")
+    ax7b.set_ylabel("Fan speed (%)")
 
 # Subplot H: X (reference) bellow expansion and pressure
 if ('pressureX' in dfLogFile.columns):

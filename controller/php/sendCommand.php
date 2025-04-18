@@ -35,7 +35,7 @@
         } else if( $_POST['cmd'] == "TWD0" ) {
 
             // Send the TILDAS commands to stop the data acquisition
-            sendCommandViaTCP("amass0\r\namwd0\r\n", $TILDAS_IP);
+            sendCommandViaTCP("amass0\r\namwd0\r\nbdfits1\r\n", $TILDAS_IP);
         
 
         } else if( $_POST['cmd'] == "BG0" ) {

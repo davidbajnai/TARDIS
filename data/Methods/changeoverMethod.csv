@@ -5,38 +5,35 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
+V11,0,1,
 V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,4,<--- MEASUREMENT OFF changeover starts >>>
+BZ,50,4,
+TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-WC,0,2,<--- Write target cell pressure only for the Dummy
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -45,7 +42,7 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-7.5,1,<--- Compress bellow to speed up PX
+BX,-8.1,1,<--- Compress bellow to speed up PX
 V17,1,90,<-------------------------------------------------- DUMMY 00 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 01 STARTED
 V05,0,1,
@@ -53,40 +50,35 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
+V11,0,1,
 V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -95,7 +87,7 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-7.5,1,<--- Compress bellow to speed up PX
+BX,-8.1,1,<--- Compress bellow to speed up PX
 V17,1,90,<---------------------------------------------- REFERENCE 01 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 01 STARTED
 V11,0,1,
@@ -103,40 +95,35 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
+V05,0,1,
 V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -145,48 +132,43 @@ V11,1,1,
 V19,1,1,
 V07,1,1,
 V27,1,20,
-BY,-7.5,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 01
-V07,0,1,<--------------------------------------------------- START REFERENCE 02
+BY,-7.8,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 01 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 02 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
+V11,0,1,
 V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -195,48 +177,43 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-7.5,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 02
-V13,0,1,<------------------------------------------------------ START SAMPLE 02
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 02 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 02 STARTED
 V11,0,1,
 V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
+V05,0,1,
 V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -245,48 +222,43 @@ V11,1,1,
 V19,1,1,
 V07,1,1,
 V27,1,20,
-BY,-7.5,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 02
-V07,0,1,<--------------------------------------------------- START REFERENCE 03
+BY,-7.8,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 02 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 03 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
+V11,0,1,
 V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -295,48 +267,43 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-7.5,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 03
-V13,0,1,<------------------------------------------------------ START SAMPLE 03
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 03 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 03 STARTED
 V11,0,1,
 V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
+V05,0,1,
 V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -345,248 +312,43 @@ V11,1,1,
 V19,1,1,
 V07,1,1,
 V27,1,20,
-BY,-7.5,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 03
-V07,0,1,<--------------------------------------------------- START REFERENCE 04
+BY,-7.8,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 03 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 04 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
-V07,1,1,<---- Start gas mixing
-BZ,52,1,
-BZ,50,1,
-TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
-V17,0,1,
-BG,0,1,<--- Suspend background fitting
-V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
-V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
-BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
-TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
-V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
-V27,1,1,
-BZ,52,1,
-BZ,50,1,
-V11,1,1,
-V05,1,1,
-V19,1,1,
-V13,1,1,
-V27,1,20,
-BX,-7.5,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 04
-V13,0,1,<------------------------------------------------------ START SAMPLE 04
 V11,0,1,
-V12,1,1,
-V19,0,1,<--- Expand a portion of collision gas for later mixing
-V20,1,5,
-V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
-V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
-V07,0,1,
-V13,1,1,<---- Start gas mixing
-BZ,52,1,
-BZ,50,1,
-TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
-V17,0,1,
-BG,0,1,<--- Suspend background fitting
-V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
-V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
-BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
-TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
-V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
-V27,1,1,
-BZ,52,1,
-BZ,50,1,
-V05,1,1,
-V11,1,1,
-V19,1,1,
-V07,1,1,
-V27,1,20,
-BY,-7.5,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 04
-V07,0,1,<--------------------------------------------------- START REFERENCE 05
-V05,0,1,
-V06,1,1,
-V19,0,1,<--- Expand a portion of collision gas for later mixing
-V20,1,5,
-V20,0,1,
-PX,1.750,5,
-V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
-V13,0,1,
-V07,1,1,<---- Start gas mixing
-BZ,52,1,
-BZ,50,1,
-TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
-V17,0,1,
-BG,0,1,<--- Suspend background fitting
-V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
-V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
-BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
-TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
-V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
-V27,1,1,
-BZ,52,1,
-BZ,50,1,
-V11,1,1,
-V05,1,1,
-V19,1,1,
-V13,1,1,
-V27,1,20,
-BX,-7.5,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 05
-V13,0,1,<------------------------------------------------------ START SAMPLE 05
-V11,0,1,
-V12,1,1,
-V19,0,1,<--- Expand a portion of collision gas for later mixing
-V20,1,5,
-V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
-V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
-V07,0,1,
-V13,1,1,<--- Start gas mixing
-BZ,52,1,
-BZ,50,1,
-TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
-V17,0,1,
-BG,0,1,<--- Suspend background fitting
-V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
-V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
-BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
-TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
-V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
-V27,1,1,
-BZ,52,1,
-BZ,50,1,
-V05,1,1,
-V11,1,1,
-V19,1,1,
-V07,1,1,
-V27,1,20,
-BY,-7.5,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 05
-V07,0,1,<--------------------------------------------------- START REFERENCE 06
-V05,0,1,
-V06,1,1,
-V19,0,1,<--- Expand a portion of collision gas for later mixing
-V20,1,5,
-V20,0,1,
-PX,1.750,5,
-V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
-V13,0,1,
 V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -595,48 +357,223 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-7.5,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 06
-V13,0,1,<------------------------------------------------------ START SAMPLE 06
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 04 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 04 STARTED
 V11,0,1,
 V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
-V13,1,1,<---- Start gas mixing
+V05,0,1,
+V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
+V27,1,1,
+BZ,52,1,
+BZ,50,1,
+V05,1,1,
+V11,1,1,
+V19,1,1,
+V07,1,1,
+V27,1,20,
+BY,-7.8,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 04 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 05 STARTED
+V05,0,1,
+V06,1,1,
+V19,0,1,<--- Expand a portion of collision gas for later mixing
+V20,1,5,
+V20,0,1,
+PX,1.157,5,
+V06,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
+V13,0,1,
+V11,0,1,
+V07,1,1,<--- Start gas mixing
+BZ,52,1,
+BZ,50,4,
+TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
+V17,0,1,
+V01,1,1,<--- Evacuate the cell
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
+V01,0,1,
+V05,1,15,<--- Insert analyte to cell
+BG,1,1,<--- Enable background fitting
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
+TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
+V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
+V28,1,1,
+V27,1,1,
+BZ,52,1,
+BZ,50,1,
+V11,1,1,
+V05,1,1,
+V19,1,1,
+V13,1,1,
+V27,1,20,
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 05 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 05 STARTED
+V11,0,1,
+V12,1,1,
+V19,0,1,<--- Expand a portion of collision gas for later mixing
+V20,1,5,
+V20,0,1,
+PY,1.186,5,<--- Set CO2 pressure
+V12,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
+V07,0,1,
+V05,0,1,
+V13,1,1,<--- Start gas mixing
+BZ,52,1,
+BZ,50,4,
+TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
+V17,0,1,
+V01,1,1,<--- Evacuate the cell
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
+V01,0,1,
+V11,1,15,<--- Insert analyte to cell
+BG,1,1,<--- Enable background fitting
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
+TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
+V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
+V28,1,1,
+V27,1,1,
+BZ,52,1,
+BZ,50,1,
+V05,1,1,
+V11,1,1,
+V19,1,1,
+V07,1,1,
+V27,1,20,
+BY,-7.9,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 05 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 06 STARTED
+V05,0,1,
+V06,1,1,
+V19,0,1,<--- Expand a portion of collision gas for later mixing
+V20,1,5,
+V20,0,1,
+PX,1.157,5,
+V06,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
+V13,0,1,
+V11,0,1,
+V07,1,1,<--- Start gas mixing
+BZ,52,1,
+BZ,50,4,
+TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
+V17,0,1,
+V01,1,1,<--- Evacuate the cell
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
+V01,0,1,
+V05,1,15,<--- Insert analyte to cell
+BG,1,1,<--- Enable background fitting
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
+TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
+V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
+V28,1,1,
+V27,1,1,
+BZ,52,1,
+BZ,50,1,
+V11,1,1,
+V05,1,1,
+V19,1,1,
+V13,1,1,
+V27,1,20,
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 06 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 06 STARTED
+V11,0,1,
+V12,1,1,
+V19,0,1,<--- Expand a portion of collision gas for later mixing
+V20,1,5,
+V20,0,1,
+PY,1.186,5,<--- Set CO2 pressure
+V12,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
+V07,0,1,
+V05,0,1,
+V13,1,1,<--- Start gas mixing
+BZ,52,1,
+BZ,50,4,
+TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
+V17,0,1,
+V01,1,1,<--- Evacuate the cell
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
+V01,0,1,
+V11,1,15,<--- Insert analyte to cell
+BG,1,1,<--- Enable background fitting
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
+TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
+V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -646,47 +583,42 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-8.1,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 06
-V07,0,1,<--------------------------------------------------- START REFERENCE 07
+V17,1,90,<-------------------------------------------------- SAMPLE 06 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 07 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
-V07,1,1,<---- Start gas mixing
+V11,0,1,
+V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -695,48 +627,43 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-7.6,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 07
-V13,0,1,<------------------------------------------------------ START SAMPLE 07
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 07 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 07 STARTED
 V11,0,1,
 V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
-V13,1,1,<---- Start gas mixing
+V05,0,1,
+V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -745,48 +672,43 @@ V11,1,1,
 V19,1,1,
 V07,1,1,
 V27,1,20,
-BY,-8.4,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 07
-V07,0,1,<--------------------------------------------------- START REFERENCE 08
+BY,-8.5,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 07 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 08 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
+V11,0,1,
 V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -795,48 +717,43 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-7.6,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 08
-V13,0,1,<------------------------------------------------------ START SAMPLE 08
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 08 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 08 STARTED
 V11,0,1,
 V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
+V05,0,1,
 V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -846,47 +763,42 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-9.3,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 08
-V07,0,1,<--------------------------------------------------- START REFERENCE 09
+V17,1,90,<-------------------------------------------------- SAMPLE 08 FINISHED
+V07,0,1,<------------------------------------------------ REFERENCE 09 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
+V11,0,1,
 V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -895,48 +807,43 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-8.4,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 09
-V13,0,1,<------------------------------------------------------ START SAMPLE 09
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 09 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 09 STARTED
 V11,0,1,
 V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
+V05,0,1,
 V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -945,48 +852,43 @@ V11,1,1,
 V19,1,1,
 V07,1,1,
 V27,1,20,
-BY,-10.1,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 09
-V07,0,1,<--------------------------------------------------- START REFERENCE 10
+BY,-9.3,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 09 FINISHED
+V07,0,1,<------------------------------------------------- REFERENCE 10 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
-V07,1,1,<---- Start gas mixing
+V11,0,1,
+V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -995,48 +897,43 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-BX,-9.5,1,<--- Compress bellow to speed up PX
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 10
-V13,0,1,<------------------------------------------------------ START SAMPLE 10
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 10 FINISHED
+V13,0,1,<--------------------------------------------------- SAMPLE 10 STARTED
 V11,0,1,
 V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.750,5,<--- Set sample CO2 pressure
+PY,1.186,5,<--- Set CO2 pressure
 V12,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V05,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V07,0,1,
+V05,0,1,
 V13,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V11,1,10,<--- Insert analyte to cell
-V11,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V11,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,55,<--- Timeadjust here to eliminate the tick shape of pCO2
+V11,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -1045,48 +942,43 @@ V11,1,1,
 V19,1,1,
 V07,1,1,
 V27,1,20,
-BY,-11.0,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE FINISHED 10
-V07,0,1,<--------------------------------------------------- START REFERENCE 11
+BY,-9.3,1,<--- Compress bellow to speed up PY
+V17,1,90,<-------------------------------------------------- SAMPLE 10 FINISHED
+V07,0,1,<------------------------------------------------- REFERENCE 11 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.750,5,
+PX,1.157,5,
 V06,0,1,
-V16,0,1,
-V19,1,5,<--- Expand the collision gas aliquot for mixing
-V19,0,1,
-V20,1,5,
-V20,0,1,
-V19,1,5,
-V19,0,10,
-SN,366,2,<--- Set collision gas pressure to the target value
-V11,0,1,
+V28,0,1,
+V19,1,10,<--- Expand the collision gas aliquot for mixing
+SN,237,2,<--- Set collision gas pressure
 V13,0,1,
-V07,1,1,<---- Start gas mixing
+V11,0,1,
+V07,1,1,<--- Start gas mixing
 BZ,52,1,
-BZ,50,1,
+BZ,50,4,
 TWD,0,1,<--- MEASUREMENT OFF changeover starts >>>
 V17,0,1,
-BG,0,1,<--- Suspend background fitting
 V01,1,1,<--- Evacuate the cell
-V27,1,10,
-V01,0,1,<--- Flush the cell with nitrogen and pump
-V02,1,2,
-V01,1,20,
-V17,1,25,
+V27,1,3,
+V02,1,1,
+V01,1,15,
+V19,0,1,
+V17,1,30,
 V01,0,1,
-V05,1,10,<--- Insert analyte to cell
-V05,0,1,
-QC,41.200,5,<--- Set the cell pressure
-QC,41.200,2,<--- Set the cell pressure
+V05,1,15,<--- Insert analyte to cell
 BG,1,1,<--- Enable background fitting
-V02,0,70,<--- Timeadjust here to eliminate the tick shape of pCO2
+V05,0,3,
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+QC,41.300,3,<--- Set the cell pressure
+V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,1,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
-V16,1,1,
+V28,1,1,
 V27,1,1,
 BZ,52,1,
 BZ,50,1,
@@ -1095,6 +987,8 @@ V05,1,1,
 V19,1,1,
 V13,1,1,
 V27,1,20,
-V17,1,90,<----------------------------------------------- REFERENCE FINISHED 11
-V19,1,105,<----------------------------------------------------- START APPENDIX
-TWD,0,1,<--------------------------------------------------- APPENDIX FINISHED
+BX,-8.1,1,<--- Compress bellow to speed up PX
+V17,1,90,<---------------------------------------------- REFERENCE 11 FINISHED
+V19,1,90,<----------------------------------------------------- START APPENDIX
+TWD,0,10,
+BG,1,1,<---------------------------------------------------- APPENDIX FINISHED

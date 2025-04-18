@@ -406,12 +406,14 @@ void expandX(int number)
 {
   if (number == 1) // 6% reduction
   {
+    switchValve("V13C");
     switchValve("V06C");
     switchValve("V07O");
     wait(20, "EX");
     switchValve("V07C");
     switchValve("V06O");
     wait(5, "EX");
+    switchValve("V13O");
   }
   else if (number == 2) // 35% reduction
   {
@@ -441,12 +443,14 @@ void expandY(int number)
 {
   if (number == 1) // 6% reduction
   {
+    switchValve("V07C");
     switchValve("V12C");
     switchValve("V13O");
     wait(20, "EY");
     switchValve("V13C");
     switchValve("V12O");
     wait(5, "EY");
+    switchValve("V07O");
   }
   else if (number == 2) // 35% reduction
   {
@@ -459,7 +463,7 @@ void expandY(int number)
     switchValve("V05O");
     wait(20, "EY");
   }
-  else if (number == 3) // 60% reduction
+  else if (number == 3) // 65% reduction
   {
     switchValve("V28C");
     switchValve("V11O");
@@ -647,7 +651,7 @@ void setN2Pressure(float targetPressure)
       else
       {
         // Compress/open bellows
-        targetPercent = percentageZ_fromSteps() + (Zpressure - targetPressure) / 0.1044f;
+        targetPercent = percentageZ_fromSteps() + (Zpressure - targetPressure) / 0.08f;
         // Send the command to the bellows
         runZP(targetPercent);
         delay(100);
