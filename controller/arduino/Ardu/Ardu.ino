@@ -12,26 +12,26 @@ long ZstartPos = 0;
 long steps = 0;
 char command;
 String string;
-float Xpercentage = 0.0f;
-float Ypercentage = 0.0f;
+float X_percentage = 0.0f;
+float Y_percentage = 0.0f;
 float Zpercentage = 0.0f;
-float Xpressure = 0.0f;
-float Ypressure = 0.0f;
-float Zpressure = 0.0f;
-float DeltaPlusGauge = 0.0f;
+float X_pressure = 0.0f;
+float Y_pressure = 0.0f;
+float Z_pressure = 0.0f;
+float D_pressure = 0.0f;
 const byte n = 50; // Integration cycles (4 seconds at 12.4 Hz)
-RunningMedian XpressureArray = RunningMedian(n);
-RunningMedian YpressureArray = RunningMedian(n);
-RunningMedian ZpressureArray = RunningMedian(n);
-RunningMedian XpercentageArray = RunningMedian(n);
-RunningMedian YpercentageArray = RunningMedian(n);
-RunningMedian boxTempArray = RunningMedian(n);
-RunningMedian boxHumArray = RunningMedian(n);
-RunningMedian DeltaPlusGaugeArray = RunningMedian(n);
+RunningMedian X_pressure_Array = RunningMedian(n);
+RunningMedian Y_pressure_Array = RunningMedian(n);
+RunningMedian Z_pressure_Array = RunningMedian(n);
+RunningMedian X_percentage_Array = RunningMedian(n);
+RunningMedian Y_percentage_Array = RunningMedian(n);
+RunningMedian boxTemperature_Array = RunningMedian(n);
+RunningMedian boxHumidity_Array = RunningMedian(n);
+RunningMedian D_pressureArray = RunningMedian(n);
 float fanSpeed = 0.0f;
 float boxTemperature = 0.0f;
-const float SPT = 32.5f; // Set the housing temperature here
-float boxHum = 0.0f;
+const float boxSetpoint = 32.5f; // Set the housing temperature here
+float boxHumidity = 0.0f;
 unsigned long lastTime = 0;
 unsigned long startTime = 0;
 float errSum = 0.0f;
@@ -45,6 +45,7 @@ String valveStatus;
 String relayStatus;
 StaticJsonDocument<350> doc;
 String jsonString;
+float arduinoSpeed;
 
 
 // Define the pinout ---------------------------------------------------------------------------
@@ -211,17 +212,17 @@ void setup()
   while (i < 200)
   // Integrate 200 values for better accuracy
   {
-    Xpercentage += percentageX_fromPoti();
-    Ypercentage += percentageY_fromPoti();
+    X_percentage += percentageX_fromPoti();
+    Y_percentage += percentageY_fromPoti();
     i++;
   }
-  Xpercentage /= 200.00;
-  Ypercentage /= 200.00;
+  X_percentage /= 200.00;
+  Y_percentage /= 200.00;
 
   // Set the position of the motors
   // For X and Y bellows, 0-100% are 62438 steps, at 1/8 microsteps
-  Xsteps = Xpercentage * 62438.00 / 100;
-  Ysteps = Ypercentage * 62438.00 / 100;
+  Xsteps = X_percentage * 62438.00 / 100;
+  Ysteps = Y_percentage * 62438.00 / 100;
   // For Z bellow, we use 1/8 microsteps but at half the range
   Zsteps = 15960 / 2; // Start position is at 50%
   Xaxis.setCurrentPosition(Xsteps);
@@ -267,7 +268,7 @@ void controlT()
     return;
 
   unsigned long dt = now - lastTime;
-  float error = boxTemperature - SPT;
+  float error = boxTemperature - boxSetpoint;
 
   const float Kp = 370.0f;
   const float Ki = 0.34f;
@@ -279,7 +280,7 @@ void controlT()
 
   fanSpeed = Kp * error + Ki * errSum + Kd * dErr;
 
-  if (fanSpeed > 100 || boxTemperature > (SPT + 0.5f))
+  if (fanSpeed > 100 || boxTemperature > (boxSetpoint + 0.5f))
     fanSpeed = 100;
   else if (fanSpeed < 0)
     fanSpeed = 0;
@@ -296,7 +297,7 @@ void controlT()
   analogWrite(CurrentPin, fanSpeed * scaling);
 }
 
-void runXP(float percentage)
+void moveBellowX(float percentage)
 {
   digitalWrite(Xenable, LOW); // Wake up the motor
   delay(100);
@@ -320,7 +321,7 @@ void runXP(float percentage)
   digitalWrite(Xenable, HIGH); // Disable motor
 }
 
-void runYP(float percentage)
+void moveBellowY(float percentage)
 {
   digitalWrite(Yenable, LOW); // Wake up the motor
   delay(100);
@@ -344,7 +345,7 @@ void runYP(float percentage)
   digitalWrite(Yenable, HIGH); // Disable motor
 }
 
-void runZP(float percentage)
+void moveBellowZ(float percentage)
 {
   digitalWrite(Zenable, LOW); // Wake up the motor
   delay(100);
@@ -423,12 +424,13 @@ void expandX(int number)
     wait(10, "EX");
     switchValve("V07C");
     switchValve("V28O");
-    switchValve("V11O");
     wait(20, "EX");
+    switchValve("V11O");
   }
   else if (number == 3) // 60% reduction
   {
     switchValve("V28C");
+    switchValve("V19C");
     switchValve("V05O");
     switchValve("V07O");
     wait(15, "EX");
@@ -436,6 +438,7 @@ void expandX(int number)
     switchValve("V05C");
     switchValve("V28O");
     wait(20, "EX");
+    switchValve("V19C");
   }
 }
 
@@ -460,12 +463,13 @@ void expandY(int number)
     wait(10, "EY");
     switchValve("V13C");
     switchValve("V28O");
-    switchValve("V05O");
     wait(20, "EY");
+    switchValve("V05O");
   }
   else if (number == 3) // 65% reduction
   {
     switchValve("V28C");
+    switchValve("V19C");
     switchValve("V11O");
     switchValve("V13O");
     wait(15, "EY");
@@ -473,14 +477,15 @@ void expandY(int number)
     switchValve("V11C");
     switchValve("V28O");
     wait(20, "EY");
+    switchValve("V19O");
   }
 }
 
-void refillSample(float tPress)
+void refillSampleFromManifold(float tPress)
 {
   byte expN = 0;
   sendStatus("RS");
-  while (Ypressure < tPress && expN < 10)
+  while (Y_pressure < tPress && expN < 10)
   {
     switchValve("V22O");
     wait(20, "RS");
@@ -493,30 +498,27 @@ void refillSample(float tPress)
   }
 }
 
-// Function that was used to introduce air into the cell
-// void runIA(float pressureTarget)
-// {
+// Function to wait for a sample to be ready from the KIEL
+void waitForKiel()
+{
+  sendStatus("WK");
+  delay(10);
 
-//   sendStatus("IA");
-//   switchValve("V21O");
-//   delay(10);
+  unsigned long startTime = millis();
+  const unsigned long maxWait = 9000000; // 2.5 hours
 
-//   unsigned long startTime = millis();
+  while (D_pressure <= 15 && millis() - startTime <= maxWait)
+  {
+    sendStatus("WK");
+    delay(10);
+  }
 
-//   while (Zpressure <= pressureTarget && millis() - startTime <= 120000)
-//   {
-//     sendStatus("IA");
-//     delay(10);
-//   }
-
-//   switchValve("V15C");
-//   switchValve("V21C");
-// }
+}
 
 void setPressureX(float targetPressure)
 {
   const float V0 = 41.008f; // This is a instrument constant for bellows X
-  for (byte a = 0; a < 15; a++)
+  for (byte a = 0; a < 10; a++)
   {
     // Wait a little and get pressure
     const byte m = 100;
@@ -527,18 +529,18 @@ void setPressureX(float targetPressure)
     }
     delay(100);
     // Decide what to do
-    if (abs(Xpressure - targetPressure) <= 0.001 || percentageX_fromSteps() == 0)
+    if (abs(X_pressure - targetPressure) <= 0.001 || percentageX_fromSteps() <= 1)
     {
       break;
     }
-    else if (percentageX_fromSteps() != 100 || ((Xpressure - targetPressure) < -0.001 && percentageX_fromSteps() == 100))
+    else if (percentageX_fromSteps() != 100 || ((X_pressure - targetPressure) < -0.001 && percentageX_fromSteps() == 100))
     {
       // Adjust the bellow; p = k / (V + V0)
-      float k = Xpressure * (percentageX_fromSteps() + V0);
+      float k = X_pressure * (percentageX_fromSteps() + V0);
       targetPercent = k / targetPressure - V0;
       
       // Send the command to the bellows
-      runXP(targetPercent);
+      moveBellowX(targetPercent);
       sendStatus("PX");
       delay(100);
     }
@@ -546,17 +548,17 @@ void setPressureX(float targetPressure)
     {
       // Expand gas. This is only relevant when refilling the bellows
       // Now decide which route should be evacuated
-      if ((Xpressure - targetPressure) / Xpressure * 100 > 60)
+      if ((X_pressure - targetPressure) / X_pressure * 100 > 60)
       {
         sendStatus("PX");
         expandX(3);
       }
-      else if ((Xpressure - targetPressure) / Xpressure * 100 <= 60 && (Xpressure - targetPressure) / Xpressure * 100 > 35)
+      else if ((X_pressure - targetPressure) / X_pressure * 100 <= 60 && (X_pressure - targetPressure) / X_pressure * 100 > 35)
       {
         sendStatus("PX");
         expandX(2);
       }
-      else if ((Xpressure - targetPressure) / Xpressure * 100 <= 35)
+      else if ((X_pressure - targetPressure) / X_pressure * 100 <= 35)
       {
         sendStatus("PX");
         expandX(1);
@@ -572,7 +574,7 @@ void setPressureX(float targetPressure)
 void setPressureY(float targetPressure)
 {
   float V0 = 42.337; // This is a instrument constant for bellows Y
-  for (byte a = 0; a < 15; a++)
+  for (byte a = 0; a < 10; a++)
   {
     // Wait a little and get pressure
     const byte m = 100;
@@ -584,18 +586,18 @@ void setPressureY(float targetPressure)
     delay(100);
 
     // Now decide what to do
-    if (abs(Ypressure - targetPressure) <= 0.001 || percentageY_fromSteps() == 0)
+    if (abs(Y_pressure - targetPressure) <= 0.001 || percentageY_fromSteps() <= 1)
     {
       break;
     }
-    else if (percentageY_fromSteps() != 100 || (percentageY_fromSteps() == 100 && (Ypressure - targetPressure) < -0.001))
+    else if (percentageY_fromSteps() != 100 || (percentageY_fromSteps() == 100 && (Y_pressure - targetPressure) < -0.001))
     {
       // Adjust the bellow; p = k / (V + V0)
-      float k = Ypressure * (percentageY_fromSteps() + V0);
+      float k = Y_pressure * (percentageY_fromSteps() + V0);
       targetPercent = k / targetPressure - V0;
 
       // Send the command to the bellows
-      runYP(targetPercent);
+      moveBellowY(targetPercent);
       sendStatus("PY");
       delay(100);
     }
@@ -603,19 +605,19 @@ void setPressureY(float targetPressure)
     {
       // Expand gas. This is only relevant when refilling the bellows
       // Now decide which route should be evacuated
-      if ((Ypressure - targetPressure) / Ypressure * 100 > 60)
+      if ((Y_pressure - targetPressure) / Y_pressure * 100 > 60)
       {
         sendStatus("PY");
         expandY(3);
         delay(100);
       }
-      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 60 && (Ypressure - targetPressure) / Ypressure * 100 > 35)
+      else if ((Y_pressure - targetPressure) / Y_pressure * 100 <= 60 && (Y_pressure - targetPressure) / Y_pressure * 100 > 35)
       {
         sendStatus("PY");
         expandY(2);
         delay(100);
       }
-      else if ((Ypressure - targetPressure) / Ypressure * 100 <= 35)
+      else if ((Y_pressure - targetPressure) / Y_pressure * 100 <= 35)
       {
         sendStatus("PY");
         expandY(1);
@@ -629,11 +631,11 @@ void setPressureY(float targetPressure)
   }
 }
 
-void setN2Pressure(float targetPressure)
+void setCollisionGasPressure(float targetPressure)
 {
   if (targetPressure > 10)
   {
-    for (byte a = 0; a < 10; a++)
+    for (byte a = 0; a < 5; a++)
     {
       // Get current pressure
       const byte m = 100; // Integration cycles
@@ -644,16 +646,16 @@ void setN2Pressure(float targetPressure)
       }
       delay(100);
       // Now decide what to do
-      if (abs(Zpressure - targetPressure) <= 0.1)
+      if (abs(Z_pressure - targetPressure) <= 0.1)
       {
         break;
       }
       else
       {
         // Compress/open bellows
-        targetPercent = percentageZ_fromSteps() + (Zpressure - targetPressure) / 0.08f;
+        targetPercent = percentageZ_fromSteps() + (Z_pressure - targetPressure) / 0.08f;
         // Send the command to the bellows
-        runZP(targetPercent);
+        moveBellowZ(targetPercent);
         delay(100);
       }
     }
@@ -721,34 +723,26 @@ void sendStatus(String param)
   // Get sensor readings
   sensors_event_t humidity, temp;
   shtc3.getEvent(&humidity, &temp);
-  boxTemperature = temp.temperature;
-  boxHum = humidity.relative_humidity;
-  Xpressure = readBaratronX();
-  Ypressure = readBaratronY();
-  Zpressure = readBaratronZ();
-  Xpercentage = percentageX_fromPoti();
-  Ypercentage = percentageY_fromPoti();
-  DeltaPlusGauge = readDeltaPlus();
 
-  // Add the values to arrays
-  XpressureArray.add(Xpressure);
-  YpressureArray.add(Ypressure);
-  ZpressureArray.add(Zpressure);
-  XpercentageArray.add(Xpercentage);
-  YpercentageArray.add(Ypercentage);
-  boxTempArray.add(boxTemperature);
-  boxHumArray.add(boxHum);
-  DeltaPlusGaugeArray.add(DeltaPlusGauge);
+  // Add the sensor and pressure readings to arrays
+  X_pressure_Array.add(readBaratronX());
+  Y_pressure_Array.add(readBaratronY());
+  Z_pressure_Array.add(readBaratronZ());
+  X_percentage_Array.add(percentageX_fromPoti());
+  Y_percentage_Array.add(percentageY_fromPoti());
+  boxTemperature_Array.add(temp.temperature);
+  boxHumidity_Array.add(humidity.relative_humidity);
+  D_pressureArray.add(readDeltaPlus());
 
   // Get the averages
-  Xpressure = XpressureArray.getAverage();
-  Ypressure = YpressureArray.getAverage();
-  Zpressure = ZpressureArray.getAverage();
-  Xpercentage = XpercentageArray.getAverage();
-  Ypercentage = YpercentageArray.getAverage();
-  boxTemperature = boxTempArray.getAverage();
-  boxHum = boxHumArray.getAverage();
-  DeltaPlusGauge = DeltaPlusGaugeArray.getAverage();
+  X_pressure = X_pressure_Array.getAverage();
+  Y_pressure = Y_pressure_Array.getAverage();
+  Z_pressure = Z_pressure_Array.getAverage();
+  X_percentage = X_percentage_Array.getAverage();
+  Y_percentage = Y_percentage_Array.getAverage();
+  boxTemperature = boxTemperature_Array.getAverage();
+  boxHumidity = boxHumidity_Array.getAverage();
+  D_pressure = D_pressureArray.getAverage();
 
   // Control the fan speed
   controlT();
@@ -772,21 +766,22 @@ void sendStatus(String param)
   // Create a JSON string with keys
   doc["moveStatus"] = param;
   doc["X_position"] = String(percentageX_fromSteps(), 2);
-  doc["X_percentage"] = String(Xpercentage, 1);
+  doc["X_percentage"] = String(X_percentage, 1);
   doc["Y_position"] = String(percentageY_fromSteps(), 2);
-  doc["Y_percentage"] = String(Ypercentage, 1);
+  doc["Y_percentage"] = String(Y_percentage, 1);
   doc["Z_position"] = String(Zaxis.currentPosition());
   doc["Z_percentage"] = String(percentageZ_fromSteps(), 2);
-  doc["X_pressure"] = String(Xpressure, 3);
-  doc["Y_pressure"] = String(Ypressure, 3);
-  doc["Z_pressure"] = String(Zpressure, 1);
+  doc["X_pressure"] = String(X_pressure, 3);
+  doc["Y_pressure"] = String(Y_pressure, 3);
+  doc["Z_pressure"] = String(Z_pressure, 1);
   doc["valveArray"] = valveStatus;
   doc["relayArray"] = relayStatus;
-  doc["boxHumidity"] = String(boxHum, 2);
+  doc["boxHumidity"] = String(boxHumidity, 2);
   doc["boxTemperature"] = String(boxTemperature, 4);
-  doc["boxSetpoint"] = String(SPT, 2);
+  doc["boxSetpoint"] = String(boxSetpoint, 2);
   doc["fanSpeed"] = String(fanSpeed, 2);
-  doc["DeltaPlusGauge"] = String(DeltaPlusGauge, 1);
+  doc["D_pressure"] = String(D_pressure, 1);
+  doc["arduinoSpeed"] = String(arduinoSpeed, 0);
 
   // Serialize the JSON document
   doc.shrinkToFit();
@@ -799,6 +794,16 @@ void sendStatus(String param)
 
 void loop()
 {
+
+  // Measure the speed of the Arduino
+  static unsigned long prevMicros = 0;
+  unsigned long nowMicros = micros();
+  unsigned long loopDuration = nowMicros - prevMicros;
+  prevMicros = nowMicros;
+  if (loopDuration > 0) {
+    arduinoSpeed = 1000000.0 / loopDuration; // Hz = 1 / seconds, micros to seconds
+  }
+
   // Monitor the serial port
   while (Serial.available())
   {
@@ -809,7 +814,7 @@ void loop()
 
   // Perform a function based on on the command sent by the index.html
 
-  if (string.substring(0, 1) == "V")
+  if (string.startsWith("V"))
   {
     // Set the valve positions
     switchValve(string);
@@ -818,25 +823,61 @@ void loop()
     sendStatus("-");
   }
 
-  else if (string.substring(0, 2) == "XP")
+  else if (string.startsWith("U"))
   {
-    // Set the stepper motor positions
-    runXP(string.substring(2, 9).toFloat());
+    // Switch the relays
+    switchRelay(string);
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if (string.substring(0, 2) == "XS")
+  else if (string.startsWith("PY"))
   {
-    // Set the pressure in bellows X to the given pressure
-    setPressureX(string.substring(2, 9).toFloat());
+    // Set pressure in bellow Y (sample side)
+    setPressureY(string.substring(2).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if (string.substring(0, 2) == "KL")
+  else if (string.startsWith("PX"))
+  {
+    // Set the pressure in bellow X (reference side)
+    setPressureX(string.substring(2).toFloat());
+    string = "";
+    command = ' ';
+    sendStatus("-");
+  }
+
+  else if (string.startsWith("BX"))
+  {
+    // Move bellow X (reference side)
+    moveBellowX(string.substring(2).toFloat());
+    string = "";
+    command = ' ';
+    sendStatus("-");
+  }
+
+  else if (string.startsWith("BY"))
+  {
+    // Move bellow Y (sample side)
+    moveBellowY(string.substring(2).toFloat());
+    string = "";
+    command = ' ';
+    sendStatus("-");
+  }
+
+  else if (string.startsWith("BZ"))
+  {
+    // Move bellow Z
+    moveBellowZ(string.substring(2).toFloat());
+    string = "";
+    command = ' ';
+    sendStatus("-");
+  }
+
+  else if (string.startsWith("KL"))
   {
     // Resets the valves to starting position
     startingPosition();
@@ -845,66 +886,30 @@ void loop()
     sendStatus("-");
   }
 
-  else if (string.substring(0, 2) == "YP")
+  else if (string.startsWith("WK"))
   {
-    // Move bellow Y (sample side)
-    runYP(string.substring(2, 9).toFloat());
+    // Wait until gauge D reaches a pressure threshold
+    waitForKiel();
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  // else if (string.substring(0, 2) == "IA")
-  // {
-  //   // Wait until gauge A reaches the required pressure - for air refill
-  //   runIA(string.substring(2, 9).toFloat());
-  //   string = "";
-  //   command = ' ';
-  //   sendStatus("-");
-  // }
-
-  else if (string.substring(0, 2) == "YS")
-  {
-    // Set pressure in bellow Y (sample side)
-    setPressureY(string.substring(2, 9).toFloat());
-    string = "";
-    command = ' ';
-    sendStatus("-");
-  }
-
-  else if (string.substring(0, 2) == "ZP")
-  {
-    // Move bellow Z
-    runZP(string.substring(2, 9).toFloat());
-    string = "";
-    command = ' ';
-    sendStatus("-");
-  }
-
-  else if (string.substring(0, 2) == "SN")
+  else if (string.startsWith("SN"))
   {
     // Set N2 pressure by moving the Z bellow
-    setN2Pressure(string.substring(2, 9).toFloat());
+    setCollisionGasPressure(string.substring(2).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");
   }
 
-  else if (string.substring(0, 2) == "RS")
+  else if (string.startsWith("RS"))
   {
     // Refill sample from manifold
     // To work, this function needs a starting position, and
     // that the sample gas is aleady in the manifold and not the autofinger
-    refillSample(string.substring(2, 9).toFloat());
-    string = "";
-    command = ' ';
-    sendStatus("-");
-  }
-
-  else if (string.substring(0, 1) == "U")
-  {
-    // Switch the relays
-    switchRelay(string);
+    refillSampleFromManifold(string.substring(2).toFloat());
     string = "";
     command = ' ';
     sendStatus("-");

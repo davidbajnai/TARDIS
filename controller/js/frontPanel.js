@@ -18,28 +18,61 @@ function sendCommand(cmd) {
         data: { cmd: cmd },
         async: false,
         success: function (response) {
-            // Split the status string
-            const statusArr = response.split(","); // The status array is received from serialComm.py via sendCommand.php
 
-            $("#moveStatus").html(statusArr[1]);
+            // The status string is a JSON object
+            // variable names are the same as in the Arduino code
+            // and in the serialComm.py
+            const status = JSON.parse(response);
 
+            // Update HTML elements with the status values
+            for (const key in status) {
+                if (!status.hasOwnProperty(key)) continue;
+
+                const el = document.getElementById(key);
+                if (!el) continue;
+
+                // Keep these keys as strings
+                if (key === "moveStatus" || key === "valveArray" || key === "relayArray") {
+                    el.innerHTML = status[key];
+                    continue;
+                }
+
+                // Parse the rest as floats
+                const value = parseFloat(status[key]);
+                if (!isNaN(value)) {
+                    if (key === "X_pressure" || key === "Y_pressure" || key === "cellPressure" || key.includes("chi")) {
+                        el.innerHTML = value.toFixed(3);
+                    } else if (key === "Z_pressure" || key === "D_pressure") {
+                        el.innerHTML = value.toFixed(1);
+                    } else if (key === "fanSpeed" || key.includes("position")) {
+                        el.innerHTML = value.toFixed(2);
+                    } else if (key === "vacuum" || key === "boxTemperature") {
+                        el.innerHTML = value.toFixed(4);
+                    } else {
+                        el.innerHTML = value;
+                    }
+                }
+            }
+
+            // Update motor gifs based on moveStatus
+            $("#moveStatus").html(status.moveStatus);
             if (
-                statusArr[1] == "MX" &&
+                status.moveStatus == "MX" &&
                 $("#motorX").attr("src") == "controller/images/standing_motor.gif"
             ) {
                 $("#motorX").attr("src", "controller/images/rotating_motor.gif");
             } else if (
-                statusArr[1] == "MY" &&
+                status.moveStatus == "MY" &&
                 $("#motorY").attr("src") == "controller/images/standing_motor.gif"
             ) {
                 $("#motorY").attr("src", "controller/images/rotating_motor.gif");
             } else if (
-                statusArr[1] == "MZ" &&
+                status.moveStatus == "MZ" &&
                 $("#motorZ").attr("src") == "controller/images/standing_motor.gif"
             ) {
                 $("#motorZ").attr("src", "controller/images/rotating_motor.gif");
             } else if (
-                statusArr[1] == "-" &&
+                status.moveStatus == "-" &&
                 ($("#motorX").attr("src") == "controller/images/rotating_motor.gif" ||
                     $("#motorY").attr("src") == "controller/images/rotating_motor.gif" ||
                     $("#motorZ").attr("src") == "controller/images/rotating_motor.gif")
@@ -49,52 +82,26 @@ function sendCommand(cmd) {
                 $("#motorZ").attr("src", "controller/images/standing_motor.gif");
             }
 
-            // X bellows
-            $("#percentageX").html(parseFloat(statusArr[2]).toFixed(2)); // bellow expansion based on motor steps
-            $("#percentageX_Poti").html(parseFloat(statusArr[3]).toFixed(1)); // bellow expansion based on potentiometer
-            $("#bellowsX").css(
-                "height",
-                parseInt(10 + 0.9 * statusArr[2]) + "px"
-            );
+            // Update bellows heights
+            $("#bellowsX").css("height", parseInt(10 + 0.9 * status.X_position) + "px");
+            $("#bellowsY").css("height", parseInt(10 + 0.9 * status.Y_position) + "px");
+            $("#bellowsZ").css("height", parseInt(10 + 0.9 * status.Z_percentage) + "px");
 
-            // Y bellows
-            $("#percentageY").html(parseFloat(statusArr[4]).toFixed(2)); // bellow expansion based on motor steps
-            $("#percentageY_Poti").html(parseFloat(statusArr[5]).toFixed(1)); // bellow expansion based on potentiometer
-            $("#bellowsY").css(
-                "height",
-                parseInt(10 + 0.9 * statusArr[4]) + "px");
-
-            // Z bellows
-            $("#stepsZ").html(parseInt(statusArr[6]));
-            $("#percentageZ").html(parseFloat(statusArr[7]).toFixed(1));
-            $("#bellowsZ").css(
-                "height",
-                parseInt(10 + 0.9 * statusArr[7]) + "px"
-            );
-
+            // Add warning icon if Z position is not at 50%
             if (
-                statusArr[6] != 7980 &&
+                status.Z_position != 7980 &&
                 $("#warningZ").attr("src") != "controller/images/warning.png"
             ) {
                 $("#warningZ").attr("src", "controller/images/warning.png");
-            } else if (statusArr[6] == 7980) {
+            } else if (status.Z_position == 7980) {
                 $("#warningZ").attr("src", "");
             }
 
-            // X baratron in Torr (max. 5 Torr)
-            var pressureX = parseFloat(statusArr[8]);
-            $("#pressureX").html(pressureX.toFixed(3));
-
-            // Y baratron in Torr (max. 5 Torr)
-            var pressureY = parseFloat(statusArr[9]);
-            $("#pressureY").html(pressureY.toFixed(3));
-
-            // A baratron in Torr (max. 500 Torr)
-            var pressureZ = parseFloat(statusArr[10]);
-            $("#pressureZ").html(pressureZ.toFixed(1));
+            // Draw gauges
+            drawTemperatureGauge(parseFloat(status.boxSetpoint), parseFloat(status.boxTemperature));
+            drawFanGauge(parseFloat(status.fanSpeed));
 
             // Valve status
-            var valveArray = statusArr[11];
             const positions = [
                 "vertical", // V01
                 "vertical", // V02
@@ -124,7 +131,7 @@ function sendCommand(cmd) {
                 "vertical", // V26
                 "horizontal", // V27
                 "vertical", // V28
-                "vertical", // V29
+                "horizontal", // V29
                 "horizontal", // V30
                 "horizontal", // V31
                 "horizontal", // V32
@@ -138,9 +145,9 @@ function sendCommand(cmd) {
                     n = "";
                 }
                 $("#V" + n + i.toString() + "_label").html(
-                    valveArray.charAt(i - 1)
+                    status.valveArray.charAt(i - 1)
                 );
-                if (valveArray.charAt(i - 1) == "0") {
+                if (status.valveArray.charAt(i - 1) == "0") {
                     $("#V" + n + i.toString()).attr(
                         "src",
                         "controller/images/" + positions[i - 1] + "_closed.png"
@@ -154,13 +161,11 @@ function sendCommand(cmd) {
                 i = i + 1;
             }
 
-
             // Relay status
-            var relayArray = statusArr[12];
             var i = 1;
             while (i <= 2) {
-                $("#U" + "0" +  i.toString() + "_label").html(relayArray[i - 1]);
-                if (relayArray[i - 1] == 0) {
+                $("#U" + "0" +  i.toString() + "_label").html(status.relayArray[i - 1]);
+                if (status.relayArray[i - 1] == 0) {
                     $("#U" + "0" + i.toString()).attr("src", "controller/images/relay_off.png");
                 } else {
                     $("#U" + "0" + i.toString()).attr("src", "controller/images/relay_on.png");
@@ -168,49 +173,9 @@ function sendCommand(cmd) {
                 i = i + 1;
             }
 
-            // Box humidity
-            var boxHumidity = statusArr[13];
-            $("#boxHumidity").html(boxHumidity);
-
-            // Box temperature
-            var boxTemperature = statusArr[14];
-            $("#boxTemperature").html(boxTemperature);
-
-            // Box setpoint temperature
-            var SPT = parseFloat(statusArr[15]);
-            $("#boxSetpoint").html(SPT.toFixed(1));
-            drawTemperatureGauge(SPT, boxTemperature);  // pass the live value
-
-            // Fan speed
-            var fanSpeed = statusArr[16];
-            $("#fanSpeed").html(fanSpeed);
-            drawFanGauge(fanSpeed);
-            
-            // DeltaPlus gauge (towards the KIEl)
-            var DeltaPlusGauge = statusArr[17];
-            $("#DeltaPlusGauge").html(DeltaPlusGauge);
-            
-            // Cell pressure from the TILDAS in Torr
-            var cellPressure = parseFloat(statusArr[18]);
-            $("#cellPressure").html(cellPressure.toFixed(3));
-
-            // CO2 mixing ratios from the TILDAS
-            var chi_627 = statusArr[19];
-            $("#chi_627").html(parseFloat(chi_627).toFixed(3));
-            var chi_628 = statusArr[20];
-            $("#chi_628").html(parseFloat(chi_628).toFixed(3));
-            var chi_626 = statusArr[21];
-            $("#chi_626").html(parseFloat(chi_626).toFixed(3));
-            var free_path_CO2 = statusArr[22];
-            $("#free_path_CO2").html(parseFloat(free_path_CO2).toFixed(3));
-
-            // vacuum vacuum gauge
-            var vacuum = statusArr[23];
-            $("#vacuum").html(parseFloat(vacuum).toFixed(5));
-
-            // Reset the command string
             cmd = "";
         },
+
         error: function (xhr, status, error) {
             console.error(error);
         },
@@ -312,7 +277,7 @@ function moveBellows(bellow) {
         percentage = 100.0;
         $('#setPercentage' + bellow).val("100.0");
     }
-    cmd = bellow + 'P' + percentage;
+    cmd = "B" + bellow + percentage;
     console.log(
         `${new Date().toLocaleTimeString()}, ` +
         "Moving bellow " +
@@ -913,9 +878,8 @@ var line = 0;
 var moving = "no";
 var waiting = "no"; // Wait for the delay to goto next command
 var executed = "yes";
-let cycleJS = 0;
 let startTimeJS = new Date().getTime();
-let speedJS = 0;
+let JS_speed = 0;
 var lastTimeUpdated = 0;
 var logData = [];
 var sample = 0;
@@ -930,25 +894,24 @@ setInterval(function () {
     if ($("#methodStatus").text() == "Method running") {
         var currentTime = parseInt(new Date().getTime() / 1000);
 
-        // Save data to logfile array every 5 seconds
-        if (currentTime % 5 == 0 &&
-            currentTime != lastTimeUpdated &&
+        // Save data to logfile array every 2 seconds
+        if (currentTime != lastTimeUpdated &&
             $("#sampleName").html() != "" &&
             !$("#sampleName").html().includes("refill")) {
             // Unix -> Mac timestamp, TILDAS uses Mac timestamp
             let logObject = {
-                "Time(abs)": parseInt(new Date().getTime() / 1000 + 2082844800 + 3600),
-                "SampleName": $("#sampleName").html(),
+                "Time(abs)": Math.floor(Date.now() / 1000 + 2082844800),
+                "SampleName": $("#sampleName").html(),  // assuming this one is a string
                 "boxTemperature": parseFloat($("#boxTemperature").html()),
                 "boxSetpoint": parseFloat($("#boxSetpoint").html()),
                 "boxHumidity": parseFloat($("#boxHumidity").html()),
-                "percentageX": $("#percentageX").html(),
-                "percentageY": $("#percentageY").html(),
-                "percentageZ": $("#percentageZ").html(),
-                "pressureX": $("#pressureX").html(),
-                "pressureY": $("#pressureY").html(),
-                "pressureZ": $("#pressureZ").html(),
-                "vacuum": $("#vacuum").html().trim(),
+                "percentageX": parseFloat($("#X_position").html()),
+                "percentageY": parseFloat($("#Y_position").html()),
+                "percentageZ": parseFloat($("#Z_percentage").html()),
+                "pressureX": parseFloat($("#X_pressure").html()),
+                "pressureY": parseFloat($("#Y_pressure").html()),
+                "pressureZ": parseFloat($("#Z_pressure").html()),
+                "vacuum": parseFloat($("#vacuum").html()),
                 "fanSpeed": parseFloat($("#fanSpeed").html())
             };
 
@@ -1023,7 +986,7 @@ setInterval(function () {
         else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "A" && executed == "yes" && moving == "no" && waiting == "no") {
             doThisBeforeEveryCommand();
 
-            $("#nitrogenTargetPressure").html((parseFloat($("#pressureZ").html())).toFixed(1));
+            $("#nitrogenTargetPressure").html((parseFloat($("#Z_pressure").html())).toFixed(1));
 
             doThisAfterEveryCommand("executed");
         }
@@ -1141,14 +1104,14 @@ setInterval(function () {
             doThisAfterEveryCommand("executed");
         }
 
-        // Move bellows (X,Y,Z) "BY 53" with the percentage as parameter BX
+        // Move bellows (X,Y,Z) "BY 53" with the percentage as parameter, BX
         else if (commandsArray[line][0] == "B" && moving == "no" && executed == "yes" && waiting == "no") {
             doThisBeforeEveryCommand();
 
             if (parameterArray[line].substr(0, 1) == "+" || parameterArray[line].substr(0, 1) == "-") {
                 // Move increment
                 // Get current bellows position
-                let currentPercent = parseFloat($("#percentage" + commandsArray[line][1]).text());
+                let currentPercent = parseFloat($("#" + commandsArray[line][1] + "_percentage").html());
 
                 console.log(
                     `${new Date().toLocaleTimeString()}, ` +
@@ -1179,7 +1142,7 @@ setInterval(function () {
             doThisAfterEveryCommand("started");
         }
 
-        // Set bellows to pressure target (X,Y) "PX 1.723"
+        // Set bellows to pressure target (X,Y) "PX 1.723", PY
         else if (commandsArray[line][0] == "P" && executed == "yes" && moving == "no" && waiting == "no") {
             doThisBeforeEveryCommand();
 
@@ -1236,7 +1199,7 @@ setInterval(function () {
                 );
 
             }
-            sendCommand(commandsArray[line][1] + "S" + pTarget.toFixed(3));
+            sendCommand("P" + commandsArray[line][1] + pTarget.toFixed(3));
             $('#moveStatus').html('M' + commandsArray[line][1]);
 
             doThisAfterEveryCommand("started");
@@ -1336,7 +1299,7 @@ setInterval(function () {
                 " Torr"
             );
 
-            let percent = parseFloat($("#percentageZ").text());
+            let percent = parseFloat($("#Z_percentage").text());
             console.log(
                 `${new Date().toLocaleTimeString()}, ` +
                 "Bellow Z is at " +
@@ -1428,8 +1391,7 @@ setInterval(function () {
         }
     }
 
-    speedJS = Math.round( (1/((new Date().getTime() - startTimeJS)/1000))/10 )*10;
-    $("#infoJS").html("ICE " + cycleJS + "<br>RE " + speedJS);
-    cycleJS++;
+    JS_speed = Math.round( (1/((new Date().getTime() - startTimeJS)/1000))/10 )*10;
+    $("#infoJS").html("ICE " + $("#arduinoSpeed").html() + "<br>RE " + JS_speed);
     startTimeJS = new Date().getTime();
 }, 50);

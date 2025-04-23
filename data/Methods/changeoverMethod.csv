@@ -5,7 +5,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -43,14 +43,14 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<-------------------------------------------------- DUMMY 00 FINISHED
+V17,1,61,<-------------------------------------------------- DUMMY 00 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 01 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -88,7 +88,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 01 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 01 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 01 STARTED
 V11,0,1,
 V12,1,1,
@@ -133,14 +133,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-7.8,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 01 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 01 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 02 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -178,7 +178,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 02 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 02 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 02 STARTED
 V11,0,1,
 V12,1,1,
@@ -223,14 +223,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-7.8,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 02 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 02 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 03 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -268,7 +268,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 03 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 03 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 03 STARTED
 V11,0,1,
 V12,1,1,
@@ -313,14 +313,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-7.8,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 03 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 03 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 04 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -358,7 +358,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 04 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 04 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 04 STARTED
 V11,0,1,
 V12,1,1,
@@ -403,14 +403,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-7.8,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 04 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 04 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 05 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -448,7 +448,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 05 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 05 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 05 STARTED
 V11,0,1,
 V12,1,1,
@@ -493,14 +493,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-7.9,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 05 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 05 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 06 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -538,7 +538,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 06 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 06 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 06 STARTED
 V11,0,1,
 V12,1,1,
@@ -583,14 +583,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-8.1,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 06 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 06 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 07 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -628,7 +628,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 07 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 07 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 07 STARTED
 V11,0,1,
 V12,1,1,
@@ -673,14 +673,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-8.5,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 07 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 07 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 08 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -718,7 +718,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 08 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 08 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 08 STARTED
 V11,0,1,
 V12,1,1,
@@ -763,14 +763,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-9.3,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 08 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 08 FINISHED
 V07,0,1,<------------------------------------------------ REFERENCE 09 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -808,7 +808,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 09 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 09 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 09 STARTED
 V11,0,1,
 V12,1,1,
@@ -853,14 +853,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-9.3,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 09 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 09 FINISHED
 V07,0,1,<------------------------------------------------- REFERENCE 10 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -898,7 +898,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 10 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 10 FINISHED
 V13,0,1,<--------------------------------------------------- SAMPLE 10 STARTED
 V11,0,1,
 V12,1,1,
@@ -943,14 +943,14 @@ V19,1,1,
 V07,1,1,
 V27,1,20,
 BY,-9.3,1,<--- Compress bellow to speed up PY
-V17,1,90,<-------------------------------------------------- SAMPLE 10 FINISHED
+V17,1,61,<-------------------------------------------------- SAMPLE 10 FINISHED
 V07,0,1,<------------------------------------------------- REFERENCE 11 STARTED
 V05,0,1,
 V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.157,5,
+PX,1.155,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -988,7 +988,7 @@ V19,1,1,
 V13,1,1,
 V27,1,20,
 BX,-8.1,1,<--- Compress bellow to speed up PX
-V17,1,90,<---------------------------------------------- REFERENCE 11 FINISHED
+V17,1,61,<---------------------------------------------- REFERENCE 11 FINISHED
 V19,1,90,<----------------------------------------------------- START APPENDIX
 TWD,0,10,
 BG,1,1,<---------------------------------------------------- APPENDIX FINISHED

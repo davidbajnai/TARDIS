@@ -1,0 +1,19 @@
+V15,0,1,<--- Necessary dummy command for the beginning #######################
+V29,1,0,
+WK,1,1,<--- Wait until sample is ready from the KIEL
+V10,1,90,
+V10,0,1,
+V07,0,1,
+V13,0,1,
+V17,0,1,
+V14,1,3,<--- Pump the line towards the KIEL
+V27,1,30,
+V17,1,60,
+V14,0,1,
+V11,0,1,
+V13,0,1,
+V12,1,3,
+PY,1.250,1,
+V12,0,1,
+V11,1,1,
+V13,1,150,

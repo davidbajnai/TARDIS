@@ -164,7 +164,7 @@
 				<img id="V28" src="" class="small" onclick="var status=$('#V28_label').html();toggleValve('V28',status);" />
 				<span id="V28_label" style="display:none;">undefined</span>
 			</div>
-			<div style="top:345px;left:1214px;">
+			<div style="top:275px;left:1275px;">
 				<span class="valveNumberLabel">V29</span>
 				<img id="V29" src="" class="small" onclick="var status=$('#V29_label').html();toggleValve('V29',status);" />
 				<span id="V29_label" style="display:none;">undefined</span>
@@ -212,49 +212,49 @@
 			<img id="bellowsY" src="controller/images/bellows.png" class="bellows" style="top:510px;left:1092px;" />
 			<img id="bellowsZ" src="controller/images/bellows.png" class="bellows" style="top:320px;left:688px;" />
 			
-			<span id="pressureX" class="box small" style="top:353px;left:319px;">NaN</span>
+			<span id="X_pressure" class="box small" style="top:353px;left:319px;">NaN</span>
 			<p class="label" style="top:312px;left:319px;">X (Torr)</p>
 			
-			<span id="pressureY" class="box small" style="top:353px;left:1120px;">NaN</span>
+			<span id="Y_pressure" class="box small" style="top:353px;left:1120px;">NaN</span>
 			<p class="label" style="top:312px;left:1120px;">Y (Torr)</p>
 
-			<div id='pressureZ' class="box small" style="top:555px;left:710px;"><em>NaN</em></div>
+			<div id='Z_pressure' class="box small" style="top:555px;left:710px;"><em>NaN</em></div>
 			<p class="label" style="top:517px;left:710px;">Z (Torr)</p>
 
-			<span id="DeltaPlusGauge" class="box small" style="top:353px;left:1328px;">NaN</span>
-			<p class="label" style="top:312px;left:1345px;">D (Torr)</p>
+			<span id="D_pressure" class="box small" style="top:353px;left:1300px;">NaN</span>
+			<p class="label" style="top:312px;left:1300px;">D (Torr)</p>
 
 			<img id="motorX" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
-			<span id="percentageX" class="box small" style="top:625px;left:315px;">NaN</span>
+			<span id="X_position" class="box small" style="top:625px;left:315px;">NaN</span>
 			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
 			<button onclick="moveBellows('X');" class="button small" style="top:655px;left:365px;">Set X</button>
 
 			<img id="motorY" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:1184px;" />
-			<span id="percentageY" class="box small" style="top:625px;left:1120px;">NaN</span>
+			<span id="Y_position" class="box small" style="top:625px;left:1120px;">NaN</span>
 			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
 			<button onclick="moveBellows('Y');" class="button small" style="top:655px;left:1169px;">Set Y</button>
 			
 			<img id="motorZ" src="controller/images/standing_motor.gif" class="icon" style="top:450px;left:755px;" />
-			<span id="percentageZ" class="box small" style="top:450px;left:690px;">NaN</span>
+			<span id="Z_percentage" class="box small" style="top:450px;left:690px;">NaN</span>
 			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
 			<button onclick="moveBellows('Z');" class="button small" style="top:480px;left:740px;">Set Z</button>
 			<img id="warningZ" src="" class="icon" style="top:450px;left:650px;" />
 
 			<!-- Bellow parameters only necessary for the script to work -->
-			<span id="percentageX_Poti" class="box unimportant" style="top:653px;left:2240px;">NaN</span>
-			<span id="percentageY_Poti" class="box unimportant" style="top:653px;left:2290px;">NaN</span>
-			<span id="stepsZ" class="box unimportant" style="top:653px;left:2340px;">NaN</span>
+			<span id="X_percentage" class="box unimportant" style="top:653px;left:2240px;">NaN</span>
+			<span id="Y_percentage" class="box unimportant" style="top:653px;left:2290px;">NaN</span>
+			<span id="Z_position" class="box unimportant" style="top:653px;left:2340px;">NaN</span>
 			
 			<!-- Mixing ratio indicators -->
 			<p class="label" style="top:170px;left:2240px;">Mixing ratios  <span class="decorative" >_________</span></p>
 			<span id="chi_627" class="box medium" style="top:215px;left:2240px;">chi_627</span>
-				<p class="label" style="top:200px;left:2310px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+				<p class="label" style="top:200px;left:2310px;"><sup>17</sup>C<sup>12</sup>O<sup>16</sup>O (µmol mol<sup>-1</sup>)</p>
 			<span id="chi_628" class="box medium" style="top:245px;left:2240px;">chi_628</span>
-				<p class="label" style="top:230px;left:2310px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+				<p class="label" style="top:230px;left:2310px;"><sup>18</sup>C<sup>12</sup>O<sup>16</sup>O (µmol mol<sup>-1</sup>)</p>
 			<span id="chi_626" class="box medium" style="top:275px;left:2240px;">chi_626</span>
-				<p class="label" style="top:260px;left:2310px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (ppmv)</p>
+				<p class="label" style="top:260px;left:2310px;"><sup>16</sup>C<sup>12</sup>O<sup>16</sup>O (µmol mol<sup>-1</sup>)</p>
 			<span id="free_path_CO2" class="box medium" style="top:305px;left:2240px;">free_path_CO2</span>
-				<p class="label" style="top:290px;left:2310px;">free-path CO<sub>2</sub> (ppmv)</p>
+				<p class="label" style="top:290px;left:2310px;">free-path CO<sub>2</sub> (µmol mol<sup>-1</sup>)</p>
 			
 			<!-- Edwards gauge -->
 			<span id="vacuum" class="box medium" style="top:353px;left:858px;">vacuum</span>
@@ -309,6 +309,7 @@
 			<p class="label" style="top:195px;left:1460px;">fan speed (%)</p>
 
 			<!-- Script variables -->
+			<!-- These need to be defined here to be able to be used by the JS -->
 			<p class="label" style="top:335px;left:2240px;">Script variables <span class="decorative">_________</span></p>
 			<div id="sampleName"			  class="info" style="top:380px;">Sample name</div>
 			<div id="timeMeasurementStarted"  class="info" style="top:400px;">Time measurement started</div>
@@ -320,6 +321,7 @@
 			<div id="sample_pCO2"			  class="info" style="top:520px;">Sample pCO<sub>2</sub></div>
 			<div id="reference_pCO2"		  class="info" style="top:540px;">Reference pCO<sub>2</sub></div>
 			<div id="correction_pCO2"		  class="info" style="top:560px;">1.000</div>
+			<div id="arduinoSpeed"			  class="info" style="top:580px;">0</div>
 
 			<!-- The main buttons -->
 			<button onclick="startSequenceButton();" class="button big" style="top:660px;left:1800px;background-color:#63A615;">Start sequence</button>

@@ -121,8 +121,34 @@ def loop_2():
 
     # Initialize variables used in the loop
     ArduinoError = 0
-    arduinoStatus = ""
-    laserStatus = "0,0,0,0,0"
+    arduinoStatus = {
+        "moveStatus": "Error",
+        "X_position": "",
+        "X_percentage": "",
+        "Y_position": "",
+        "Y_percentage": "",
+        "Z_position": "",
+        "Z_percentage": "",
+        "X_pressure": "",
+        "Y_pressure": "",
+        "Z_pressure": "",
+        "valveArray": "",
+        "relayArray": "",
+        "boxHumidity": "",
+        "boxTemperature": "",
+        "boxSetpoint": "",
+        "fanSpeed": "",
+        "D_pressure": "",
+        "arduinoSpeed": "",
+    }
+
+    laserStatus = {
+        "cellPressure": 0,
+        "chi_627": 0,
+        "chi_628": 0,
+        "chi_626": 0,
+        "free_path_CO2": 0
+    }
     start_time_elapsed = time.time()
     start_time_speed = time.time()
     elapsed_time = 0
@@ -146,18 +172,20 @@ def loop_2():
 
                 laserStatusArray = laserStatus.split(',')
 
-                chi_627 = str(round(float(laserStatusArray[1]) / 1000,3)) # 627
-                chi_628 = str(round(float(laserStatusArray[2]) / 1000,3)) # 628
-                chi_626 = str(round(float(laserStatusArray[3]) / 1000,3)) # 626
-                free_path_CO2 = str(round(float(laserStatusArray[4]) / 1000,3)) # free-path CO2
-                cellPressure = str(round(float(laserStatusArray[10]),3)) # cell pressure (Torr)
+                def to_ppm(value):
+                    return round(float(value) / 1000, 3)
 
-                laserStatus = cellPressure + ',' + chi_627 + ',' + chi_628 + ',' + chi_626 + ',' + free_path_CO2
-                # print(laserStatus) # Show laser status string in the Terminal - for debugging
+                laserStatus = {
+                    "chi_627": to_ppm(laserStatusArray[1]),
+                    "chi_628": to_ppm(laserStatusArray[2]),
+                    "chi_626": to_ppm(laserStatusArray[3]),
+                    "free_path_CO2": to_ppm(laserStatusArray[4]),
+                    "cellPressure": round(float(laserStatusArray[10]), 3)
+                }
+                # print(ujson.dumps(laserStatus, indent=2)) # Show laser status string in the Terminal - for debugging
             except (ValueError, UnicodeDecodeError, IndexError):
                 # If the string is broken, just ignore it
-                # This error could occur when starting the script
-                laserStatus = "0,0,0,0,0"
+                pass
 
         # Read the JSON string sent by the Arduino
         try:
@@ -167,7 +195,7 @@ def loop_2():
             # print(arduinoStatusNew) # Show the raw serial output of the Arduino in the Terminal - for debugging
 
             # Check if the JSON string is correct lenght
-            if len(arduinoStatusNew) != 17:
+            if len(arduinoStatusNew) != 18:
                 raise ValueError("Invalid number of values in the JSON string")
 
             # Check if some of the values make sense
@@ -178,21 +206,19 @@ def loop_2():
                 raise ValueError("Invalid values in the JSON string")
 
             # Save the temperatre control data to a CSV file for PID tuning
-            if elapsed_time < 2700:
-                write_header = not os.path.exists(temperature_log)
-                with open(temperature_log, mode='a', newline='') as file:
-                    writer = csv.writer(file)
-                    if write_header:
-                        writer.writerow(["Time", "boxTemperature", "boxSetpoint", "fanSpeed"])
-                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    box_temp = arduinoStatusNew.get('boxTemperature', '')
-                    fanspeed = arduinoStatusNew.get('fanSpeed', '')
-                    boxSetpoint = arduinoStatusNew.get('boxSetpoint', '')
-                    writer.writerow([timestamp, box_temp, boxSetpoint, fanspeed])
+            # if elapsed_time < 2700:
+            #     write_header = not os.path.exists(temperature_log)
+            #     with open(temperature_log, mode='a', newline='') as file:
+            #         writer = csv.writer(file)
+            #         if write_header:
+            #             writer.writerow(["Time", "boxTemperature", "boxSetpoint", "fanSpeed"])
+            #         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            #         box_temp = arduinoStatusNew.get('boxTemperature', '')
+            #         fanspeed = arduinoStatusNew.get('fanSpeed', '')
+            #         boxSetpoint = arduinoStatusNew.get('boxSetpoint', '')
+            #         writer.writerow([timestamp, box_temp, boxSetpoint, fanspeed])
 
-            # Convert JSON data to comma-separated string without keys
-            arduinoStatus = ""
-            arduinoStatus = ",".join(arduinoStatusNew.values())
+            arduinoStatus = arduinoStatusNew
 
         except (UnicodeDecodeError, TypeError, ValueError, ujson.JSONDecodeError):
             ArduinoError += 1
@@ -200,16 +226,23 @@ def loop_2():
         # print(arduinoStatus) # Show the formatted serial output of the Arduino in the Terminal - for debugging
 
         # Create a status string from the information from Arduino, TILDAS, Edwards gauge, and room sensor and store it for PHP in the shared variable 'key'
-        if( arduinoStatus != "" ):
+        if arduinoStatus.get("moveStatus") != "Error":
 
             # Create the status string
-            timeNow = datetime.now().strftime("%H:%M:%S")
-            status = timeNow + ',' + arduinoStatus + ',' + laserStatus + ',' + vacuum
+            status_dict = {
+                "time": datetime.now().strftime("%H:%M:%S"),
+                "vacuum": vacuum,
+                **arduinoStatus,
+                **laserStatus
+            }
+
+            # Convert to JSON string
+            status = ujson.dumps(status_dict)
 
             # Set shared variable #1: this is what the sendCommand.php files recieves
             m.set('key', status)
 
-            # print(status) # Show the status string in the Terminal - for debugging
+            # print(ujson.dumps(status, indent=2)) # Show the status string in the Terminal - for debugging
             # time.sleep(0.05)
 
         # Receive commands for Arduino from PHP via shared variable #2, defined in sendCommand.php
