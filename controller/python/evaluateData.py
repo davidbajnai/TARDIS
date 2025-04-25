@@ -259,7 +259,7 @@ if 'Time(rel)' not in dfLogFile.columns:
 
 # Determine the pressure unit (Torr is used after 2025-09-01)
 if "Time(abs)" in dfLogFile.columns:
-    time0 = datetime.fromtimestamp(dfLogFile["Time(abs)"].iat[0]-2082844800-3600)
+    time0 = datetime.fromtimestamp(dfLogFile["Time(abs)"].iat[0]-2082844800)
     if time0 > datetime(2025, 9, 1):
         pressure_unit = "Torr"
     else:

@@ -8,14 +8,29 @@
 
     // Function to send command to TILDAS
     function sendCommandViaTCP($command, $IP) {
+    
+        for ($attempt = 1; $attempt <= 3; $attempt++) {
+    
+            $socket = @fsockopen($IP, 12345, $errno, $errstr, 1);
+    
+            if ($socket) {
+                sleep(1);
+                fwrite($socket, $command);
+    
+                stream_set_timeout($socket, 2);
+                $response = fgets($socket, 512);
+    
+                fclose($socket);
+    
+                if ($response !== false && strlen(trim($response)) > 0) {
+                    return $response;
+                }
+            }
 
-        $socket = fsockopen($IP, 12345, $errno, $errstr, 1);
-        sleep(1);
-        if ($socket) {
-            fwrite($socket, $command);
-            sleep(2);
-            fclose($socket);
+            sleep(1);
+
         }
+        return false;
     }
 
     // Get the status array from the serialComm.py via shared variable "key"
