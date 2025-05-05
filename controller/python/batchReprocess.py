@@ -16,18 +16,15 @@ import subprocess
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SETTINGS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 ############ EDIT HERE ############
 # Filter samples based on measurement date
-# afterDate = datetime(2023, 7, 1)
-# beforeDate = datetime(2024, 3, 24)
-afterDate = datetime(2020, 1, 15) # all files
-beforeDate = datetime(2030, 7, 1) # all files
-
+afterDate = datetime(2025, 4, 29)
+beforeDate = datetime(2025, 10, 29)
 # Create a dataframe from the subfolder names in the Results folder
 folders = os.listdir('/var/www/html/data/Results')
 folders = pd.DataFrame(folders, columns=["column"]).astype('str')
 
 # Alternatively read a list of sample names from a .CSV file
-folders = pd.read_csv("/var/www/html/controller/python/filesToReprocess.csv",
-                      usecols=[0], header=None, names=["column"], dtype=str)
+# folders = pd.read_csv("/var/www/html/controller/python/filesToReprocess.csv",
+#                       usecols=[0], header=None, names=["column"], dtype=str)
 
 # Make the dataframe workable
 results = folders.column.str.split("_", n=2, expand=True)
@@ -68,6 +65,10 @@ if proceed.lower() == "y":
         for index, row in tqdm(resultsFiltered.iterrows(), total=total):
 
             tqdm.write(f"Currently working on {row['SampleID']}")
+
+            # Run the PHP script to copy files
+            # subprocess.run(["php", "/var/www/html/controller/php/copyFiles.php", row["SampleID"]])
+            # subprocess.run(["/var/www/html/deleteFiles.sh", row["SampleID"]])
 
             curl_command = ["curl", "-x", "", row["Link"]]
             completed_process = subprocess.run(curl_command, capture_output=True, text=True)

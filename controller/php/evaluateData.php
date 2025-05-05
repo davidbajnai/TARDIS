@@ -3,11 +3,17 @@
 // This script is used to:
 // evaluation data and send the results to the isolabor server
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 date_default_timezone_set('Europe/Berlin');
+$baseDir = dirname(__FILE__);
 $timestamp = time();
 $DateTimeAdded = date("Y-m-d H:i:s", $timestamp);
+
+if (php_sapi_name() === 'cli') {
+    $_GET['sampleName'] = $argv[1];
+    if (isset($argv[2])) {
+        $_GET['userName'] = $argv[2];
+    }
+}
 
 if (isset($_POST['sampleName'])) {
     $sampleName = urldecode($_POST['sampleName']); 
@@ -20,12 +26,12 @@ if (isset($_POST['sampleName'])) {
 }
 
 // Import necessary data 
-include_once('../config/.config.php');
+include_once($baseDir . '/../config/.config.php');
 
 // Start the timer
 $start_time = microtime(true);
 
-$cmd = "python3 ../python/evaluateData.py " . $sampleName . " " . " 2>&1";
+$cmd = "python3 " . escapeshellarg($baseDir . "/../python/evaluateData.py") . " " . escapeshellarg($sampleName);
 $result = shell_exec($cmd); // isotope ratios from the evaluation script
 
 // Stop the timer
@@ -76,7 +82,7 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
     $sampleName = $postData['SampleName'];
 
     // Get the local directory
-    $localDirectory = "/var/www/html/data/Results/" . $sampleName;
+    $localDirectory = $baseDir . "/../../data/Results/" . $sampleName;
 
     // Copy SPE files from the TILDAS PC to the local directory
     $csvFile = $localDirectory . "/list_of_SPE_files.csv";
@@ -121,7 +127,7 @@ if ($postData === null && json_last_error() !== JSON_ERROR_NONE) {
     echo "</br>";
 
     // Create a ZIP archive of all files and upload that too the isolaborserver
-    exec("cd /var/www/html/data/Results/$sampleName/ && zip -j $sampleName.zip *");
+    exec("cd " . escapeshellarg($localDirectory) . " && zip -j $sampleName.zip *");
 
     $filesToUpload = array(
         "FitPlot.png",

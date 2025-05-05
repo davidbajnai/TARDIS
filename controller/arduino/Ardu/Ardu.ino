@@ -481,20 +481,17 @@ void expandY(int number)
   }
 }
 
-void refillSampleFromManifold(float tPress)
+void refillSampleFromManifold(float targetPressure)
 {
-  byte expN = 0;
-  sendStatus("RS");
-  while (Y_pressure < tPress && expN < 10)
+  byte attempt = 0;
+  while (Y_pressure < targetPressure && attempt++ < 10)
   {
     switchValve("V22O");
-    wait(20, "RS");
+    wait(15, "RS");
     switchValve("V22C");
     switchValve("V10O");
-    wait(20, "RS");
+    wait(15, "RS");
     switchValve("V10C");
-    wait(5, "RS");
-    expN = expN + 1;
   }
 }
 
