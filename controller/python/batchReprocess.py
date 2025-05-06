@@ -16,7 +16,7 @@ import subprocess
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SETTINGS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 ############ EDIT HERE ############
 # Filter samples based on measurement date
-afterDate = datetime(2025, 4, 29)
+afterDate = datetime(2025, 5, 5, 20)
 beforeDate = datetime(2025, 10, 29)
 # Create a dataframe from the subfolder names in the Results folder
 folders = os.listdir('/var/www/html/data/Results')
@@ -67,8 +67,8 @@ if proceed.lower() == "y":
             tqdm.write(f"Currently working on {row['SampleID']}")
 
             # Run the PHP script to copy files
-            # subprocess.run(["php", "/var/www/html/controller/php/copyFiles.php", row["SampleID"]])
-            # subprocess.run(["/var/www/html/deleteFiles.sh", row["SampleID"]])
+            subprocess.run(["php", "/var/www/html/controller/php/copyFiles.php", row["SampleID"]])
+            subprocess.run(["/var/www/html/controller/shell/deleteFiles.sh", row["SampleID"]])
 
             curl_command = ["curl", "-x", "", row["Link"]]
             completed_process = subprocess.run(curl_command, capture_output=True, text=True)

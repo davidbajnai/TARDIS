@@ -23,10 +23,10 @@ if (php_sapi_name() === 'cli') {
 }
 
 if (isset($_POST['folderName'])) {
-    $folderName = urldecode($_POST['folderName']);
+    $folderName = basename(urldecode($_POST['folderName']));
     $timeMeasurementStarted = $_POST['timeMeasurementStarted'];
 } else {
-    $folderName = urldecode($_GET['folderName']);
+    $folderName = basename(urldecode($_GET['folderName']));
     $timeMeasurementStarted = $_GET['timeMeasurementStarted'];
 }
 
@@ -37,8 +37,12 @@ $timeMeasurementStarted = DateTime::createFromFormat('U', $timeMeasurementStarte
 echo "Search files created after: " . date_format($timeMeasurementStarted, 'Y-m-d H:i:s') . "</br>";
 
 if (count(scandir('/mnt/TILDAS_PC')) <= 2) {
-    echo "TILDAS PC not mounted.\n";
-    exit();
+    exec('sudo /var/www/html/controller/shell/mountTILDAS.sh', $output, $returnVar);
+    
+    if ($returnVar !== 0) {
+        echo "Mount failed. Script returned code: $returnVar\n";
+        exit(1);
+    }
 }
 
 $files = getFiles('/mnt/TILDAS_PC/Data');
