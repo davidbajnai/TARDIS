@@ -37,10 +37,11 @@ $timeMeasurementStarted = DateTime::createFromFormat('U', $timeMeasurementStarte
 echo "Search files created after: " . date_format($timeMeasurementStarted, 'Y-m-d H:i:s') . "</br>";
 
 if (count(scandir('/mnt/TILDAS_PC')) <= 2) {
+    echo "The TILDAS PC not yet mounted you dummy. Let's correct this serious mistake... </br>";
     exec('sudo /var/www/html/controller/shell/mountTILDAS.sh', $output, $returnVar);
     
     if ($returnVar !== 0) {
-        echo "Mount failed. Script returned code: $returnVar\n";
+        echo "Oh noo, mounting the TILDAS PC failed because: $returnVar\n";
         exit(1);
     }
 }
@@ -80,10 +81,6 @@ if (empty($files)) {
 
         if (!empty($copiedFiles)) {
             echo "Files successfully copied to local folder!</br>";
-            // echo "Copied files:</br>";
-            // foreach ($copiedFiles as $copiedFile) {
-            //     echo $copiedFile . "</br>";
-            // }
         } else {
             echo "No matching files were copied.";
         }
