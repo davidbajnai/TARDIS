@@ -340,41 +340,69 @@
 		<details>
 			<summary>Quick start</summary>
 			<ol>
-				<li>Ensure that no sequence is currently running.</li>
-				<li>Reload the front panel webpage (http://localhost).</li>
-				<li>Attach the manifold to the inlet system and plug in the corresponding yellow tubes.</li>
-				<li>Pump the vented volume between the green valve on the manifold and V22. First use the scroll pump then the turbo.</li>
-				<li>Once the vacuum goes below 0.01 Torr, open the green valve manually.</li>
-				<li>Click the <b><span style="color: #9A6CA6">violet</span></b> <em>Starting position</em> button.</li>
-				<li>To choose the measurement sequence, click the <em>Sequence: Choose File</em> button.</li>
+				<li>Ensure that no sequence is currently running: the status above the progress bar should be either <em>Sample finished</em> or <em>Standby</em>.</li>
+				<li>Connect the manifold to the inlet system and attach the corresponding yellow tubes.</li>
+				<li>Pump down the vented volume between the green valve on the manifold and valve V22.</li>
+				<li>Open the green valve manually.</li>
+				<li>Ensure that all valves are in their starting configuration. Click the <b><span style="color: #9A6CA6"><em>Starting position</em></span></b> button.</li>
+				<li>Reload the front panel webpage (<a href="http://localhost">http://localhost</a>) to start fresh.</li>
+				<li>To load a measurement sequence, click the <b><em>Sequence: Choose File</em></b> button.</li>
 				<ul>
-				<li>The sequence .csv files are usually in the /home/pi/Desktop folder.</li>
-				<li>You can modify the existing sampleSequence.csv file, or create a new file. The file name does not matter.</li>
-				<li>Modifying a sequence file after it is loaded in will not automatically update on the front panel. You have to refresh the front panel and upload the modified sequence.</li>
+					<li>Sequence CSV files are usually located in the <code>/home/pi/Desktop</code> folder.</li>
+					<li>You may modify the existing <code>sampleSequence.csv</code> file or create a new one. The file name does not matter.</li>
+					<li>If you modify a sequence file after uploading it, you must refresh the front panel and upload the updated file again.</li>
 				</ul>
-				<li>To start the measurement, click the <b><span style="color: #63A615">green</span></b> <em>Start sequence</em> button.</li>
+				<li>You only need to update the method CSV files if you are using a new custom method.</li>
+				<li>Click the <b><span style="color: #63A615"><em>Start sequence</em></span></b> button to begin the measurement.</li>
 			</ol>
 		</details>
 
 		</br>
 
 		<details>
-
 			<summary>User manual</summary>
-
+		
 			<h3>General notes</h3>
 			<ul>
-				<li>Before stopping the serialComm.py or the Arduino, make sure the Z bellow is at 50%!</li>
-				<li>To reprocess a measurement: http://localhost/controller/php/evaluateData.php?sampleName=221223_025949_test_Air</li>
+				<li>Before stopping <code>serialComm.py</code> or turning off the Arduino, make sure the Z bellow is at 50%! This bellow does not have a potentiometer and will assume it is at 50% upon restart.</li>
+				<li>To reprocess a measurement, call the PHP script like this:<br>
+					<a href="http://localhost/controller/php/evaluateData.php?sampleName=221223_025949_test_Air" target="_blank">
+						http://localhost/controller/php/evaluateData.php?sampleName=221223_025949_test_Air
+						</a>				</li>
+				<li>If you need to reprocess multiple measurements, use the <code>batchReprocess.py</code> script.</li>
 			</ul>
-			
+		
 			<h3>Startup</h3>
 			<ul>
-				<li>To turn the TILDAS on: (1) plug it in, (2) toggle the power switch in the back, (3) turn on the main swith on the front.</li>
-				<li>To allow streaming data from the TILDAS to the rPi, click the "RS" on (TDLWintel bottom left) and set the mode to "Stream Data" (TDLWintel top left).</li>
-				<li>If Python does not get data from the TILDAS (all mixing ratios are zero) toggle the "RS" button in TDLWintel.</li>
-				<li>Start the communication script: python3 /var/www/html/controller/python/serialComm.py</li>
+				<li>To turn on the TILDAS:
+					<ol type="a">
+						<li>Plug in the power cable.</li>
+						<li>Toggle the power switch on the back.</li>
+						<li>Switch on the main power on the front.</li>
+					</ol>
+				</li>
+				<li>To enable data streaming from the TILDAS PC to this Linux computer:
+					<ol type="a">
+						<li>Click the "RS" button (bottom left in TDLWintel).</li>
+						<li>Set the mode to "Stream Data" (top left in TDLWintel).</li>
+						<li>Click the "flk" button for frequency lock (bottom left in TDLWintel).</li>
+					</ol>
+				</li>
+				<li>Start the communication script in a terminal with:<br>
+					<code>python3 /var/www/html/controller/python/serialComm.py</code>
+				</li>
 			</ul>
+		
+			<h3>Checklist before starting a sequence</h3>
+			<ol>
+				<li>Ensure that <code>serialComm.py</code> is running in the terminal. The number of Arduino errors does not need to be zero, but it should not increase continuously. A few errors are expected when the stepper motors are active.</li>
+				<li>The valves respond correctly when clicked (they should open and close as expected).</li>
+				<li>Mixing ratios and cell pressure values are being streamed from the TILDAS (they should update approximately once per second).</li>
+				<li>The TILDAS is mounted as an external drive. This is only necessary if the computer was restarted. Although the PHP code normally mounts it automatically, you can ensure it by running:<br>
+					<code>exec /var/www/html/controller/shell/mountTILDAS.sh</code>
+				</li>
+				<li>All valves are in their correct starting positions. You can click the <b><span style="color: #9A6CA6"><em>Starting position</em></span></b> button to reset them.</li>
+			</ol>
 
 			<h3>Methods and sequences</h3>
 			<p>The general structure of a command-line in the method files is "command,parameter,wait".
@@ -387,8 +415,8 @@
 				<li>WA,0,7, &lt;--- Write current pressure at gauge A on the front panel.</li>
 				<li>WR,0,12, &lt;--- Write current reference CO<sub>2</sub> pressure (gauge X) on the front panel. This value is reset after the method is finished.</li>
 				<li>WS,0,6, &lt;--- Write current sample CO<sub>2</sub> pressure (gauge Y) on the front panel. This value is reset after the method is finished.</li>
+				<li>WK,0,6, &lt;--- <b>W</b>ait for the <b>K</b>iel. The script waits until the pressure on gauge D is above 5, i.e., there is a sample wating to be introduced into the bellows.</li>
 				<li>CM,0,1, &lt;--- Write current <em>p</em>CO<sub>2</sub> on the front panel for mixing ratio adjustment. Parameter 0 is for reference gas and 1 for sample gas. This value is reset after the method is finished.</li>
-				<li>IA,363,7, &lt;--- <b>I</b>ntroduces <b>A</b>ir. Opens V15, waits until the pressure on gauge A reaches the value set in the parameter, then closes valves V15.</li>
 				<li>RS,1.700,1, &lt;--- <b>R</b>efill <b>S</b>ample (Y) bellow incrementally from the volume right to V22 to a target pressure set by the parameter. Line needs to be pumped and in starting position and sample bellow at 100%.</li>
 				<li>TWD,1,1, &lt;--- Starts the TILDAS writing data.</li>
 				<li>TWD,0,1, &lt;--- Stops the TILDAS writing data.</li>
