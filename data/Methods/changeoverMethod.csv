@@ -5,7 +5,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -27,9 +27,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -50,7 +51,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -72,9 +73,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -95,7 +97,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -117,9 +119,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -140,7 +143,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -162,9 +165,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -185,7 +189,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -207,9 +211,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -230,7 +235,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -252,9 +257,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -275,7 +281,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -297,9 +303,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -320,7 +327,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -342,9 +349,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -365,7 +373,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -387,9 +395,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -410,7 +419,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -432,9 +441,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -455,7 +465,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -477,9 +487,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -500,7 +511,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -522,9 +533,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -545,7 +557,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -567,9 +579,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -590,7 +603,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -612,9 +625,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -635,7 +649,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -657,9 +671,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -680,7 +695,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -702,9 +717,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -725,7 +741,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -747,9 +763,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -770,7 +787,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -792,9 +809,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -815,7 +833,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -837,9 +855,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -860,7 +879,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -882,9 +901,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -905,7 +925,7 @@ V12,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PY,1.186,5,<--- Set CO2 pressure
+PY,1.127,5,<--- Set CO2 pressure
 V12,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -927,9 +947,10 @@ V01,0,1,
 V11,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V11,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture
@@ -950,7 +971,7 @@ V06,1,1,
 V19,0,1,<--- Expand a portion of collision gas for later mixing
 V20,1,5,
 V20,0,1,
-PX,1.165,5,
+PX,1.169,5,
 V06,0,1,
 V28,0,1,
 V19,1,10,<--- Expand the collision gas aliquot for mixing
@@ -972,9 +993,10 @@ V01,0,1,
 V05,1,15,<--- Insert analyte to cell
 BG,1,3,<--- Enable background fitting
 V05,0,3,
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
-QC,41.300,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
+QC,41.000,3,<--- Set the cell pressure
 V02,0,10,<--- Timeadjust here to eliminate the tick shape of pCO2
 TWD,1,3,<--- MEASUREMENT ON changeover finished <<<
 V17,0,1,<--- Evacuate the remaining CO2-collision gas mixture

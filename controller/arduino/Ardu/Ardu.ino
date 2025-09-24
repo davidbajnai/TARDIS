@@ -504,7 +504,7 @@ void waitForKiel()
   unsigned long startTime = millis();
   const unsigned long maxWait = 9000000; // 2.5 hours
 
-  while (D_pressure <= 15 && millis() - startTime <= maxWait)
+  while (D_pressure <= 6.5 && millis() - startTime <= maxWait)
   {
     sendStatus("WK");
     delay(10);

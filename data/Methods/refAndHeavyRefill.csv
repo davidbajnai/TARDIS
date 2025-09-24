@@ -44,7 +44,7 @@ V17,1,40,
 V11,0,1,
 V13,0,1,
 V12,1,5,
-PY,1.250,1,<--- Adjust the pressure in the sample bellow
+PY,1.205,1,<--- Adjust the pressure in the sample bellow
 V12,0,1,
 V13,1,1,
 V11,1,1,

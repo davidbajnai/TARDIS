@@ -3,23 +3,23 @@
 #################################################################
 ######################## Import libraries #######################
 #################################################################
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
+from scipy.stats import norm
+from scipy import stats
+from datetime import datetime
+import pandas as pd
+import numpy as np
+import json
+import sys
+import traceback
+import warnings
 import os
 os.environ['MPLCONFIGDIR'] = "/var/www/html/controller/python"
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-import warnings
 warnings.filterwarnings('ignore')
-import traceback
-import sys
-import json
-import numpy as np
-import pandas as pd
-from datetime import datetime
-from scipy import stats
-from scipy.stats import norm
-from matplotlib.colors import LinearSegmentedColormap
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 #################################################################
 ####################### Figure parameters #######################
@@ -35,6 +35,7 @@ plt.rcParams['mathtext.default'] = 'regular'
 #################################################################
 ####################### Define functions ########################
 #################################################################
+
 
 def prime(delta):
     return 1000 * np.log(delta/1000 + 1)
@@ -57,7 +58,7 @@ def confidence_interval(data, confidence=68):
 def calc_stats(df, column, samID, offset=0, scale=1, rounding=5):
     """
     Calculate mean, standard deviation, and number of data points for a given column.
-    
+
     Parameters:
     df (pd.DataFrame): The dataframe containing the data.
     column (str): The column to calculate statistics for.
@@ -65,7 +66,7 @@ def calc_stats(df, column, samID, offset=0, scale=1, rounding=5):
     offset (float, optional): Value to subtract from the mean (e.g., 273.15 for temperature). Default is 0.
     scale (float, optional): Value to multiply the result by (e.g., 1000 for pCO2). Default is 1.
     rounding (int, optional): Number of decimal places to round to. Default is 5.
-    
+
     Returns:
     tuple: (Sample mean, Sample std, Reference mean, Reference std, nSam, nRef)
     """
@@ -82,15 +83,17 @@ def calc_stats(df, column, samID, offset=0, scale=1, rounding=5):
     nRef = df.loc[ref_mask].shape[0]
 
     # Compute mean and standard deviation with offset and scaling
-    sample_mean = ((df.loc[sample_mask, column].mean() - offset) * scale).round(rounding)
+    sample_mean = ((df.loc[sample_mask, column].mean() -
+                   offset) * scale).round(rounding)
     sample_std = (df.loc[sample_mask, column].std() * scale).round(rounding)
-    ref_mean = ((df.loc[ref_mask, column].mean() - offset) * scale).round(rounding)
+    ref_mean = ((df.loc[ref_mask, column].mean() - offset)
+                * scale).round(rounding)
     ref_std = (df.loc[ref_mask, column].std() * scale).round(rounding)
 
     return sample_mean, sample_std, ref_mean, ref_std, nSam, nRef
 
 
-def calculate_mismatch(df, param, samID = None):
+def calculate_mismatch(df, param, samID=None):
     """
     This function calculates the mean and standard deviation of mismatches 
     between sample cycles and their neighboring reference cycles for a given parameter.
@@ -122,16 +125,18 @@ def calculate_mismatch(df, param, samID = None):
     if samID is None:  # If no local samID is provided, use the global one
         samID = globals().get("samID")  # Get samID from the global scope
     if samID is None:
-        raise NameError("Global variable 'samID' is not defined")  
+        raise NameError("Global variable 'samID' is not defined")
     start_cycle = 4 if "air" in samID.lower() else 2  # Start at 4 if "air" in samID
 
-    for i in range(start_cycle, df["Cycle"].max() + 1, 2):  # Loop through sample cycles (even numbers, starting from 2)
+    # Loop through sample cycles (even numbers, starting from 2)
+    for i in range(start_cycle, df["Cycle"].max() + 1, 2):
         prev_ref = df[df["Cycle"] == i - 1]  # Get previous reference cycle
         next_ref = df[df["Cycle"] == i + 1]  # Get next reference cycle
         sam = df[df["Cycle"] == i]  # Get current sample cycle
 
         if not prev_ref.empty and not next_ref.empty and not sam.empty:
-            avg_ref = (prev_ref[param].mean() + next_ref[param].mean()) / 2  # Compute mean of reference cycles
+            # Compute mean of reference cycles
+            avg_ref = (prev_ref[param].mean() + next_ref[param].mean()) / 2
             mismatch = sam[param].mean() - avg_ref  # Compute mismatch
             mismatches.append(mismatch)  # Store mismatch
 
@@ -142,14 +147,17 @@ def calculate_mismatch(df, param, samID = None):
 ####################### Import TILDAS data ######################
 #################################################################
 
+
 # Import measurement info
 samID = str(sys.argv[1])  # Something like 230118_084902_heavyVsRef
 folder = os.path.join("/var/www/html/data/Results/", samID)
 
 # Calculate the start time of the measurement.
 # The TILDAS and the loglife use Mac time, which is the number of seconds since 1904-01-01
-measurementStarted = int(datetime.strptime(samID[0:13], '%y%m%d_%H%M%S').timestamp()-datetime(1904, 1, 1).timestamp())
-dateTimeMeasured = str(datetime.strptime(samID[:6] + samID[7:13], "%y%m%d%H%M%S").strftime("%Y-%m-%d %H:%M:%S"))
+measurementStarted = int(datetime.strptime(
+    samID[0:13], '%y%m%d_%H%M%S').timestamp()-datetime(1904, 1, 1).timestamp())
+dateTimeMeasured = str(datetime.strptime(
+    samID[:6] + samID[7:13], "%y%m%d%H%M%S").strftime("%Y-%m-%d %H:%M:%S"))
 
 strFiles = []
 for file in os.listdir(folder):
@@ -171,20 +179,24 @@ i = 0
 for file in strFiles:
     baseName = file[:-4]
     # The .str files contain the isotopologue mixing ratios
-    dfstr = pd.read_csv(os.path.join(folder, baseName + ".str"), names=["Time(abs)", "Xp627", "Xp628", "Xp626", "CO2"], delimiter=" ", skiprows=1, index_col=False)
-    
+    dfstr = pd.read_csv(os.path.join(folder, baseName + ".str"), names=[
+                        "Time(abs)", "Xp627", "Xp628", "Xp626", "CO2"], delimiter=" ", skiprows=1, index_col=False)
+
     # The .stc files contain the cell temperature, pressure, etc. data
-    dfstc = pd.read_csv(os.path.join(folder, baseName + ".stc"), delimiter=",", skiprows=1)
+    dfstc = pd.read_csv(os.path.join(folder, baseName +
+                        ".stc"), delimiter=",", skiprows=1)
     dfstc.columns = dfstc.columns.str.strip()
-    
+
     # Combine data from the two files
     df = pd.concat([dfstr, dfstc], axis=1, join="inner")
-    
+
     df['Time(rel)'] = df['Time(abs)'] - measurementStarted
     df['Type'] = pattern[i]
     df['Cycle'] = i
-    df['d17O_cy'] = ((df['Xp627'] / df['Xp626']) / np.mean(df['Xp627'] / df['Xp626']) - 1) * 1000
-    df['d18O_cy'] = ((df['Xp628'] / df['Xp626']) / np.mean(df['Xp628'] / df['Xp626']) - 1) * 1000
+    df['d17O_cy'] = ((df['Xp627'] / df['Xp626']) /
+                     np.mean(df['Xp627'] / df['Xp626']) - 1) * 1000
+    df['d18O_cy'] = ((df['Xp628'] / df['Xp626']) /
+                     np.mean(df['Xp628'] / df['Xp626']) - 1) * 1000
     df['Dp17O_cy'] = Dp17O(df['d17O_cy'], df['d18O_cy'])
     df['z_score'] = stats.zscore(df['Dp17O_cy'])
     if i == 0:
@@ -195,8 +207,10 @@ for file in strFiles:
 df = dfAll
 
 # Calculate the isotope ratios normalized to all data avarege
-df["d17O_raw"] = ((df['Xp627'] / df['Xp626']) / np.mean(df['Xp627'] / df['Xp626']) - 1) * 1000
-df["d18O_raw"] = ((df['Xp628'] / df['Xp626']) / np.mean(df['Xp628'] / df['Xp626']) - 1) * 1000
+df["d17O_raw"] = ((df['Xp627'] / df['Xp626']) /
+                  np.mean(df['Xp627'] / df['Xp626']) - 1) * 1000
+df["d18O_raw"] = ((df['Xp628'] / df['Xp626']) /
+                  np.mean(df['Xp628'] / df['Xp626']) - 1) * 1000
 df["Dp17O_raw"] = Dp17O(df["d17O_raw"], df["d18O_raw"])
 
 # Compensate for summer time / winter time, if necessary
@@ -205,15 +219,18 @@ if (df["Time(rel)"].iat[0] > 3500):
 
 # Calculate the measurement duration
 seconds = df["Time(rel)"].iat[-1]
-measurement_duration = str("%d:%02d:%02d" % (seconds % (24 * 3600) // 3600, seconds % 3600 // 60, seconds % 3600 % 60))
+measurement_duration = str("%d:%02d:%02d" % (seconds % (
+    24 * 3600) // 3600, seconds % 3600 // 60, seconds % 3600 % 60))
 
 # Export all data into an Excel file
 df.to_excel(os.path.join(folder, "allData.xlsx"), index=False)
 
 # Get the list of the SPI files and copy the list into a CSV file
 if "SPEFile" in df.columns:
-    df["SPEFile"] = df["SPEFile"].str.replace(r'C:\\TDLWintel', '/mnt/TILDAS_PC', regex=True).str.replace(r'\\', '/', regex=True)
-    df["SPEFile"].dropna().to_csv(os.path.join(folder, "list_of_SPE_files.csv"), index=False, header=False)
+    df["SPEFile"] = df["SPEFile"].str.replace(
+        r'C:\\TDLWintel', '/mnt/TILDAS_PC', regex=True).str.replace(r'\\', '/', regex=True)
+    df["SPEFile"].dropna().to_csv(os.path.join(
+        folder, "list_of_SPE_files.csv"), index=False, header=False)
 
 #################################################################
 ################### Read and reformat logfile ###################
@@ -269,9 +286,12 @@ if "Time(abs)" in dfLogFile.columns:
 dfLogFile.to_csv(os.path.join(folder, "logFile.csv"), index=False)
 
 # Calculate the mismatch between sample and reference cycles for pCO2, cellT, and cellP
-pCO2_mismatch, pCO2_mismatch_error = np.round(np.array(calculate_mismatch(df, "Xp626")) / 1000, 5)
-TCell_mismatch, TCell_mismatch_error = np.round(calculate_mismatch(df, "Traw"), 5)
-PCell_mismatch, PCell_mismatch_error = np.round(calculate_mismatch(df, "Praw"), 5)
+pCO2_mismatch, pCO2_mismatch_error = np.round(
+    np.array(calculate_mismatch(df, "Xp626")) / 1000, 5)
+TCell_mismatch, TCell_mismatch_error = np.round(
+    calculate_mismatch(df, "Traw"), 5)
+PCell_mismatch, PCell_mismatch_error = np.round(
+    calculate_mismatch(df, "Praw"), 5)
 
 #################################################################
 ###################### Figure 1 – Raw data ######################
@@ -280,7 +300,8 @@ PCell_mismatch, PCell_mismatch_error = np.round(calculate_mismatch(df, "Praw"), 
 # Plot parameters
 plt.rcParams["figure.figsize"] = (6, 18)
 # from http://tsitsul.in/blog/coloropt/                blue     yellow      red        grey    green
-mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=["#4053d3", "#ddb310", "#b51d14", "#cacaca", "#00b25d"])
+mpl.rcParams['axes.prop_cycle'] = mpl.cycler(
+    color=["#4053d3", "#ddb310", "#b51d14", "#cacaca", "#00b25d"])
 
 # Colors
 colSample = "C0"
@@ -291,7 +312,8 @@ data_colors = {'Dummy': 'C3', 'Sam': 'C0', 'Ref': 'C2'}
 cmap = LinearSegmentedColormap.from_list('custom_colors', ['C3', 'C2', 'C0'])
 data_names = ['Dummy', 'Reference', 'Sample']
 
-fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9, ax10) = plt.subplots(10, 1, sharex=True)
+fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9,
+      ax10) = plt.subplots(10, 1, sharex=True)
 ax1.set_title(f"{samID}\nMeasurement duration: {measurement_duration}")
 
 for ax in fig.get_axes():
@@ -304,37 +326,44 @@ for ax in fig.get_axes():
 # Subplot A: d18O vs time
 TILDAS_time = df["Time(rel)"]
 scat = ax1.scatter(TILDAS_time, df["d18O_raw"],
-                   marker=".", c=df.Type.astype('category').cat.codes, cmap=cmap)
-ax1.legend(handles=scat.legend_elements()[0], labels=data_names, markerscale = 0.5)
+                   marker=".", s=1,c=df.Type.astype('category').cat.codes, cmap=cmap)
+ax1.legend(handles=scat.legend_elements()[
+           0], labels=data_names, markerscale=0.5)
 ax1.set_ylabel("$\delta^{18}$O (‰, raw)")
 
 # Subplot B: D17O vs time
 high_zscore = df[df['z_score'].abs() > 3]
 low_zscore = df[df['z_score'].abs() <= 3]
 ax2.scatter(TILDAS_time[low_zscore.index], low_zscore['Dp17O_raw'],
-            marker=".", color=low_zscore['Type'].map(data_colors))
+            marker=".", s=1, color=low_zscore['Type'].map(data_colors))
+
 ax2.scatter(TILDAS_time[high_zscore.index], high_zscore['Dp17O_raw'],
             marker="o", fc='none', s=5, ec=high_zscore['Type'].map(data_colors))
 
 # Annotate each cycle number at its computed mean position
-cycle_means = df.groupby("Cycle", as_index=False).agg({"Time(rel)": "mean", "Dp17O_raw": "mean"})
+cycle_means = df.groupby("Cycle", as_index=False).agg(
+    {"Time(rel)": "mean", "Dp17O_raw": "mean"})
 for time, d18O, cycle in cycle_means[["Time(rel)", "Dp17O_raw", "Cycle"]].to_numpy():
     ax2.text(time, d18O, str(int(cycle)),
              color="white", fontweight="bold",
              ha="center", va="center")
 
 legend_handles = [
-    plt.Line2D([0], [0], marker=".", color="black", ls="None", label="z-score ≤ 3"),
-    plt.Line2D([0], [0], marker="o", markersize=3, mfc="none", mec="black", ls="None", label="z-score > 3")
+    plt.Line2D([0], [0], marker=".", color="black",
+               ls="None", label="z-score ≤ 3"),
+    plt.Line2D([0], [0], marker="o", markersize=3, mfc="none",
+               mec="black", ls="None", label="z-score > 3")
 ]
 ax2.legend(handles=legend_handles)
 
 ax2.set_ylabel("$\Delta\prime^{17}$O (ppm, raw)")
 
 # Subplot C: mixing ratios (pCO2) vs time
-ax3.scatter(TILDAS_time, df['Xp626'] / 1000, marker=".", color = df['Type'].map(data_colors))
+ax3.scatter(TILDAS_time, df['Xp626'] / 1000,
+            marker=".", s=1,color=df['Type'].map(data_colors))
 
-pCO2Sam, pCO2Sam_error, pCO2Ref, pCO2Ref_error, nSam, nRef = calc_stats(df, "Xp626", samID, scale = 0.001)
+pCO2Sam, pCO2Sam_error, pCO2Ref, pCO2Ref_error, nSam, nRef = calc_stats(
+    df, "Xp626", samID, scale=0.001)
 
 ax3.text(0.01, 0.02, f"{pCO2Sam:.1f}±{pCO2Sam_error:.1f} ppmv",
          size=8, color=colSample, ha='left', va='bottom',
@@ -347,9 +376,11 @@ ax3.text(0.01, 0.12, f"{pCO2Ref:.1f}±{pCO2Ref_error:.1f} ppmv",
 ax3.set_ylabel('$\chi\prime_{626}$ (µmol mol$^{-1}$)')
 
 # Subplot D: Cell pressure vs time
-ax4.scatter(TILDAS_time, df['Praw'], marker=".", color = df['Type'].map(data_colors))
+ax4.scatter(TILDAS_time, df['Praw'], marker=".",s=1,
+            color=df['Type'].map(data_colors))
 
-PCellSam, PCellSam_error, PCellRef, PCellRef_error, _, _ = calc_stats(df, "Praw", samID)
+PCellSam, PCellSam_error, PCellRef, PCellRef_error, _, _ = calc_stats(
+    df, "Praw", samID)
 
 ax4.text(0.01, 0.02, f"{PCellSam:.3f}±{PCellSam_error:.3f} Torr",
          size=8, color=colSample, ha='left', va='bottom',
@@ -360,9 +391,24 @@ ax4.text(0.01, 0.12, f"{PCellRef:.3f}±{PCellRef_error:.3f} Torr",
 ax4.set_ylabel("Pressure (Torr, cell)")
 
 # Subplot E: Cell temperature
-ax5.scatter(TILDAS_time, df['Traw'] - 273.15, marker=".", color = df['Type'].map(data_colors))
+ax5.scatter(TILDAS_time, df['Traw'] - 273.15,
+            marker=".", s=1, color=df['Type'].map(data_colors))
 
-TCellSam, TCellSam_error, TCellRef, TCellRef_error, _, _ = calc_stats(df, "Traw", samID, offset=273.15)
+window=101
+half_win = window // 2
+# Moving average (with 'same' so length matches input)
+# Sort if needed
+sort_idx = np.argsort(TILDAS_time)
+sorted_time = np.array(TILDAS_time)[sort_idx]
+sorted_y = np.array(df['Traw'] - 273.15)[sort_idx]
+smoothed_y = np.convolve(sorted_y, np.ones(window)/window, mode='same')
+# Trim the edges
+sorted_time = sorted_time[half_win:-half_win]
+smoothed_y = smoothed_y[half_win:-half_win]
+ax5.plot(sorted_time, smoothed_y, color='black', linewidth=1)
+
+TCellSam, TCellSam_error, TCellRef, TCellRef_error, _, _ = calc_stats(
+    df, "Traw", samID, offset=273.15)
 
 ax5.text(0.01, 0.02, f"{TCellSam:.3f}±{TCellSam_error:.3f} °C",
          size=8, color=colSample, ha='left', va='bottom',
@@ -374,7 +420,22 @@ ax5.set_ylabel("Temperature (°C, cell)")
 
 # Subplot F: Coolant temperature and room temperature
 TCoolant = df['Tref'] - 273.15
-ax6.scatter(TILDAS_time, TCoolant, marker=".",color = df['Type'].map(data_colors))
+ax6.scatter(TILDAS_time, TCoolant, marker=".",s=1,
+            color=df['Type'].map(data_colors))
+
+window=101
+half_win = window // 2
+# Moving average (with 'same' so length matches input)
+# Sort if needed
+sort_idx = np.argsort(TILDAS_time)
+sorted_time = np.array(TILDAS_time)[sort_idx]
+sorted_y = np.array(TCoolant)[sort_idx]
+smoothed_y = np.convolve(sorted_y, np.ones(window)/window, mode='same')
+# Trim the edges
+sorted_time = sorted_time[half_win:-half_win]
+smoothed_y = smoothed_y[half_win:-half_win]
+ax6.plot(sorted_time, smoothed_y, color='black', linewidth=1)
+
 ax6.set_ylabel("Temperature (°C, coolant)")
 TCoolant_error = np.std(TCoolant)
 TCoolant = np.mean(TCoolant)
@@ -384,14 +445,16 @@ if ('roomTemperature' in dfLogFile.columns):
     ax6b.spines['right'].set_color('C1')
     x = dfLogFile["Time(rel)"]
     y = dfLogFile['roomTemperature']
-    ax6b.plot(x, y, color = "C1")
+    ax6b.plot(x, y, color="C1")
     ax6b.set_ylabel("Temperature (°C, room)")
     mean = np.round(np.mean(y), 3)
     std = np.round(np.std(y), 3)
     labelRoomT = str(mean) + "±" + str(std) + " °C"
-    ax6b.text(1 - 0.01, 0.02, labelRoomT, size=8, color="C1", ha = 'right', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
+    ax6b.text(1 - 0.01, 0.02, labelRoomT, size=8, color="C1", ha='right', va='bottom',
+              transform=ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
-ax6.text(0.01, 0.02, f"{TCoolant:.3f}±{TCoolant_error:.3f} °C", size=8, color="black", ha = 'left', va = 'bottom', transform = ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1,alpha=0.5))
+ax6.text(0.01, 0.02, f"{TCoolant:.3f}±{TCoolant_error:.3f} °C", size=8, color="black", ha='left',
+         va='bottom', transform=ax6.transAxes, bbox=dict(fc='white', ec="none", pad=1, alpha=0.5))
 
 # Subplot G: Box temperature vs time
 if 'boxTemperature' in dfLogFile.columns:
@@ -400,14 +463,14 @@ if 'boxTemperature' in dfLogFile.columns:
     ax7.plot(x, y, color="C0")
     ax7.set_ylabel("Temperature (°C, box)")
     ax7.text(0.01, 0.02, f"{np.mean(y):.3f}±{np.std(y):.3f} °C",
-            size=8, color="C0", ha='left', va='bottom', transform=ax7.transAxes,
-            bbox=dict(fc='white', ec="none", pad=1, alpha=0.5), zorder=10)
+             size=8, color="C0", ha='left', va='bottom', transform=ax7.transAxes,
+             bbox=dict(fc='white', ec="none", pad=1, alpha=0.5), zorder=10)
 if 'boxSetpoint' in dfLogFile.columns:
     y_sp = dfLogFile['boxSetpoint']
     ax7.plot(x, y_sp, color="C2")
     ax7.text(0.01, 0.11, f"SP: {y_sp.iat[0]} °C",
-            size=8, color="C2", ha='left', va='bottom', transform=ax7.transAxes,
-            bbox=dict(fc='white', ec="none", pad=1, alpha=0.5), zorder=10)
+             size=8, color="C2", ha='left', va='bottom', transform=ax7.transAxes,
+             bbox=dict(fc='white', ec="none", pad=1, alpha=0.5), zorder=10)
 if 'fanSpeed' in dfLogFile.columns:
     ax7b = ax7.twinx()
     ax7b.spines['right'].set_color('C1')
@@ -447,7 +510,7 @@ if all(col in dfLogFile.columns for col in ['pressureZ', 'percentageZ', 'Time(re
     ax10b = ax10.twinx()
     ax10b.spines['right'].set_color('C1')
     y = dfLogFile['percentageZ']
-    ax10b.plot(x, y, color = "C1")
+    ax10b.plot(x, y, color="C1")
     ax10b.set_ylabel("Bellow expansion (%, Z)")
 
 ax10.set_xlabel("Relative time (s)")
@@ -455,7 +518,7 @@ ax10.set_xlabel("Relative time (s)")
 plt.tight_layout()
 plt.savefig(os.path.join(folder, "rawData.png"))
 
-try: 
+try:
     #################################################################
     ########################## Filter data ##########################
     #################################################################
@@ -478,7 +541,6 @@ try:
                 size=12, weight="bold", ha="right", va="top",
                 bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
                 transform=ax.transAxes)
-
 
     # Reference gas composition
     d18OWorkingGas = 28.048
@@ -508,12 +570,13 @@ try:
     # New dataframe without the dummy cycles
     if "air" in samID.lower():
         dfm = df.loc[df['Cycle'] > 2]
-        cy = 4 # the number of the first proper reference cycle
+        cy = 4  # the number of the first proper reference cycle
     else:
         dfm = df.loc[df['Cycle'] > 0]
-        cy = 2 # the number of the first proper reference cycle
+        cy = 2  # the number of the first proper reference cycle
 
-    dfm = dfm.groupby(['Cycle'])[['Time(rel)', "d17O_raw", "d18O_raw", "Dp17O_raw"]].mean()
+    dfm = dfm.groupby(['Cycle'])[['Time(rel)', "d17O_raw",
+                                  "d18O_raw", "Dp17O_raw"]].mean()
     ax1.scatter(dfm.iloc[:, 0], dfm.iloc[:, 1],
                 marker="*", s=20, c=colBracketing, label="Cycle avg")
 
@@ -539,26 +602,25 @@ try:
             ysRef = m * xs + b
 
             a17Bracketing = (ys + 1000) / (ysRef + 1000)
-            d17OBracketing = (d17OWorkingGas + 1000 ) * a17Bracketing - 1000
+            d17OBracketing = (d17OWorkingGas + 1000) * a17Bracketing - 1000
             bracketingResults.append(d17OBracketing)
             bracketingCycles.append(cy)
 
             bracketingTime.append(xs)
 
             ax1.plot([x1, x2], [y1, y2],
-                    linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
+                     linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
             ax1.plot([xs, xs], [ys, ysRef],
-                    color=colBracketing, linewidth=1.2)
+                     color=colBracketing, linewidth=1.2)
         cy = cy + 1
 
     # We create the dfBracketingResults dataframe here
-    dfBracketingResults = pd.DataFrame(bracketingCycles, columns = ["Cycle"])
+    dfBracketingResults = pd.DataFrame(bracketingCycles, columns=["Cycle"])
     dfBracketingResults['Time(rel)'] = bracketingTime
     dfBracketingResults['d17O'] = bracketingResults
 
     ax1.legend(loc="center left")
     ax1.set_ylabel("$\delta^{17}$O (‰, raw)")
-
 
     ######################### Plot B – d18O #########################
 
@@ -601,15 +663,15 @@ try:
             ys = dfm.loc[cy]["d18O_raw"]
 
             ysRef = m * xs + b
-            
+
             a18Bracketing = (ys + 1000) / (ysRef + 1000)
-            d18OBracketing = (d18OWorkingGas + 1000 ) * a18Bracketing - 1000
+            d18OBracketing = (d18OWorkingGas + 1000) * a18Bracketing - 1000
             bracketingResults.append(d18OBracketing)
 
             ax2.plot([x1, x2], [y1, y2],
-                    linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
+                     linestyle='dotted', color=colBracketing, linewidth=1.2, dash_capstyle="round")
             ax2.plot([xs, xs], [ys, ysRef],
-                    color=colBracketing, linewidth=1.2)
+                     color=colBracketing, linewidth=1.2)
         cy = cy + 1
 
     dfBracketingResults['d18O'] = bracketingResults
@@ -618,7 +680,8 @@ try:
 
     ######################## Plot C – Dp17O #########################
 
-    dfBracketingResults['Dp17O'] = Dp17O(dfBracketingResults['d17O'], dfBracketingResults['d18O'])
+    dfBracketingResults['Dp17O'] = Dp17O(
+        dfBracketingResults['d17O'], dfBracketingResults['d18O'])
 
     # Final bracketing results
     d18O_SRB = dfBracketingResults["d18O"].mean().round(3)
@@ -626,12 +689,13 @@ try:
     d17O_SRB = dfBracketingResults["d17O"].mean().round(3)
     d17O_SRB_error = confidence_interval(dfBracketingResults["d17O"])
     D17Op_SRB = dfBracketingResults["Dp17O"].mean().round(1)
-    D17Op_SRB_error = round(confidence_interval(dfBracketingResults["Dp17O"]), 1)
+    D17Op_SRB_error = round(confidence_interval(
+        dfBracketingResults["Dp17O"]), 1)
 
     ax3.scatter(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
                 marker="*", s=20, c=colSample, label="Cycle avg", zorder=5)
     ax3.plot(dfBracketingResults['Time(rel)'], dfBracketingResults['Dp17O'],
-            color=colSample, linewidth=1)
+             color=colSample, linewidth=1)
     ax3.axhline(D17Op_SRB,
                 c=colBracketing, zorder=-1, linewidth=1.2, label="mean")
     ax3.axhline(D17Op_SRB-D17Op_SRB_error,
@@ -694,9 +758,9 @@ except Exception as e:
     # but otherwise all files are there:
     # - create an empty FitPlot.png
     # - save the python error into a txt file
-    # - save the replicate in the isolabor database, but mark it 
+    # - save the replicate in the isolabor database, but mark it
     # as discarded
-    
+
     # Save an empty figure
     plt.figure()
     plt.savefig(os.path.join(folder, "FitPlot.png"))

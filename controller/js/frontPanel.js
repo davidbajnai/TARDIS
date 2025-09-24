@@ -265,6 +265,12 @@ function startingPosition() {
     console.log(`${new Date().toLocaleTimeString()}, Resetting valves to starting position`);
 }
 
+// Set valves to starting position
+function waitForKiel() {
+    cmd = 'WK';
+    console.log(`${new Date().toLocaleTimeString()}, Waiting for the Kiel to be ready`);
+}
+
 // Move bellows
 function moveBellows(bellow) {
     $('#moveStatus').html('M' + bellow);
@@ -964,6 +970,15 @@ setInterval(function () {
             doThisBeforeEveryCommand();
 
             startingPosition();
+
+            doThisAfterEveryCommand("started");
+        }
+
+        // RWait for Kiel to be ready
+        else if (commandsArray[line][0] == "W" && commandsArray[line][1] == "K" && executed == "yes" && moving == "no" && waiting == "no") {
+            doThisBeforeEveryCommand();
+
+            waitForKiel();
 
             doThisAfterEveryCommand("started");
         }
