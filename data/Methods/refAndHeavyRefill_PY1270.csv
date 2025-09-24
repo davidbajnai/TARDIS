@@ -1,0 +1,51 @@
+V15,0,1,<--- Necessary dummy command for the beginning #######################
+V17,0,1,
+V20,1,3,<--- Prepare some collision gas for flushing
+V20,0,1,
+V06,1,1,<--- Open bellow X
+V12,1,1,<--- Open bellow Y
+V27,1,1,
+V04,1,1,
+V08,1,1,
+V14,1,1,
+V10,1,1,
+BX,100,1,
+BY,100,1,
+V19,1,30,
+V17,1,60,<--- Pump the bellows with the turbo pump
+V12,0,1,
+V10,0,1,
+V14,0,1,
+V04,0,1,
+V08,0,1,
+V18,1,10,
+V18,0,1,<--- Fill the T-piece (left of bellows) with working reference CO2
+V06,0,1,
+V04,1,10,
+V04,0,1,
+V05,0,1,
+V07,0,1,
+V06,1,10,
+PX,1.235,1,<--- Adjust the pressure in the reference bellow
+V06,0,1,
+V05,1,1,
+V07,1,60,
+V11,0,1,<--- The heavy gas refill starts here ################################
+V12,0,1,
+V13,0,1,
+V09,1,10,<--- Fill the X-piece left of Y bellow with CO2
+V09,0,1,
+V12,1,10,
+V12,0,1,
+V27,1,2,
+V13,1,1,
+V11,1,20,
+V17,1,40,
+V11,0,1,
+V13,0,1,
+V12,1,5,
+PY,1.335,1,<--- Adjust the pressure in the sample bellow
+V12,0,1,
+V13,1,1,
+V11,1,1,
+V17,1,150,
