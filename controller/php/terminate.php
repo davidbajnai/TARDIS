@@ -41,10 +41,11 @@ if (!flock($lock, LOCK_EX | LOCK_NB)) {
     stopResponse(409, false, 'A STOP request is already running. Wait for it to finish.');
 }
 
-// Apache needs permission for this exact command; see shell/STOP_SETUP.md.
+// Run as Apache's user, which must also own serialComm.py and have serial access.
+// See shell/STOP_SETUP.md; no privilege elevation is performed here.
 $output = [];
 $exitCode = 1;
-exec('/usr/bin/sudo -n -- ' . escapeshellarg($scriptPath) . ' 2>&1', $output, $exitCode);
+exec(escapeshellarg($scriptPath) . ' 2>&1', $output, $exitCode);
 flock($lock, LOCK_UN);
 fclose($lock);
 
