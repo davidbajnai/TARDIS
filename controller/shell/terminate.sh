@@ -32,10 +32,31 @@ script_path = Path(sys.argv[1]).resolve()
 arduino_serial_number = "8503631363035151D102"
 
 
+def python_script_argument(arguments):
+    index = 1
+    while index < len(arguments):
+        argument = arguments[index]
+        # "-" runs code from stdin, as this reset helper does. The remaining
+        # arguments belong to that code and must not be treated as script paths.
+        if argument in ("-", "-c", "-m") or argument.startswith(("-c", "-m")):
+            return None
+        if argument == "--":
+            return arguments[index + 1] if index + 1 < len(arguments) else None
+        if argument in ("-W", "-X", "--check-hash-based-pycs"):
+            index += 2
+        elif argument.startswith("-"):
+            index += 1
+        else:
+            return argument
+    return None
+
+
 def find_serial_processes():
     process_ids = []
     for process_dir in Path("/proc").iterdir():
         if not process_dir.name.isdigit():
+            continue
+        if int(process_dir.name) == os.getpid():
             continue
         try:
             arguments = [
@@ -47,19 +68,15 @@ def find_serial_processes():
                 r"python(?:\d+(?:\.\d+)*)?", Path(arguments[0]).name
             ):
                 continue
-            # Match the script argument, including relative paths and spaces.
-            # Do not match Python -c/-m commands mentioning the filename.
-            if "-c" in arguments or "-m" in arguments:
+            # Match only the executed script, not filenames in its arguments.
+            argument = python_script_argument(arguments)
+            if argument is None or Path(argument).name != script_path.name:
                 continue
-            for argument in arguments[1:]:
-                if Path(argument).name != script_path.name:
-                    continue
-                candidate = Path(argument)
-                if not candidate.is_absolute():
-                    candidate = (process_dir / "cwd").resolve() / candidate
-                if candidate.resolve() == script_path:
-                    process_ids.append(int(process_dir.name))
-                    break
+            candidate = Path(argument)
+            if not candidate.is_absolute():
+                candidate = (process_dir / "cwd").resolve() / candidate
+            if candidate.resolve() == script_path:
+                process_ids.append(int(process_dir.name))
         except FileNotFoundError:
             # A process can exit between listing /proc and reading its files.
             continue
