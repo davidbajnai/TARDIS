@@ -327,6 +327,16 @@
 			<!-- The main buttons -->
 			<button onclick="startSequenceButton();" class="button big" style="top:660px;left:1800px;background-color:#63A615;">Start sequence</button>
 			<button onclick="startingPosition();" class="button big" style="top:660px;left:1340px;background-color:#9A6CA6;">Starting position</button>
+			<button id="stopButton" type="button" onclick="stopSystemButton();" class="button big" style="top:660px;left:1470px;background-color:#C62828;color:white;font-weight:bold;">STOP</button>
+
+			<dialog id="stopWarning" aria-labelledby="stopWarningTitle" style="max-width:420px;border:3px solid #C62828;border-radius:4px;padding:20px;">
+				<h2 id="stopWarningTitle" style="color:#C62828;margin-top:0;">STOP — restart warning</h2>
+				<p><strong>The Z bellow needs to be at 50% when the Arduino restarts.</strong> Its position is assumed to be 50% after reset.</p>
+				<p><strong>Reset the TILDAS state manually:</strong> check WD (data writing) and BG (background fitting) in TDLWintel. STOP does not change these settings.</p>
+				<p id="stopResult" role="status" style="white-space:pre-wrap;"></p>
+				<p>The page refreshes after a successful STOP. Restart serialComm.py manually before operating the inlet again.</p>
+				<button type="button" onclick="document.getElementById('stopWarning').close();">Close</button>
+			</dialog>
 
 			<!-- Zugzielanzeiger -->
 			<span id="infoJS" class="Zugzielanzeiger" style="top:35px;left:150px;">NaN</span>

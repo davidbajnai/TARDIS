@@ -7,6 +7,7 @@
 // Global variable needed by the JS but not the HTML
 var cmd = "";
 var sampleNameDate = "";
+var stopInProgress = false;
 
 
 // Fetch the status string from sendCommand.php
@@ -263,6 +264,47 @@ function enableFit() {
 function startingPosition() {
     cmd = 'KL';
     console.log(`${new Date().toLocaleTimeString()}, Resetting valves to starting position`);
+}
+
+// Reset the Arduino independently of moveStatus, then refresh this GUI.
+function stopSystemButton() {
+    const warning = document.getElementById("stopWarning");
+    if (!warning.open) warning.showModal();
+    if (stopInProgress) return;
+
+    stopInProgress = true;
+    $("#stopResult").text("Stopping communication and resetting the Arduino...");
+
+    // The dialog is informational: no acknowledgement is required to send STOP.
+    $.ajax({
+        type: "POST",
+        url: "controller/php/terminate.php",
+        headers: { "X-TARDIS-Stop": "1" },
+        dataType: "json",
+        async: true,
+        timeout: 25000,
+        success: function (response) {
+            $("#stopResult").text(response.message);
+            if (response.ok === true) {
+                // Keep the warning visible after the requested page refresh.
+                try {
+                    sessionStorage.setItem("tardisStopMessage", response.message);
+                } catch (error) {
+                    console.error("Could not retain the STOP warning after refresh:", error);
+                }
+                window.location.reload();
+            }
+        },
+        error: function (xhr) {
+            const message = xhr.responseJSON && xhr.responseJSON.message;
+            $("#stopResult").text(message ||
+                "STOP could not be confirmed. Check the Linux terminal before retrying.");
+            if (!warning.open) warning.showModal();
+        },
+        complete: function () {
+            stopInProgress = false;
+        },
+    });
 }
 
 // Set valves to starting position
@@ -1410,3 +1452,15 @@ setInterval(function () {
     $("#infoJS").html("ICE " + $("#arduinoSpeed").html() + "<br>RE " + JS_speed);
     startTimeJS = new Date().getTime();
 }, 50);
+
+// Restore the STOP warning after refreshing the GUI.
+try {
+    const stopMessage = sessionStorage.getItem("tardisStopMessage");
+    if (stopMessage !== null) {
+        sessionStorage.removeItem("tardisStopMessage");
+        $("#stopResult").text(stopMessage);
+        document.getElementById("stopWarning").showModal();
+    }
+} catch (error) {
+    console.error("Could not restore the STOP warning:", error);
+}
