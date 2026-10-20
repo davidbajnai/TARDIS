@@ -680,6 +680,7 @@ void switchValve(String param)
       digitalWrite(21 + 17, LOW); // Close valve 17
       delay(250);
     }
+    
     if (v == 19)
     {
       digitalWrite(21 + 20, LOW); // Close valve 20
@@ -690,6 +691,7 @@ void switchValve(String param)
       digitalWrite(21 + 19, LOW); // Close valve 19
       delay(250);
     }
+    
     digitalWrite(21 + v, HIGH); // Open valve
   }
   else if (param.substring(3, 4) == "C")

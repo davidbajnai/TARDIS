@@ -1,5 +1,3 @@
-refill,refAndHeavyRefill.csv,<--- HEAVY
-heavyVsRef,changeoverMethod.csv,<--- HEAVY
 refill,refAndLightRefill.csv,<--- light
 lightVsRef,changeoverMethod.csv,<--- light
 refill,refAndHeavyRefill.csv,<--- HEAVY
@@ -20,7 +18,6 @@ refill,refAndLightRefill.csv,<--- light
 lightVsRef,changeoverMethod.csv,<--- light
 refill,refAndHeavyRefill.csv,<--- HEAVY
 heavyVsRef,changeoverMethod.csv,<--- HEAVY
-refill,refAndLightRefill.csv,<--- lights
 lightVsRef,changeoverMethod.csv,<--- light
 refill,refAndHeavyRefill.csv,<--- HEAVY
 heavyVsRef,changeoverMethod.csv,<--- HEAVY
@@ -28,7 +25,6 @@ refill,refAndLightRefill.csv,<--- light
 lightVsRef,changeoverMethod.csv,<--- light
 refill,refAndHeavyRefill.csv,<--- HEAVY
 heavyVsRef,changeoverMethod.csv,<--- HEAVY
-refill,refAndLightRefill.csv,<--- light
 lightVsRef,changeoverMethod.csv,<--- light
 refill,refAndHeavyRefill.csv,<--- HEAVY
 heavyVsRef,changeoverMethod.csv,<--- HEAVY
@@ -36,13 +32,3 @@ refill,refAndLightRefill.csv,<--- light
 lightVsRef,changeoverMethod.csv,<--- light
 refill,refAndHeavyRefill.csv,<--- HEAVY
 heavyVsRef,changeoverMethod.csv,<--- HEAVY
-refill,refAndLightRefill.csv,<--- light
-lightVsRef,changeoverMethod.csv,<--- light
-refill,refAndHeavyRefill.csv,<--- HEAVY
-heavyVsRef,changeoverMethod.csv,<--- HEAVY
-refill,refAndLightRefill.csv,<--- light
-lightVsRef,changeoverMethod.csv,<--- light
-refill,refAndHeavyRefill.csv,<--- HEAVY
-heavyVsRef,changeoverMethod.csv,<--- HEAVY
-refill,refAndLightRefill.csv,<--- light
-lightVsRef,changeoverMethod.csv,<--- light

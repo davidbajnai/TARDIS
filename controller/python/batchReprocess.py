@@ -16,15 +16,15 @@ import subprocess
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SETTINGS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 ############ EDIT HERE ############
 # Filter samples based on measurement date
-afterDate = datetime(2025, 5, 5, 20)
-beforeDate = datetime(2025, 10, 29)
+afterDate = datetime(2025, 9, 30)
+beforeDate = datetime(2026, 3, 5)
 # Create a dataframe from the subfolder names in the Results folder
 folders = os.listdir('/var/www/html/data/Results')
 folders = pd.DataFrame(folders, columns=["column"]).astype('str')
 
 # Alternatively read a list of sample names from a .CSV file
-# folders = pd.read_csv("/var/www/html/controller/python/filesToReprocess.csv",
-#                       usecols=[0], header=None, names=["column"], dtype=str)
+#folders = pd.read_csv("/var/www/html/controller/python/filesToReprocess.csv",
+ #                    usecols=[0], header=None, names=["column"], dtype=str)
 
 # Make the dataframe workable
 results = folders.column.str.split("_", n=2, expand=True)
@@ -38,7 +38,7 @@ resultsFiltered = resultsFiltered.sort_values(by=["RealDate"])
 
 ############ EDIT HERE ############
 # Filter sample names according to measurement date
-# resultsFiltered = resultsFiltered[resultsFiltered["SampleName"].str.contains("DH11")]  # includes
+resultsFiltered = resultsFiltered[resultsFiltered["SampleName"].str.contains(r"GD_SLAP2|DH11")]  # includes
 resultsFiltered = resultsFiltered[~resultsFiltered["SampleName"].str.contains("test")]  # doesn't include
 resultsFiltered = resultsFiltered[~resultsFiltered["SampleName"].str.contains("Air")]  # doesn't include
 resultsFiltered = resultsFiltered[~resultsFiltered["SampleName"].str.contains("air")]  # doesn't include
@@ -67,11 +67,14 @@ if proceed.lower() == "y":
             tqdm.write(f"Currently working on {row['SampleID']}")
 
             # Run the PHP script to copy files
-            subprocess.run(["php", "/var/www/html/controller/php/copyFiles.php", row["SampleID"]])
-            subprocess.run(["/var/www/html/controller/shell/deleteFiles.sh", row["SampleID"]])
+            #subprocess.run(["php", "/var/www/html/controller/php/evaluateData.php", row["SampleID"]])
+            #subprocess.run(["/var/www/html/controller/shell/deleteFiles.sh", row["SampleID"]])
 
             curl_command = ["curl", "-x", "", row["Link"]]
-            completed_process = subprocess.run(curl_command, capture_output=True, text=True)
+            completed_process = subprocess.run(curl_command,
+            					stdout=subprocess.PIPE,
+            					stderr=subprocess.PIPE,
+            					text=True)
             page_source = completed_process.stdout
 
             if re.search(r"'dfAll' is not defined", page_source):

@@ -7,7 +7,7 @@ V06,1,1, <--- Open the bellow
 V04,1,1,
 V08,1,1,
 BX,100,25,
-V17,1,40, <--- Pump the bellows with the turbo pump
+V17,1,80, <--- Pump the bellows with the turbo pump
 V04,0,1,
 V08,0,1,
 V18,1,10,
@@ -18,7 +18,7 @@ V04,0,1,
 V05,0,1,
 V07,0,1,
 V06,1,10,
-PX,1.235,1, <--- Adjust the pressure in the reference bellow
+PX,1.081,1, <--- Adjust the pressure in the reference bellow
 V06,0,1,
 V17,0,1,
 V27,0,1,
@@ -28,4 +28,4 @@ V28,0,1, <--- Flush old CO2 with N2 out
 V19,1,5,
 V28,1,1,
 V27,1,25,
-V17,1,60, <--- Go back to turbo pump
+V17,1,80, <--- Go back to turbo pump

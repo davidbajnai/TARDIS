@@ -18,12 +18,7 @@ devices = {p.serial_number: p.device for p in serial.tools.list_ports.comports()
 
 # Assign the serial ports to the devices
 
-try:
-    TILDAS_PORT = devices["ETBQi19C116"]
-    print(f" ✓ TILDAS is connected at {TILDAS_PORT}")
-except KeyError:
-    print(" x The TILDAS is not connected. Stopping the script.")
-    sys.exit(1)
+TILDAS_PORT = "/dev/ttyS0"
 
 try:
     EDWARDS_PORT = devices["CHAAb131R01"]
@@ -51,7 +46,7 @@ except serial.SerialException:
     sys.exit(1)
 
 try:
-    laser = serial.Serial(TILDAS_PORT, baudrate=57600, timeout=1)
+    laser = serial.Serial(TILDAS_PORT, baudrate=56000, timeout=1)
     print(" ✓ Serial communication with the TILDAS established")
     time.sleep(1)
 except serial.SerialException:
@@ -97,6 +92,9 @@ othwerwise the it slows down the communication with the Arduino and TILDAS
 
 lock = threading.Lock()
 
+def to_ppm(value):
+    return round(float(value) / 1000, 3)
+
 def loop_1():
 
     # Initialize the global variable also used by loop_2
@@ -116,6 +114,8 @@ def loop_1():
                 pass
         except (UnicodeDecodeError, ValueError):
             pass # broken response from the Edwards gauge -> do nothing
+
+        time.sleep(0.1)
 
 def loop_2():
 
@@ -152,6 +152,7 @@ def loop_2():
     start_time_elapsed = time.time()
     start_time_speed = time.time()
     elapsed_time = 0
+    last_status_print = start_time_elapsed
     temperature_log = os.path.join(
         "/var/www/html/data/Logfiles", f"tempControl{datetime.now().strftime('_%y%m%d_%H%M%S')}.csv")
 
@@ -171,9 +172,6 @@ def loop_2():
                 # print(laserStatus) # Show the raw serial output of the TILDAS in the Terminal - for debugging
 
                 laserStatusArray = laserStatus.split(',')
-
-                def to_ppm(value):
-                    return round(float(value) / 1000, 3)
 
                 laserStatus = {
                     "chi_627": to_ppm(laserStatusArray[1]),
@@ -231,10 +229,11 @@ def loop_2():
             # Create the status string
             status_dict = {
                 "time": datetime.now().strftime("%H:%M:%S"),
-                "vacuum": vacuum,
                 **arduinoStatus,
                 **laserStatus
             }
+            with lock:
+                status_dict["vacuum"] = vacuum
 
             # Convert to JSON string
             status = ujson.dumps(status_dict)
@@ -253,9 +252,6 @@ def loop_2():
             # print(value) # Show command in the terminal - for debugging
             m.set('key2', "")
 
-        # Clean up the shared variables
-        m.close()
-
         # Calculate the elapsed time since start
         elapsed_time = time.time() - start_time_elapsed
         days, remainder = divmod(int(elapsed_time), 86400)
@@ -266,7 +262,9 @@ def loop_2():
         time_taken = time.time() - start_time_speed
         speed = 1 / time_taken
 
-        print(f"  Elapsed: {days:.0f} d, {hours:.0f} h, {minutes:.0f} m, {seconds:.0f} s | Speed: {speed:.1f}Hz | Arduino errors: {ArduinoError:.0f}      ", end="\r")
+        if time.time() - last_status_print >= 1:
+            print(f"  Elapsed: {days:.0f} d, {hours:.0f} h, {minutes:.0f} m, {seconds:.0f} s | Speed: {speed:.1f}Hz | Arduino errors: {ArduinoError:.0f}      ", end="\r")
+            last_status_print = time.time()
         start_time_speed = time.time()
 
 
