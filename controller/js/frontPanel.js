@@ -58,28 +58,28 @@ function sendCommand(cmd) {
             $("#moveStatus").html(status.moveStatus);
             if (
                 status.moveStatus == "MX" &&
-                $("#motorX").attr("src") == "controller/images/standing_motor.gif"
+                $("#motorX").attr("src") == "data/images/standing_motor.gif"
             ) {
-                $("#motorX").attr("src", "controller/images/rotating_motor.gif");
+                $("#motorX").attr("src", "data/images/rotating_motor.gif");
             } else if (
                 status.moveStatus == "MY" &&
-                $("#motorY").attr("src") == "controller/images/standing_motor.gif"
+                $("#motorY").attr("src") == "data/images/standing_motor.gif"
             ) {
-                $("#motorY").attr("src", "controller/images/rotating_motor.gif");
+                $("#motorY").attr("src", "data/images/rotating_motor.gif");
             } else if (
                 status.moveStatus == "MZ" &&
-                $("#motorZ").attr("src") == "controller/images/standing_motor.gif"
+                $("#motorZ").attr("src") == "data/images/standing_motor.gif"
             ) {
-                $("#motorZ").attr("src", "controller/images/rotating_motor.gif");
+                $("#motorZ").attr("src", "data/images/rotating_motor.gif");
             } else if (
                 status.moveStatus == "-" &&
-                ($("#motorX").attr("src") == "controller/images/rotating_motor.gif" ||
-                    $("#motorY").attr("src") == "controller/images/rotating_motor.gif" ||
-                    $("#motorZ").attr("src") == "controller/images/rotating_motor.gif")
+                ($("#motorX").attr("src") == "data/images/rotating_motor.gif" ||
+                    $("#motorY").attr("src") == "data/images/rotating_motor.gif" ||
+                    $("#motorZ").attr("src") == "data/images/rotating_motor.gif")
             ) {
-                $("#motorX").attr("src", "controller/images/standing_motor.gif");
-                $("#motorY").attr("src", "controller/images/standing_motor.gif");
-                $("#motorZ").attr("src", "controller/images/standing_motor.gif");
+                $("#motorX").attr("src", "data/images/standing_motor.gif");
+                $("#motorY").attr("src", "data/images/standing_motor.gif");
+                $("#motorZ").attr("src", "data/images/standing_motor.gif");
             }
 
             // Update bellows heights
@@ -90,9 +90,9 @@ function sendCommand(cmd) {
             // Add warning icon if Z position is not at 50%
             if (
                 status.Z_position != 7980 &&
-                $("#warningZ").attr("src") != "controller/images/warning.png"
+                $("#warningZ").attr("src") != "data/images/warning.png"
             ) {
-                $("#warningZ").attr("src", "controller/images/warning.png");
+                $("#warningZ").attr("src", "data/images/warning.png");
             } else if (status.Z_position == 7980) {
                 $("#warningZ").attr("src", "");
             }
@@ -150,12 +150,12 @@ function sendCommand(cmd) {
                 if (status.valveArray.charAt(i - 1) == "0") {
                     $("#V" + n + i.toString()).attr(
                         "src",
-                        "controller/images/" + positions[i - 1] + "_closed.png"
+                        "data/images/" + positions[i - 1] + "_closed.png"
                     );
                 } else {
                     $("#V" + n + i.toString()).attr(
                         "src",
-                        "controller/images/" + positions[i - 1] + "_open.png"
+                        "data/images/" + positions[i - 1] + "_open.png"
                     );
                 }
                 i = i + 1;
@@ -166,9 +166,9 @@ function sendCommand(cmd) {
             while (i <= 2) {
                 $("#U" + "0" +  i.toString() + "_label").html(status.relayArray[i - 1]);
                 if (status.relayArray[i - 1] == 0) {
-                    $("#U" + "0" + i.toString()).attr("src", "controller/images/relay_off.png");
+                    $("#U" + "0" + i.toString()).attr("src", "data/images/relay_off.png");
                 } else {
-                    $("#U" + "0" + i.toString()).attr("src", "controller/images/relay_on.png");
+                    $("#U" + "0" + i.toString()).attr("src", "data/images/relay_on.png");
                 }
                 i = i + 1;
             }

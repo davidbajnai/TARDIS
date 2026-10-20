@@ -14,10 +14,10 @@
 		<div id="wrap" style="position:relative;border:1.5px solid #F5F4F1;width:2550px;height:710px;border-radius:4px;">
 			
 			<!-- This is the schematic of the inlet system -->
-			<img src="controller/images/schaltbild.png" class="schaltbild" />
+			<img src="data/images/schaltbild.png" class="schaltbild" />
 
 			<!-- Some design elements and labels -->
-			<img src="controller/images/GZG_logo_color.png" class="logo" style="top:19px;" />
+			<img src="data/images/GZG_logo_color.png" class="logo" style="top:19px;" />
 			<p class="label" style="top:39px;left:1030px;">N<sub>2</sub> purging</p>
 			<p class="label" style="top:155px;left:1030px;">Turbo</p>
 			<p class="label" style="top:230px;left:1030px;">Scroll</p>
@@ -208,9 +208,9 @@
 			<p class="label" style="top:39px;left:790px;color:white;">Torr (cell)</p>
 
 			<!-- Bellows control -->
-			<img id="bellowsX" src="controller/images/bellows.png" class="bellows" style="top:510px;left:295px;" />
-			<img id="bellowsY" src="controller/images/bellows.png" class="bellows" style="top:510px;left:1092px;" />
-			<img id="bellowsZ" src="controller/images/bellows.png" class="bellows" style="top:320px;left:688px;" />
+			<img id="bellowsX" src="data/images/bellows.png" class="bellows" style="top:510px;left:295px;" />
+			<img id="bellowsY" src="data/images/bellows.png" class="bellows" style="top:510px;left:1092px;" />
+			<img id="bellowsZ" src="data/images/bellows.png" class="bellows" style="top:320px;left:688px;" />
 			
 			<span id="X_pressure" class="box small" style="top:353px;left:319px;">NaN</span>
 			<p class="label" style="top:312px;left:319px;">X (Torr)</p>
@@ -224,17 +224,17 @@
 			<span id="D_pressure" class="box small" style="top:353px;left:1300px;">NaN</span>
 			<p class="label" style="top:312px;left:1300px;">D (Torr)</p>
 
-			<img id="motorX" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
+			<img id="motorX" src="data/images/standing_motor.gif" class="icon" style="top:625px;left:380px;" />
 			<span id="X_position" class="box small" style="top:625px;left:315px;">NaN</span>
 			<input type="text" id="setPercentageX" placeholder="100.0" style="top:655px;left:315px;width:50px;" />
 			<button onclick="moveBellows('X');" class="button small" style="top:655px;left:365px;">Set X</button>
 
-			<img id="motorY" src="controller/images/standing_motor.gif" class="icon" style="top:625px;left:1184px;" />
+			<img id="motorY" src="data/images/standing_motor.gif" class="icon" style="top:625px;left:1184px;" />
 			<span id="Y_position" class="box small" style="top:625px;left:1120px;">NaN</span>
 			<input type="text" id="setPercentageY" placeholder="100.0" style="top:655px;left:1120px;width:50px;" />
 			<button onclick="moveBellows('Y');" class="button small" style="top:655px;left:1169px;">Set Y</button>
 			
-			<img id="motorZ" src="controller/images/standing_motor.gif" class="icon" style="top:450px;left:755px;" />
+			<img id="motorZ" src="data/images/standing_motor.gif" class="icon" style="top:450px;left:755px;" />
 			<span id="Z_percentage" class="box small" style="top:450px;left:690px;">NaN</span>
 			<input type="text" id="setPercentageZ" placeholder="50.0" style="top:480px;left:690px;width:50px;" />
 			<button onclick="moveBellows('Z');" class="button small" style="top:480px;left:740px;">Set Z</button>
