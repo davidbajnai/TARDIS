@@ -3,6 +3,7 @@ controller/config/*
 controller/fonts/*
 controller/js/*
 !controller/js/frontPanel.js
+!controller/js/pythonConsole.js
 data/Methods/*Sequence*
 data/Methods/*sequence*
 data/Logfiles/*

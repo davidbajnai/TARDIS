@@ -328,13 +328,23 @@
 			<button onclick="startSequenceButton();" class="button big" style="top:660px;left:1800px;background-color:#63A615;">Start sequence</button>
 			<button onclick="startingPosition();" class="button big" style="top:660px;left:1340px;background-color:#9A6CA6;">Starting position</button>
 			<button id="stopButton" type="button" onclick="stopSystemButton();" class="button big" style="top:660px;left:1470px;background-color:#C62828;color:white;font-weight:bold;">STOP</button>
+			<button id="startPyButton" type="button" onclick="startPythonButton();" class="button big" style="top:660px;left:1600px;background-color:#FBC02D;color:black;font-weight:bold;">Start PY</button>
+
+			<dialog id="pythonConsole" aria-labelledby="pythonConsoleTitle" onclose="closePythonConsole();" style="position:fixed;top:30px;z-index:1000;width:760px;max-width:85vw;max-height:80vh;overflow:auto;border:3px solid #FBC02D;border-radius:4px;padding:20px;">
+				<button type="button" onclick="document.getElementById('pythonConsole').close();" style="float:right;">Close</button>
+				<h2 id="pythonConsoleTitle" style="margin-top:0;">Python communication</h2>
+				<p id="pythonConsoleStatus" role="status" style="white-space:pre-wrap;"></p>
+				<pre id="pythonConsoleOutput" aria-label="Live Python terminal output" style="background:#161616;color:#eeeeee;padding:12px;height:280px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px monospace;"></pre>
+				<p>Closing this window leaves Python running. Use STOP to stop it. Click Start PY again to reopen live output.</p>
+				<p>Keep the Z bellow at 50% when starting: opening the Arduino connection can reset it.</p>
+			</dialog>
 
 			<dialog id="stopWarning" aria-labelledby="stopWarningTitle" style="max-width:420px;border:3px solid #C62828;border-radius:4px;padding:20px;">
 				<h2 id="stopWarningTitle" style="color:#C62828;margin-top:0;">STOP — restart warning</h2>
 				<p><strong>The Z bellow needs to be at 50% when the Arduino restarts.</strong> Its position is assumed to be 50% after reset.</p>
 				<p><strong>Reset the TILDAS state manually:</strong> check WD (data writing) and BG (background fitting) in TDLWintel. STOP does not change these settings.</p>
 				<p id="stopResult" role="status" style="white-space:pre-wrap;"></p>
-				<p>The page refreshes after a successful STOP. Restart serialComm.py manually before operating the inlet again.</p>
+				<p>The page refreshes after a successful STOP. Use Start PY to restart communication before operating the inlet again.</p>
 				<button type="button" onclick="document.getElementById('stopWarning').close();">Close</button>
 			</dialog>
 
@@ -399,14 +409,14 @@
 						<li>Click the "flk" button for frequency lock (bottom left in TDLWintel).</li>
 					</ol>
 				</li>
-				<li>Start the communication script in a terminal with:<br>
-					<code>python3 /var/www/html/controller/python/serialComm.py</code>
-				</li>
+				<li>With Z at 50%, click the yellow <b>Start PY</b> button and check the live startup output. Closing the popup leaves Python running in the background; no terminal output logfile is saved.</li>
+				<li>For troubleshooting, start manually in a terminal: <code>python3 /var/www/html/controller/python/serialComm.py</code>. Stop that copy with Ctrl+C. Do not start a second copy while one is running.</li>
+				<li>To stop a background copy and reset the Arduino, use STOP or run <code>/var/www/html/controller/shell/terminate.sh</code> in a terminal as the process owner or root. GUI-started Python belongs to the web-server user (usually <code>www-data</code>); GUI STOP cannot stop a copy started by another user. Keep Z at 50% and reset TILDAS WD/BG manually afterwards.</li>
 			</ul>
 		
 			<h3>Checklist before starting a sequence</h3>
 			<ol>
-				<li>Ensure that <code>serialComm.py</code> is running in the terminal. The number of Arduino errors does not need to be zero, but it should not increase continuously. A few errors are expected when the stepper motors are active.</li>
+				<li>Ensure that <code>serialComm.py</code> is running; check the Start PY popup or the terminal used for a manual start. The number of Arduino errors does not need to be zero, but it should not increase continuously. A few errors are expected when the stepper motors are active.</li>
 				<li>The valves respond correctly when clicked (they should open and close as expected).</li>
 				<li>Mixing ratios and cell pressure values are being streamed from the TILDAS (they should update approximately once per second).</li>
 				<li>The TILDAS is mounted as an external drive. This is only necessary if the computer was restarted. Although the PHP code normally mounts it automatically, you can ensure it by running:<br>
@@ -453,6 +463,7 @@
 		<!-- The jQuery is downloaded so that it works without an internet connection -->
 		<script src="controller/js/jquery-4.0.0.min.js" lang="en"></script>
 		<script src="controller/js/frontPanel.js" lang="en"></script>
+		<script src="controller/js/pythonConsole.js" lang="en"></script>
 		
 		</body>
 </html>
