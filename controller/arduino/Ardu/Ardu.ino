@@ -1,4 +1,4 @@
-#include <AccelStepper.h>
+#include <MobaTools.h>
 #include "Adafruit_SHTC3.h"
 #include <ArduinoJson.h>
 #include <RunningMedian.h>
@@ -6,9 +6,6 @@
 // Initialize the variables --------------------------------------------------------------------
 
 Adafruit_SHTC3 shtc3 = Adafruit_SHTC3(); // Temperature sensor
-long XstartPos = 0;
-long YstartPos = 0;
-long ZstartPos = 0;
 long steps = 0;
 char command;
 String string;
@@ -51,11 +48,12 @@ float arduinoSpeed;
 // Define the pinout ---------------------------------------------------------------------------
 
 // Stepper motor control
-AccelStepper Xaxis(AccelStepper::DRIVER, 3, 2); // mode, step, direction
+// Only step-based methods are used; the steps-per-revolution argument is unused.
+MoToStepper Xaxis(1, STEPDIR);
 const byte Xenable = 4;
-AccelStepper Yaxis(AccelStepper::DRIVER, 6, 5);
+MoToStepper Yaxis(1, STEPDIR);
 const byte Yenable = 7;
-AccelStepper Zaxis(AccelStepper::DRIVER, 9, 8);
+MoToStepper Zaxis(1, STEPDIR);
 const byte Zenable = 10;
 
 // Pins for the relays
@@ -121,19 +119,19 @@ float percentageY_fromPoti()
 float percentageX_fromSteps()
 {
   constexpr float multiplier = 100.0f / 62438.0f;
-  return Xaxis.currentPosition() * multiplier;
+  return Xaxis.readSteps() * multiplier;
 }
 
 float percentageY_fromSteps()
 {
   constexpr float multiplier = 100.0f / 62438.0f;
-  return Yaxis.currentPosition() * multiplier;
+  return Yaxis.readSteps() * multiplier;
 }
 
 float percentageZ_fromSteps()
 {
   constexpr float multiplier = 100.0f / 15960.0f;
-  return Zaxis.currentPosition() * multiplier;
+  return Zaxis.readSteps() * multiplier;
 }
 
 
@@ -219,29 +217,30 @@ void setup()
   X_percentage /= 200.00;
   Y_percentage /= 200.00;
 
+  // Attach the existing STEP/DIR pins after disabling the drivers.
+  // Keep MobaTools' default Timer3 on the Mega: Timer1 supplies PWM on pins 11/12.
+  Xaxis.attach(3, 2);
+  Yaxis.attach(6, 5);
+  Zaxis.attach(9, 8);
+
   // Set the position of the motors
+  // MobaTools setZero() takes the zero-point offset, hence the negative positions.
   // For X and Y bellows, 0-100% are 62438 steps, at 1/8 microsteps
   Xsteps = X_percentage * 62438.00 / 100;
   Ysteps = Y_percentage * 62438.00 / 100;
   // For Z bellow, we use 1/8 microsteps but at half the range
   Zsteps = 15960 / 2; // Start position is at 50%
-  Xaxis.setCurrentPosition(Xsteps);
-  Yaxis.setCurrentPosition(Ysteps);
-  Zaxis.setCurrentPosition(Zsteps);
+  Xaxis.setZero(-Xsteps);
+  Yaxis.setZero(-Ysteps);
+  Zaxis.setZero(-Zsteps);
 
-  XstartPos = Xsteps;
-  YstartPos = Ysteps;
-  ZstartPos = Zsteps;
-
-  // Set the maximum speed and acceleration
-  Xaxis.setMaxSpeed(50 * 32);
-  Xaxis.setAcceleration(20 * 32);
-
-  Yaxis.setMaxSpeed(50 * 32);
-  Yaxis.setAcceleration(20 * 32);
-
-  Zaxis.setMaxSpeed(50 * 16);
-  Zaxis.setAcceleration(20 * 16);
+  // setSpeedSteps() takes steps/second * 10 and a ramp length in steps.
+  // Preserve 1600 steps/s for X/Y and 800 steps/s for Z. Ramp lengths use
+  // v*v/(2*a) from the former 640/320 steps/s^2 acceleration: 2000/1000 steps.
+  // MobaTools uses a different ramp profile, so acceleration timing will differ.
+  Xaxis.setSpeedSteps(16000, 2000);
+  Yaxis.setSpeedSteps(16000, 2000);
+  Zaxis.setSpeedSteps(8000, 1000);
 
   startTime = millis();
 
@@ -297,6 +296,18 @@ void controlT()
   analogWrite(CurrentPin, fanSpeed * scaling);
 }
 
+// Service monitoring while MobaTools generates motor pulses in timer interrupts.
+// Keep callers waiting until completion: PX/PY/SN must not advance mid-move.
+void waitForBellow(MoToStepper &axis, const char *moveStatus)
+{
+  while (axis.moving())
+  {
+    // Retain MX/MY/MZ throughout movement; only the caller may report completion.
+    sendStatus(moveStatus);
+    delay(20); // Match the idle loop's pause; interrupts keep the motor moving.
+  }
+}
+
 void moveBellowX(float percentage)
 {
   digitalWrite(Xenable, LOW); // Wake up the motor
@@ -309,14 +320,10 @@ void moveBellowX(float percentage)
   {
     percentage = 0;
   }
-  XstartPos = Xaxis.currentPosition();
   long steps = (percentage * 62438.0f / 100) - Xsteps;
   sendStatus("MX");
-  Xaxis.move(steps);
-  while (Xaxis.currentPosition() != XstartPos + steps)
-  {
-    Xaxis.run();
-  }
+  Xaxis.doSteps(steps);
+  waitForBellow(Xaxis, "MX");
   Xsteps = Xsteps + steps;
   digitalWrite(Xenable, HIGH); // Disable motor
 }
@@ -333,14 +340,10 @@ void moveBellowY(float percentage)
   {
     percentage = 0;
   }
-  YstartPos = Yaxis.currentPosition();
   long steps = percentage * 62438.0f / 100 - Ysteps;
   sendStatus("MY");
-  Yaxis.move(steps);
-  while (Yaxis.currentPosition() != YstartPos + steps)
-  {
-    Yaxis.run();
-  }
+  Yaxis.doSteps(steps);
+  waitForBellow(Yaxis, "MY");
   Ysteps = Ysteps + steps;
   digitalWrite(Yenable, HIGH); // Disable motor
 }
@@ -358,14 +361,10 @@ void moveBellowZ(float percentage)
     percentage = 0;
   }
 
-  ZstartPos = Zaxis.currentPosition();
   long steps = percentage * 15960 / 100 - Zsteps;
   sendStatus("MZ");
-  Zaxis.move(steps);
-  while (Zaxis.currentPosition() != ZstartPos + steps)
-  {
-    Zaxis.run();
-  }
+  Zaxis.doSteps(steps);
+  waitForBellow(Zaxis, "MZ");
   Zsteps = Zsteps + steps;
   digitalWrite(Zenable, HIGH); // Disable motor
 }
@@ -768,7 +767,7 @@ void sendStatus(String param)
   doc["X_percentage"] = String(X_percentage, 1);
   doc["Y_position"] = String(percentageY_fromSteps(), 2);
   doc["Y_percentage"] = String(Y_percentage, 1);
-  doc["Z_position"] = String(Zaxis.currentPosition());
+  doc["Z_position"] = String(Zaxis.readSteps());
   doc["Z_percentage"] = String(percentageZ_fromSteps(), 2);
   doc["X_pressure"] = String(X_pressure, 3);
   doc["Y_pressure"] = String(Y_pressure, 3);
