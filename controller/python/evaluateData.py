@@ -354,7 +354,7 @@ legend_handles = [
     for t in type_order
 ]
 ax1.legend(handles=legend_handles, markerscale=0.5)
-ax1.set_ylabel("$\delta^{18}$O (‰, raw)")
+ax1.set_ylabel("$\\delta^{18}$O (‰, raw)")
 
 # Subplot B: D17O vs time
 high_zscore = df[df['z_score'].abs() > 3]
@@ -381,7 +381,7 @@ legend_handles = [
 ]
 ax2.legend(handles=legend_handles)
 
-ax2.set_ylabel("$\Delta\prime^{17}$O (ppm, raw)")
+ax2.set_ylabel("$\\Delta\\prime^{17}$O (ppm, raw)")
 
 # Subplot C: mixing ratios (pCO2) vs time
 ax3.scatter(TILDAS_time, df['Xp626'] / 1000,
@@ -398,7 +398,7 @@ ax3.text(0.01, 0.12, f"{pCO2Ref:.1f}±{pCO2Ref_error:.1f} ppmv",
          color=colReference, ha='left', va='bottom',
          bbox=dict(fc='white', ec="none", pad=1, alpha=0.5),
          transform=ax3.transAxes)
-ax3.set_ylabel('$\chi\prime_{626}$ (µmol mol$^{-1}$)')
+ax3.set_ylabel('$\\chi\\prime_{626}$ (µmol mol$^{-1}$)')
 
 # Subplot D: Cell pressure vs time
 ax4.scatter(TILDAS_time, df['Praw'],
@@ -665,7 +665,7 @@ try:
     dfBracketingResults['d17O'] = bracketingResults
 
     ax1.legend(loc="center left")
-    ax1.set_ylabel("$\delta^{17}$O (‰, raw)")
+    ax1.set_ylabel("$\\delta^{17}$O (‰, raw)")
 
     ######################### Plot B – d18O #########################
 
@@ -723,7 +723,7 @@ try:
 
     dfBracketingResults['d18O'] = bracketingResults
 
-    ax2.set_ylabel("$\delta^{18}$O (‰, raw)")
+    ax2.set_ylabel("$\\delta^{18}$O (‰, raw)")
 
     ######################## Plot C – Dp17O #########################
 
@@ -751,10 +751,10 @@ try:
                 c=colBracketing, linestyle='dotted', dash_capstyle="round", zorder=-1, linewidth=1.2)
 
     # Write evaluated data into the figure title
-    ax1.set_title(f"{samID}\nEvaluated results: $\\delta^{{17}}$O = {d17O_SRB}±{d17O_SRB_error}‰, $\delta^{{18}}$O = {d18O_SRB}±{d18O_SRB_error}‰, $\\Delta\\prime^{{17}}$O = {D17Op_SRB}±{D17Op_SRB_error} ppm\nWorking reference gas: $\\delta^{{17}}$O = {d17OWorkingGas}‰, $\\delta^{{18}}$O = {d18OWorkingGas}‰, $\\Delta\\prime^{{17}}$O = {Dp17OWorkingGas:.1f} ppm")
+    ax1.set_title(f"{samID}\nEvaluated results: $\\delta^{{17}}$O = {d17O_SRB}±{d17O_SRB_error}‰, $\\delta^{{18}}$O = {d18O_SRB}±{d18O_SRB_error}‰, $\\Delta\\prime^{{17}}$O = {D17Op_SRB}±{D17Op_SRB_error} ppm\nWorking reference gas: $\\delta^{{17}}$O = {d17OWorkingGas}‰, $\\delta^{{18}}$O = {d18OWorkingGas}‰, $\\Delta\\prime^{{17}}$O = {Dp17OWorkingGas:.1f} ppm")
 
     ax3.legend()
-    ax3.set_ylabel("$\Delta\prime^{17}$O (ppm, rel. working gas)")
+    ax3.set_ylabel("$\\Delta\\prime^{17}$O (ppm, rel. working gas)")
     ax3.set_xlabel("Relative time (s)")
 
     plt.tight_layout()
