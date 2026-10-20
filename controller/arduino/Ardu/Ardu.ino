@@ -219,9 +219,11 @@ void setup()
 
   // Attach the existing STEP/DIR pins after disabling the drivers.
   // Keep MobaTools' default Timer3 on the Mega: Timer1 supplies PWM on pins 11/12.
-  Xaxis.attach(3, 2);
-  Yaxis.attach(6, 5);
-  Zaxis.attach(9, 8);
+  // MobaTools defaults to the opposite DIR polarity from AccelStepper.
+  // Invert DIR only to preserve the original physical direction and step signs.
+  Xaxis.attach(3, 2, INV_DIR);
+  Yaxis.attach(6, 5, INV_DIR);
+  Zaxis.attach(9, 8, INV_DIR);
 
   // Set the position of the motors
   // MobaTools setZero() takes the zero-point offset, hence the negative positions.
