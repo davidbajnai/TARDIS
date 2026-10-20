@@ -3,9 +3,6 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8337576.svg)](https://doi.org/10.5281/zenodo.8337576)
 [![CodeFactor](https://www.codefactor.io/repository/github/davidbajnai/tardis/badge?s=e60c8acc0095fc83f8522a69115b1e3ed10c7320)](https://www.codefactor.io/repository/github/davidbajnai/tardis)
-![Python](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fdavidbajnai%2FTARDIS%2Fraw%2F9be8a66983234d9d2491201fe2eb4432b56e265a%2F.github%2Fversions.json&query=%24.python&label=Python&color=3572a5)
-![PHP](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fdavidbajnai%2FTARDIS%2Fraw%2F9be8a66983234d9d2491201fe2eb4432b56e265a%2F.github%2Fversions.json&query=%24.php&label=PHP&color=4f5d95)
-![jQuery](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fdavidbajnai%2FTARDIS%2Fraw%2F9be8a66983234d9d2491201fe2eb4432b56e265a%2F.github%2Fversions.json&query=%24.js&label=jQuery&color=f1e05a)
 
 This repository includes files used to control the custom-built dual inlet system of the Aerodyne Research TILDAS laser spectrometer located at the Geochemistry and Isotope Geology Department, Geoscience Center, University of Göttingen.
 
